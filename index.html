@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MyMessenger</title>
+    <script src="js/const.js" defer></script>
+    <script src="js/common.js" defer></script>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="window">
+            <header>
+                <h1 class="header">MyMessenger</h1>
+            </header>
+            <main>
+                <section class="startPage">
+                    <form class="signInForm">
+                        <input type="text" id="username" placeholder="Username" autocomplete="on">
+                        <input type="password" id="password" placeholder="Password" autocomplete="on">
+                        <button id="signIn" type="button">Log in</button>
+                    </form>
+                    <br>
+                    <a href="#recovery" id="toRecoveryPage">Forgot password?</a>
+                    <p class="serverResponse">Hidden</p>
+                    <a href="#registration" class="buttonLink">
+                        <br>
+                        <button id="toRegistrationPage" class="navigationButton">Sign up</button>
+                    </a>
+                </section>
+                <section class="registrationPage">
+                    <form class="registrationForm">
+                        <input type="text" id="firstName" placeholder="First name" autocomplete="off">
+                        <input type="text" id="lastName" placeholder="Last name" autocomplete="off">
+                        <input type="text" id="email" placeholder="Email" autocomplete="off">
+                        <input type="text" id="username" placeholder="Username" autocomplete="off">
+                        <input type="password" id="password1" placeholder="Password" autocomplete="off">
+                        <input type="password" id="password2" placeholder="Password (confirm)" autocomplete="off">
+                        <button id="toRegistrationVerificationPage" type="button" autocomplete="off">Next</button>
+                    </form>
+                    <p class="serverResponse">Hidden</p>
+                    <a href="#signin" class="buttonLink">
+                        <br>
+                        <button id="toSignInPage" class="navigationButton">Back</button>
+                    </a>
+                </section>
+                <section class="registrationVerificationPage">
+                    <form class="registrationVerificationForm">
+                        <input type="text" id="verificationCode" placeholder="Verification code" autocomplete="off">
+                        <button id="confirm" type="button">Confirm</button>
+                    </form>
+                    <p class="serverResponse">Hidden</p>
+                </section>
+                <section class="recoveryVerificationPage">
+                    <form class="recoveryVerificationForm">
+                        <input type="text" id="verificationCode" placeholder="Verification code" autocomplete="off">
+                        <button id="confirm" type="button">Confirm</button>
+                    </form>
+                </section>
+                <section class="recoveryPage">
+                    <form class="recoveryForm">
+                        <input type="text" id="username" placeholder="Username" autocomplete="on">
+                        <button id="toVerificationPage" type="button">Next</button>
+                    </form>
+                    <p class="serverResponse">Hidden</p>
+                    <a href="#signin" class="buttonLink">
+                        <br>
+                        <button id="toSignInPage" class="navigationButton">Back</button>
+                    </a>
+                </section>
+                <section class="newPasswordPage">
+                    <form class="newPasswordForm">
+                        <input type="password" id="password1" placeholder="New password" autocomplete="off">
+                        <input type="password" id="password2" placeholder="New password (confirm)" autocomplete="off">
+                        <button id="confirm" type="button">Confirm</button>
+                    </form>
+                    <p class="serverResponse">Hidden</p>
+                </section>
+                <section class="chatsPage">
+                    <aside class="sidebar">
+                        <div class="tabs">
+                            <div class="tab activeTab" id="t1">Chats</div>
+                            <div class="tab" id="t2">Users</div>
+                        </div>
+                        <div class="tabContent" id="tc1"></div>
+                        <div class="tabContent" id="tc2"></div>
+                    </aside>
+                </section>
+            </main>
+        </div>
+    </div>
+    <link href="https://fonts.googleapis.com/css?family=Asap:700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap&subset=cyrillic" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700&display=swap&subset=cyrillic" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans:400,700&display=swap&subset=cyrillic" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</body>
+</html>

@@ -1,0 +1,401 @@
+/* ---------------------------------------------- cssReset ---------------------------------------------- */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+
+body {
+	line-height: 1;
+}
+
+ol, ul {
+	list-style: none;
+}
+
+blockquote, q {
+	quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+/* ---------------------------------------------- /cssReset ---------------------------------------------- */
+
+body {
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    background: rgb(49, 48, 48);
+}
+
+.wrapper {
+    width: 100%;
+    padding: 0;
+    margin: 0 auto;
+}
+
+.window {
+    margin: 10px auto;
+    width: 100%;
+}
+
+header {
+    padding: 24px 15px;
+    background: linear-gradient(-45deg, #2ee69f, #17d189, #02a365, #01855d);
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+}
+
+header .header {
+    text-indent: 50px;
+    font-family: 'Asap', sans-serif;
+    font-weight: bold;
+    font-size: 25px;
+    color: white;
+    letter-spacing: 1px;
+}
+
+main {
+    background: whitesmoke;
+    border-bottom-left-radius: 25px;
+    border-bottom-right-radius: 25px;
+    text-align: center;
+    padding: 50px 0;
+    overflow: hidden;
+}
+
+input, button {
+    display: block;
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+    font-size: 20px;
+    border-radius: 25px;
+    border: none;
+    padding: 12px 30px;
+    margin: 0 0 30px;
+}
+
+button {
+    display: inline-block;
+    font-size: 18px;
+    padding: 10px 15px;
+    margin: 0;
+    background: #01855d;
+    color: white;
+    cursor: pointer;
+}
+
+main .startPage .signInForm, main .registrationPage .registrationForm, main .registrationVerificationPage .registrationVerificationForm, main .recoveryPage .recoveryForm, main .recoveryVerificationPage .recoveryVerificationForm, main .newPasswordPage .newPasswordForm {
+    display: inline-block;
+    margin: 0;
+}
+
+main .startPage .signInForm #password, main .registrationPage .registrationForm #password2, #verificationCode, main .recoveryPage .recoveryForm #username, main .newPasswordPage .newPasswordForm #password2 {
+    margin-bottom: 20px;
+}
+
+.navigationButton {
+    font-size: 16px;
+    padding: 6px 11px;
+    margin: 0 auto 0;
+    background: transparent;
+    border: 2px solid #02a365;
+    color: rgb(34, 29, 29);
+    display: inline;
+}
+
+.buttonLink {
+    margin: 0;
+    padding: 0;
+    display: inline;
+}
+
+main .registrationPage, main .registrationVerificationPage, main .recoveryPage, main .recoveryVerificationPage, main .newPasswordPage,  main .chatsPage {
+    display: none;
+}
+/* main .chatsPage .sidebar, main .chatsPage .activeChatInterface */
+main .registrationPage .registrationForm input {
+    margin-bottom: 15px;
+}
+
+main .startPage #toRecoveryPage {
+    color: black;
+    font-size: 16px;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.serverResponse {
+    margin-top: 10px;
+    color: red;
+    opacity: 0;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+main .chatsPage .activeChatInterface .userForm input, main .chatsPage .activeChatInterface .userForm button {
+    display: inline;
+}
+
+main .chatsPage {
+    justify-content: left;
+    margin: 0;
+    height: 86vh;
+    background: #dfdfdf;
+}
+
+main .chatsPage .sidebar {
+    width: 28%;
+    background: #f1f1f1;
+    border-right: 1px solid #acaaaa;
+    overflow: hidden;
+}
+
+main .chatsPage .activeChatInterface {
+    width: 72%;
+    background: #dfdfdf;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+main .chatsPage .activeChatInterface .messages {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 15px 60px;
+    margin: 0 -18px;
+    overflow-y: scroll;
+}
+
+main .chatsPage .activeChatInterface .messages .userMessage {
+    align-self: flex-end;
+    background: #057e70;
+    border-radius: 25px;
+    padding: 10px 20px;
+    color: #fff;
+    margin: 1px 0;
+}
+
+main .chatsPage .activeChatInterface .interlocutorInfo {
+    padding: 15px 10px;
+    text-align: left;
+    text-indent: 45px;
+    font-family: 'Montserrat', sans-serif;
+    background: #f1f1f1;
+}
+
+main .chatsPage .activeChatInterface .messages .interlocutorMessage {
+    align-self: flex-start;
+    margin: 1px 0;
+    border-radius: 25px;
+    padding: 10px 20px;
+    background: rgb(255, 255, 255);
+}
+
+.chat, .user {
+    padding: 24px 5px;
+    font-family: 'Noto Sans', sans-serif;
+    cursor: pointer;
+    position: relative;
+    text-align: left;
+    text-indent: 35px;
+}
+
+.chat {
+    padding: 15px 5px;
+}
+
+.name {
+    color: #01855d;
+    font-weight: 700;
+}
+
+.lastMessage {
+    margin-top: 10px;
+    font-size: 15px;
+}
+
+main .chatsPage .tabContent .chat.activeChat:hover,  main .chatsPage .tabContent .chat.activeChat {
+    background-color: #01855d;
+    color: white;
+}
+
+main .chatsPage .tabContent .chat.activeChat h3 {
+    color: white;
+}
+
+main .chatsPage .tabContent .chat.activeChat p {
+    color: #ede6e6;
+}
+
+main .chatsPage .tabContent .chat:hover, main .chatsPage .tabContent .user:hover {
+    background-color: rgba(1, 133, 93, 0.3);
+}
+
+.nullPadding {
+    padding: 0;
+}
+
+main .chatsPage .activeChatInterface .userForm {
+    padding: 10px 20px;
+    background: #f1f1f1;
+    text-align: left;
+}
+
+main .chatsPage .activeChatInterface .userForm #userInput {
+    margin: 0 5px 0 0;
+    padding: 9px 20px;
+    width: 87%;
+    font-size: 17px;
+    text-align: left;
+    background: #fff;
+}
+
+main .chatsPage .activeChatInterface .userForm #send {
+    margin: 0;
+    padding: 9px 10px;
+    font-size: 17px;
+    color: white;
+    background: #02a365;
+}
+
+main .chatsPage .sidebar .tabs {
+    display: flex;
+    justify-content: center;
+}
+
+main .chatsPage .sidebar .tabs .tab {
+    flex-grow: 1;
+    color: #0d685d;
+    font-weight: lighter;
+    letter-spacing: 1px;
+    font-size: 18px;
+    padding: 15px 0;
+    background-color: #dbdada;
+    cursor: pointer;
+}
+
+main .chatsPage .sidebar .tabs .tab.activeTab {
+    background-color: #f1f1f1;
+}
+
+main .chatsPage .sidebar .tabContent {
+    overflow-y: scroll;
+    margin: 0 -17px;
+    /* overflow-x: hidden; */
+}
+
+main .chatsPage .sidebar .tabContent .user h3 {
+    display: inline;
+}
+
+main .chatsPage .sidebar .tabContent .user .toChat {
+    display: inline;
+    position: absolute;
+    top: 20.5px;
+    right: 15px;
+    font-size: 15px;
+    background: #01855d;
+    border-radius: 25px;
+    color: white;
+    padding: 5px 10px;
+    line-height: 100%;
+}
+
+@media screen and (max-width: 576px) {
+    .window {
+        width: 100%;
+        margin: 0;
+    }
+    header {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+    main {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+    body {
+        background: whitesmoke;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    input {
+        padding: 10px 4px;
+    }
+    header .header {
+        text-indent: 0;
+        text-align: center;
+    }
+    header {
+        padding: 22px 15px;
+    }
+}
+
+/* ---------------------------------------------- mediaForWrapper ---------------------------------------------- */
+
+@media screen and (min-width: 576px) {
+    .wrapper {
+        max-width: 540px;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .wrapper {
+        max-width: 720px;
+    }
+}
+
+@media screen and (min-width: 992px) {
+    .wrapper {
+        max-width: 960px;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .wrapper {
+        max-width: 1140px;
+    }
+}
+
+/* ---------------------------------------------- /mediaForWrapper ---------------------------------------------- */
