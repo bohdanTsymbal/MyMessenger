@@ -17,7 +17,7 @@
             <main>
                 <section class="startPage">
                     <form class="signInForm">
-                        <input type="text" id="username" placeholder="Username" autocomplete="on">
+                        <input type="text" class="username" placeholder="Username" autocomplete="on">
                         <input type="password" id="password" placeholder="Password" autocomplete="on">
                         <button id="signIn" type="button">Log in</button>
                     </form>
@@ -34,9 +34,9 @@
                         <input type="text" id="firstName" placeholder="First name" autocomplete="off">
                         <input type="text" id="lastName" placeholder="Last name" autocomplete="off">
                         <input type="text" id="email" placeholder="Email" autocomplete="off">
-                        <input type="text" id="username" placeholder="Username" autocomplete="off">
-                        <input type="password" id="password1" placeholder="Password" autocomplete="off">
-                        <input type="password" id="password2" placeholder="Password (confirm)" autocomplete="off">
+                        <input type="text" class="username" placeholder="Username" autocomplete="off">
+                        <input type="password" class="password1" placeholder="Password" autocomplete="off">
+                        <input type="password" class="password2" placeholder="Password (confirm)" autocomplete="off">
                         <button id="toRegistrationVerificationPage" type="button" autocomplete="off">Next</button>
                     </form>
                     <p class="serverResponse">Hidden</p>
@@ -47,20 +47,20 @@
                 </section>
                 <section class="registrationVerificationPage">
                     <form class="registrationVerificationForm">
-                        <input type="text" id="verificationCode" placeholder="Verification code" autocomplete="off">
-                        <button id="confirm" type="button">Confirm</button>
+                        <input type="text" class="verificationCode" placeholder="Verification code" autocomplete="off">
+                        <button class="confirm" type="button">Confirm</button>
                     </form>
                     <p class="serverResponse">Hidden</p>
                 </section>
                 <section class="recoveryVerificationPage">
                     <form class="recoveryVerificationForm">
-                        <input type="text" id="verificationCode" placeholder="Verification code" autocomplete="off">
-                        <button id="confirm" type="button">Confirm</button>
+                        <input type="text" class="verificationCode" placeholder="Verification code" autocomplete="off">
+                        <button class="confirm" type="button">Confirm</button>
                     </form>
                 </section>
                 <section class="recoveryPage">
                     <form class="recoveryForm">
-                        <input type="text" id="username" placeholder="Username" autocomplete="on">
+                        <input type="text" class="username" placeholder="Username" autocomplete="on">
                         <button id="toVerificationPage" type="button">Next</button>
                     </form>
                     <p class="serverResponse">Hidden</p>
@@ -71,9 +71,9 @@
                 </section>
                 <section class="newPasswordPage">
                     <form class="newPasswordForm">
-                        <input type="password" id="password1" placeholder="New password" autocomplete="off">
-                        <input type="password" id="password2" placeholder="New password (confirm)" autocomplete="off">
-                        <button id="confirm" type="button">Confirm</button>
+                        <input type="password" class="password1" placeholder="New password" autocomplete="off">
+                        <input type="password" class="password2" placeholder="New password (confirm)" autocomplete="off">
+                        <button class="confirm" type="button">Confirm</button>
                     </form>
                     <p class="serverResponse">Hidden</p>
                 </section>

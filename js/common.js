@@ -21,9 +21,9 @@ function navigate(hash) {
             let firstNameInput = document.querySelector('main .registrationPage .registrationForm #firstName');
             let lastNameInput = document.querySelector('main .registrationPage .registrationForm #lastName');
             let emailInput = document.querySelector('main .registrationPage .registrationForm #email');
-            let usernameInput = document.querySelector('main .registrationPage .registrationForm #username');
-            let password1Input = document.querySelector('main .registrationPage .registrationForm #password1');
-            let password2Input = document.querySelector('main .registrationPage .registrationForm #password2');
+            let usernameInput = document.querySelector('main .registrationPage .registrationForm .username');
+            let password1Input = document.querySelector('main .registrationPage .registrationForm .password1');
+            let password2Input = document.querySelector('main .registrationPage .registrationForm .password2');
             let selector = 'main .registrationPage .serverResponse';
 
             firstNameInput.oninput = () => checkInput.call(firstNameInput, REGEXP_NAME);
@@ -48,7 +48,7 @@ function navigate(hash) {
         case SIGNIN_PAGE: {
             displayPage();
 
-            let usernameLogInInput = document.querySelector('main .startPage .signInForm #username');
+            let usernameLogInInput = document.querySelector('main .startPage .signInForm .username');
             let passwordLogInInput = document.querySelector('main .startPage .signInForm #password');
             let button = document.querySelector('main .startPage .signInForm #signIn');
             let selector = 'main .startPage .serverResponse';
@@ -60,8 +60,8 @@ function navigate(hash) {
         case REGISTRATION_VERIFICATION_PAGE: {
             displayPage('main .registrationVerificationPage');
 
-            let input = document.querySelector('main .registrationVerificationPage .registrationVerificationForm #verificationCode');
-            let button = document.querySelector('main .registrationVerificationPage .registrationVerificationForm #confirm');
+            let input = document.querySelector('main .registrationVerificationPage .registrationVerificationForm .verificationCode');
+            let button = document.querySelector('main .registrationVerificationPage .registrationVerificationForm .confirm');
             let selector = 'main .registrationVerificationPage .serverResponse';
 
             button.onclick = () => checkEmptiness(selector, () => {
@@ -71,8 +71,8 @@ function navigate(hash) {
                     let firstNameInput = document.querySelector('main .registrationPage .registrationForm #firstName');
                     let lastNameInput = document.querySelector('main .registrationPage .registrationForm #lastName');
                     let emailInput = document.querySelector('main .registrationPage .registrationForm #email');
-                    let usernameInput = document.querySelector('main .registrationPage .registrationForm #username');
-                    let password2Input = document.querySelector('main .registrationPage .registrationForm #password2');
+                    let usernameInput = document.querySelector('main .registrationPage .registrationForm .username');
+                    let password2Input = document.querySelector('main .registrationPage .registrationForm .password2');
 
                     let firstName = firstNameInput.value.trim();
                     let lastName = lastNameInput.value.trim();
@@ -95,7 +95,7 @@ function navigate(hash) {
         case RECOVERY_PAGE: {
             displayPage('main .recoveryPage');
 
-            let input = document.querySelector('main .recoveryPage .recoveryForm #username');
+            let input = document.querySelector('main .recoveryPage .recoveryForm .username');
             let button = document.querySelector('main .recoveryPage .recoveryForm #toVerificationPage');
             let selector = 'main .recoveryPage .serverResponse';
 
@@ -112,8 +112,8 @@ function navigate(hash) {
         case RECOVERY_VERIFICATION_PAGE: {
             displayPage('main .recoveryVerificationPage');
 
-            let input = document.querySelector('main .recoveryVerificationPage .recoveryVerificationForm #verificationCode');
-            let button = document.querySelector('main .recoveryVerificationPage .recoveryVerificationForm #confirm');
+            let input = document.querySelector('main .recoveryVerificationPage .recoveryVerificationForm .verificationCode');
+            let button = document.querySelector('main .recoveryVerificationPage .recoveryVerificationForm .confirm');
             let selector = 'main .registrationVerificationPage .serverResponse';
             
             button.onclick = () => checkEmptiness(selector, () => {
@@ -129,9 +129,9 @@ function navigate(hash) {
         case NEW_PASSWORD_PAGE: {
             displayPage('main .newPasswordPage');
 
-            let password1Input = document.querySelector('main .newPasswordPage .newPasswordForm #password1');
-            let password2Input = document.querySelector('main .newPasswordPage .newPasswordForm #password2');
-            let button = document.querySelector('main .newPasswordPage .newPasswordForm #confirm');
+            let password1Input = document.querySelector('main .newPasswordPage .newPasswordForm .password1');
+            let password2Input = document.querySelector('main .newPasswordPage .newPasswordForm .password2');
+            let button = document.querySelector('main .newPasswordPage .newPasswordForm .confirm');
             let selector = 'main .newPasswordPage .serverResponse';
 
             password1Input.oninput = () => checkInput.call(password1Input, REGEXP_PASSWORD);
