@@ -1,6 +1,8 @@
 <?php
 if (!empty($_POST)) {
     require('./original.php');
+    $firstName = $_POST['firstName'];
+    $lastName = $_POST['lastName'];
     $email = $_POST['email'];
     $username = $_POST['username'];
     $password = $_POST['password'];
@@ -28,7 +30,16 @@ if (!empty($_POST)) {
             $subject = 'Verification of registration';
             $message = "Your verification code is $verificationCode.";
             sendLetter($email, $subject, $message);
-            echo $verificationCode;
+
+            session_start();
+            $_SESSION['registrationFirstName'] = $firstName;
+            $_SESSION['registrationLastName'] = $lastName;
+            $_SESSION['registrationEmail'] = $email;
+            $_SESSION['registrationUsername'] = $username;
+            $_SESSION['registrationPassword'] = password_hash($password, PASSWORD_DEFAULT);
+            $_SESSION['registrationVerificationCode'] = $verificationCode;
+
+            echo true;
         }
     }
     mysqli_close($connection);

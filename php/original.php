@@ -33,3 +33,7 @@ function sendLetter($to, $subject, $message) {
     $headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
 	mail($to, $subject, $message, $headers);
 }
+
+ini_set('session.save_path', '../session');
+ini_set('session.gc_probability', '0');
+ini_set('session.gc_maxlifetime', '86400');

@@ -4,14 +4,20 @@ let errors, response, id;
 
 errors = true;
 
-navigate(CHATS_PAGE);
-location.hash = CHATS_PAGE;
-displayChatsPage();
-// navigate(SIGNIN_PAGE);
-// location.hash = SIGNIN_PAGE;
-
-// window.onload = removeWebhostAd;
 window.onhashchange = () => navigate(location.hash);
+// window.onload = removeWebhostAd;
+
+makePostRequest(CHECK_AUTHORIZATION_PHP[0], '', () => {
+    if (response) {
+        location.hash = CHATS_PAGE;
+        navigate(CHATS_PAGE);
+        displayChatsPage();
+    }
+    else {
+        location.hash = SIGNIN_PAGE;
+        navigate(SIGNIN_PAGE);        
+    }
+});
 
 function navigate(hash) {
     switch (hash) {
@@ -35,10 +41,12 @@ function navigate(hash) {
             
             let button = document.querySelector('main .registrationPage .registrationForm #toRegistrationVerificationPage');
             button.onclick = () => checkEmptiness(selector, () => {
+                let firstName = firstNameInput.value.trim();
+                let lastName = lastNameInput.value.trim();
                 let email = emailInput.value.trim();
                 let username = usernameInput.value.trim();
                 let password = password2Input.value.trim();
-                let params = `email=${email}&username=${username}&password=${password}`;
+                let params = `firstName=${firstName}&lastName=${lastName}&email=${email}&username=${username}&password=${password}`;
 
                 makePostRequest(CHECK_PHP[0], params, () => processPreliminaryResponse(selector, REGISTRATION_VERIFICATION_PAGE));
             }, firstNameInput, lastNameInput, emailInput, usernameInput, password1Input, password2Input);
@@ -58,37 +66,29 @@ function navigate(hash) {
         }
 
         case REGISTRATION_VERIFICATION_PAGE: {
-            displayPage('main .registrationVerificationPage');
+            makePostRequest(CHECK_REGISTRATION_SESSION_PHP[0], '', () => {
+                if (response) {
+                    displayPage('main .registrationVerificationPage');
 
-            let input = document.querySelector('main .registrationVerificationPage .registrationVerificationForm .verificationCode');
-            let button = document.querySelector('main .registrationVerificationPage .registrationVerificationForm .confirm');
-            let selector = 'main .registrationVerificationPage .serverResponse';
+                    let input = document.querySelector('main .registrationVerificationPage .registrationVerificationForm .verificationCode');
+                    let button = document.querySelector('main .registrationVerificationPage .registrationVerificationForm .confirm');
+                    let selector = 'main .registrationVerificationPage .serverResponse';
 
-            button.onclick = () => checkEmptiness(selector, () => {
-                let userInput = input.value.trim();
+                    button.onclick = () => checkEmptiness(selector, () => {
+                        let userInput = input.value.trim();
+                        let params = `userInput=${userInput}`;
+                        let selector = 'main .startPage .serverResponse';
 
-                if (userInput == response) {
-                    let firstNameInput = document.querySelector('main .registrationPage .registrationForm #firstName');
-                    let lastNameInput = document.querySelector('main .registrationPage .registrationForm #lastName');
-                    let emailInput = document.querySelector('main .registrationPage .registrationForm #email');
-                    let usernameInput = document.querySelector('main .registrationPage .registrationForm .username');
-                    let password2Input = document.querySelector('main .registrationPage .registrationForm .password2');
-
-                    let firstName = firstNameInput.value.trim();
-                    let lastName = lastNameInput.value.trim();
-                    let email = emailInput.value.trim();
-                    let username = usernameInput.value.trim();
-                    let password = password2Input.value.trim();
-                    let params = `firstName=${firstName}&lastName=${lastName}&email=${email}&username=${username}&password=${password}`;
-                    let selector = 'main .startPage .serverResponse';
-                    let message = 'Registration has been successful!';
-
-                    makePostRequest(REGISTRATION_PHP[0], params, () => processFinalResponse(() => {
-                        location.hash = SIGNIN_PAGE;
-                        alert(message);
-                    }, selector));
+                        makePostRequest(CONFIRM_REGISTRATION_PHP[0], params, () => processFinalResponse(() => {
+                            location.hash = SIGNIN_PAGE;
+                            alert('Registration has been successful!');
+                        }, selector));
+                    }, input);
                 }
-            }, input);
+                else {
+                    location.hash = SIGNIN_PAGE;
+                }
+            });
             break;
         }
 
@@ -110,68 +110,86 @@ function navigate(hash) {
         }
 
         case RECOVERY_VERIFICATION_PAGE: {
-            displayPage('main .recoveryVerificationPage');
+            makePostRequest(CHECK_RECOVERY_SESSION_PHP[0], '', () => {
+                if (response) {
+                    displayPage('main .recoveryVerificationPage');
 
-            let input = document.querySelector('main .recoveryVerificationPage .recoveryVerificationForm .verificationCode');
-            let button = document.querySelector('main .recoveryVerificationPage .recoveryVerificationForm .confirm');
-            let selector = 'main .registrationVerificationPage .serverResponse';
-            
-            button.onclick = () => checkEmptiness(selector, () => {
-                let userInput = input.value.trim();
+                    let input = document.querySelector('main .recoveryVerificationPage .recoveryVerificationForm .verificationCode');
+                    let button = document.querySelector('main .recoveryVerificationPage .recoveryVerificationForm .confirm');
+                    let selector = 'main .recoveryVerificationPage .serverResponse';
+                    
+                    button.onclick = () => checkEmptiness(selector, () => {
+                        let userInput = input.value.trim();
+                        let params = `userInput=${userInput}`;
 
-                if (userInput == response['code']) {
-                    location.hash = NEW_PASSWORD_PAGE;
+                        makePostRequest(CONFIRM_RECOVERY_PHP[0], params, () => processPreliminaryResponse(selector, NEW_PASSWORD_PAGE));
+                    }, input);
                 }
-            }, input);
+                else {
+                    location.hash = SIGNIN_PAGE;
+                }
+            });
             break;
         }
 
         case NEW_PASSWORD_PAGE: {
-            displayPage('main .newPasswordPage');
+            makePostRequest(CHECK_NEW_PASSWORD_SESSION_PHP[0], '', () => {
+                if (response) {
+                    displayPage('main .newPasswordPage');
 
-            let password1Input = document.querySelector('main .newPasswordPage .newPasswordForm .password1');
-            let password2Input = document.querySelector('main .newPasswordPage .newPasswordForm .password2');
-            let button = document.querySelector('main .newPasswordPage .newPasswordForm .confirm');
-            let selector = 'main .newPasswordPage .serverResponse';
+                    let password1Input = document.querySelector('main .newPasswordPage .newPasswordForm .password1');
+                    let password2Input = document.querySelector('main .newPasswordPage .newPasswordForm .password2');
+                    let button = document.querySelector('main .newPasswordPage .newPasswordForm .confirm');
+                    let selector = 'main .newPasswordPage .serverResponse';
 
-            password1Input.oninput = () => checkInput.call(password1Input, REGEXP_PASSWORD);
-            password2Input.oninput = () => checkPasswordCompliance(password1Input, password2Input);
+                    password1Input.oninput = () => checkInput.call(password1Input, REGEXP_PASSWORD);
+                    password2Input.oninput = () => checkPasswordCompliance(password1Input, password2Input);
 
-            button.onclick = () => checkEmptiness(selector, () => {
-                let newPassword = password2Input.value.trim();
-                let id = response['id'];
-                let params = `newPassword=${newPassword}&id=${id}`;
-                let selector = 'main .newPasswordPage .serverResponse';
-                let message = 'Your password has been changed succefully!';
+                    button.onclick = () => checkEmptiness(selector, () => {
+                        let newPassword = password2Input.value.trim();
+                        let params = `newPassword=${newPassword}`;
+                        let selector = 'main .newPasswordPage .serverResponse';
+                        let message = 'Your password has been changed succefully!';
 
-                makePostRequest(NEW_PASSWORD_PHP[0], params, () => processFinalResponse(() => {
+                        makePostRequest(NEW_PASSWORD_PHP[0], params, () => processFinalResponse(() => {
+                            location.hash = SIGNIN_PAGE;
+                            alert(message);
+                        }, selector));
+                    }, password1Input, password2Input);
+                }
+                else {
                     location.hash = SIGNIN_PAGE;
-                    alert(message);
-                }, selector));
-            }, password1Input, password2Input);
+                }
+            });
             break;
         }
 
         case CHATS_PAGE: {
-            displayPage('main .chatsPage', 'flex');
+            makePostRequest(CHECK_AUTHORIZATION_PHP[0], '', () => {
+                if (response) {
+                    displayPage('main .chatsPage', 'flex');
             
-            document.querySelector('main').className = 'nullPadding';
-            document.querySelector('main .chatsPage .sidebar #tc2').style.display = 'none';
-            
-            let allTabs = document.querySelectorAll('main .chatsPage .sidebar .tabs .tab');
-            let allContent = document.querySelectorAll('main .chatsPage .sidebar .tabContent');  
-
-            document.querySelector('main .chatsPage .sidebar .tabs').onclick = () => switchTab(event, allTabs, allContent, 'activeTab', 'main .chatsPage .sidebar #tc', 'block');
-
-            document.querySelector('main .chatsPage .sidebar .tabs #t2').onclick = () => {
-                let content = document.querySelector('main .chatsPage .sidebar #tc2 .user');  
-                
-                if (!content) {
-                    id = 1;
-                    let params = `id=${id}`;
-                    makePostRequest(GET_ALL_USERS_PHP[0], params, displayAllUsers);
+                    document.querySelector('main').className = 'nullPadding';
+                    document.querySelector('main .chatsPage .sidebar #tc2').style.display = 'none';
+                    
+                    let allTabs = document.querySelectorAll('main .chatsPage .sidebar .tabs .tab');
+                    let allContent = document.querySelectorAll('main .chatsPage .sidebar .tabContent');  
+        
+                    document.querySelector('main .chatsPage .sidebar .tabs').onclick = () => switchTab(event, allTabs, allContent, 'activeTab', 'main .chatsPage .sidebar #tc', 'block');
+        
+                    document.querySelector('main .chatsPage .sidebar .tabs #t2').onclick = () => {
+                        let content = document.querySelector('main .chatsPage .sidebar #tc2 .user');  
+                        
+                        if (!content) {
+                            makePostRequest(GET_ALL_USERS_PHP[0], '', displayAllUsers);
+                        }
+                    }
                 }
-            }
+                else {
+                    location.hash = SIGNIN_PAGE;
+                }
+            });
+            break;
         }
 
         default: {
@@ -268,12 +286,7 @@ function makePostRequest(url, params, perform) {
 function processPreliminaryResponse(outSelector, toPage) {
     let out = document.querySelector(outSelector);
 
-    try {
-        response = JSON.parse(response);
-    }
-    catch { }
-
-    if (parseInt(response) || parseInt(response['code'])) {
+    if (response == true) {
         location.hash = toPage;
     }
     else {
@@ -285,7 +298,7 @@ function processPreliminaryResponse(outSelector, toPage) {
 function processFinalResponse(perform, outSelector) {
     let out = document.querySelector(outSelector);
 
-    if (parseInt(response)) {
+    if (response == true) {
         clearInputs();
         out.removeAttribute('style');
         perform();
@@ -305,12 +318,11 @@ function logIn(username, password) {
 
 function displayChatsPage() {
     location.hash = CHATS_PAGE;
-    id = Number(response);
-    id = 1;
 
-    let params = `id=${id}`;
-
-    makePostRequest(GET_ALL_CHATS_PHP[0], params, displayAllChats);
+    makePostRequest(RETURN_USER_INFO_PHP[0], 'requestedInfo=id', () => {
+        id = response;
+        makePostRequest(GET_ALL_CHATS_PHP[0], '', displayAllChats);
+    });
 }
 
 function switchTab(event, allTabs, allContent, className, contentSelector, displayType=null) {
@@ -359,7 +371,7 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null) {
     send.innerHTML = 'Send';
 
     if (number) {
-        let params = `userId=${id}&interlocutorId=${interlocutorId}&number=${number}`;
+        let params = `interlocutorId=${interlocutorId}&number=${number}`;
 
         makePostRequest(GET_MESSAGES_PHP[0], params, () => {
             let messagesContent = JSON.parse(response);
