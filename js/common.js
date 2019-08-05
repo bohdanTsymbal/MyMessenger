@@ -1,6 +1,6 @@
 'use strict';
 
-let errors, response, id;
+let errors, response, id, WebSocketConnection;
 
 errors = true;
 
@@ -538,7 +538,7 @@ function clearActive(chats, sidebarChats) {
 function connect() {
     makePostRequest(CHECK_AUTHORIZATION_PHP[0], '', () => {
         if (response) {
-            let WebSocketConnection = new WebSocket(`ws://127.0.0.1:8000/?userId=${id}`);
+            WebSocketConnection = new WebSocket(`ws://127.0.0.1:8000/?userId=${id}`);
 
             WebSocketConnection.onmessage = (event) => {
                 let data = JSON.parse(event.data);
@@ -563,17 +563,20 @@ function connect() {
 }
 
 function sendMessage(interlocutorId, message, chat) {
-    let params = `interlocutorId=${interlocutorId}&message=${message}`;
+    let data = {
+        toUser: interlocutorId,
+        fromUser: id,
+        message: message
+    };
+    data = JSON.stringify(data);
 
-    makePostRequest(SEND_MESSAGE_PHP[0], params, () => {
-        if(response) {
-            let messageBlock = document.createElement('div');
+    WebSocketConnection.send(data);
 
-            messageBlock.className = 'userMessage';
-            messageBlock.innerHTML = message;
+    let messageBlock = document.createElement('div');
 
-            chat.appendChild(messageBlock);
-            chat.scrollTo(0, chat.scrollHeight);
-        }
-    });
+    messageBlock.className = 'userMessage';
+    messageBlock.innerHTML = message;
+
+    chat.appendChild(messageBlock);
+    chat.scrollTo(0, chat.scrollHeight);
 }   
