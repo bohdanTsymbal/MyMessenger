@@ -15,3 +15,4 @@ if (isset($_SESSION['id'])) {
 else {
     session_destroy();
 }
+mysqli_close($connection);

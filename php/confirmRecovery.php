@@ -11,4 +11,5 @@ if (!empty($_POST)) {
     else {
         echo false;
     }
+    mysqli_close($connection);
 }

@@ -1,6 +1,6 @@
 'use strict';
 
-const SIGNIN_PAGE = '#signin';
+const SIGN_IN_PAGE = '#signin';
 const REGISTARTION_PAGE = '#registration';
 const REGISTRATION_VERIFICATION_PAGE = '#registration_verification';
 const RECOVERY_PAGE = '#recovery';
@@ -28,3 +28,4 @@ const CHECK_RECOVERY_SESSION_PHP = ['http://localhost/Projects/MyMessenger/php/c
 const CHECK_NEW_PASSWORD_SESSION_PHP = ['http://localhost/Projects/MyMessenger/php/checkNewPasswordSession.php', 'https://mymessengerbackend.000webhostapp.com/php/checkNewPasswordSession.php'];
 const CHECK_AUTHORIZATION_PHP = ['http://localhost/Projects/MyMessenger/php/checkAuthorization.php', 'https://mymessengerbackend.000webhostapp.com/php/checkAuthorization.php'];
 const RETURN_USER_INFO_PHP = ['http://localhost/Projects/MyMessenger/php/returnUserInfo.php', 'https://mymessengerbackend.000webhostapp.com/php/returnUserInfo.php'];
+const SEND_MESSAGE_PHP = ['http://localhost/Projects/MyMessenger/php/sendMessage.php', 'https://mymessengerbackend.000webhostapp.com/php/sendMessage.php'];

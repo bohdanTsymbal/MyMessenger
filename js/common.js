@@ -14,8 +14,8 @@ makePostRequest(CHECK_AUTHORIZATION_PHP[0], '', () => {
         displayChatsPage();
     }
     else {
-        location.hash = SIGNIN_PAGE;
-        navigate(SIGNIN_PAGE);        
+        location.hash = SIGN_IN_PAGE;
+        navigate(SIGN_IN_PAGE);        
     }
 });
 
@@ -53,7 +53,7 @@ function navigate(hash) {
             break;
         }
 
-        case SIGNIN_PAGE: {
+        case SIGN_IN_PAGE: {
             displayPage();
 
             let usernameLogInInput = document.querySelector('main .startPage .signInForm .username');
@@ -80,13 +80,13 @@ function navigate(hash) {
                         let selector = 'main .startPage .serverResponse';
 
                         makePostRequest(CONFIRM_REGISTRATION_PHP[0], params, () => processFinalResponse(() => {
-                            location.hash = SIGNIN_PAGE;
+                            location.hash = SIGN_IN_PAGE;
                             alert('Registration has been successful!');
                         }, selector));
                     }, input);
                 }
                 else {
-                    location.hash = SIGNIN_PAGE;
+                    location.hash = SIGN_IN_PAGE;
                 }
             });
             break;
@@ -126,7 +126,7 @@ function navigate(hash) {
                     }, input);
                 }
                 else {
-                    location.hash = SIGNIN_PAGE;
+                    location.hash = SIGN_IN_PAGE;
                 }
             });
             break;
@@ -152,13 +152,13 @@ function navigate(hash) {
                         let message = 'Your password has been changed succefully!';
 
                         makePostRequest(NEW_PASSWORD_PHP[0], params, () => processFinalResponse(() => {
-                            location.hash = SIGNIN_PAGE;
+                            location.hash = SIGN_IN_PAGE;
                             alert(message);
                         }, selector));
                     }, password1Input, password2Input);
                 }
                 else {
-                    location.hash = SIGNIN_PAGE;
+                    location.hash = SIGN_IN_PAGE;
                 }
             });
             break;
@@ -184,9 +184,11 @@ function navigate(hash) {
                             makePostRequest(GET_ALL_USERS_PHP[0], '', displayAllUsers);
                         }
                     }
+
+
                 }
                 else {
-                    location.hash = SIGNIN_PAGE;
+                    location.hash = SIGN_IN_PAGE;
                 }
             });
             break;
@@ -320,8 +322,14 @@ function displayChatsPage() {
     location.hash = CHATS_PAGE;
 
     makePostRequest(RETURN_USER_INFO_PHP[0], 'requestedInfo=id', () => {
-        id = response;
-        makePostRequest(GET_ALL_CHATS_PHP[0], '', displayAllChats);
+        if (response) {
+            id = response;
+            connect();
+            makePostRequest(GET_ALL_CHATS_PHP[0], '', displayAllChats);
+        }
+        else {
+            alert('No!');
+        }
     });
 }
 
@@ -370,6 +378,26 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null) {
     send.type = 'button';
     send.innerHTML = 'Send';
 
+    send.onclick = () => {
+        let userInput = document.querySelector(`main .chatsPage #i${interlocutorId} .userForm #userInput`);
+        let message = userInput.value.trim();
+        if (message !== '') {
+            sendMessage(interlocutorId, message, messages);
+            userInput.value = '';
+        }
+    }
+
+    window.onkeydown = (event) => {
+        if (event.code === 'Enter') {
+            let userInput = document.querySelector(`main .chatsPage #i${interlocutorId} .userForm #userInput`);
+            let message = userInput.value.trim();
+            if (message !== '') {
+                sendMessage(interlocutorId, message, messages);
+                userInput.value = '';
+            }
+        }
+    }
+
     if (number) {
         let params = `interlocutorId=${interlocutorId}&number=${number}`;
 
@@ -383,6 +411,7 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null) {
                 message.innerHTML = messagesContent[i].message;
 
                 messages.appendChild(message);
+                messages.scrollTo(0, messages.scrollHeight);
             }
         });
     }
@@ -505,3 +534,46 @@ function clearActive(chats, sidebarChats) {
         sidebarChats[i].classList.remove('activeChat');
     }
 }
+
+function connect() {
+    makePostRequest(CHECK_AUTHORIZATION_PHP[0], '', () => {
+        if (response) {
+            let WebSocketConnection = new WebSocket(`ws://127.0.0.1:8000/?userId=${id}`);
+
+            WebSocketConnection.onmessage = (event) => {
+                let data = JSON.parse(event.data);
+                let fromUser = data.fromUser;
+                let message = data.message;
+        
+                let chat = document.querySelector(`main .chatsPage #i${fromUser} .messages`);
+        
+                let newMessage = document.createElement('div');
+        
+                newMessage.className = 'interlocutorMessage';
+                newMessage.innerHTML = message;
+        
+                chat.appendChild(newMessage);
+                chat.scrollTo(0, chat.scrollHeight);
+            };
+        }
+        else {
+            alert('No!');
+        }
+    });
+}
+
+function sendMessage(interlocutorId, message, chat) {
+    let params = `interlocutorId=${interlocutorId}&message=${message}`;
+
+    makePostRequest(SEND_MESSAGE_PHP[0], params, () => {
+        if(response) {
+            let messageBlock = document.createElement('div');
+
+            messageBlock.className = 'userMessage';
+            messageBlock.innerHTML = message;
+
+            chat.appendChild(messageBlock);
+            chat.scrollTo(0, chat.scrollHeight);
+        }
+    });
+}   

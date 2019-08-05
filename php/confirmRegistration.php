@@ -10,7 +10,7 @@ if (!empty($_POST)) {
         $username = $_SESSION['registrationUsername'];
         $password = $_SESSION['registrationPassword'];
         session_destroy();
-        $query = "select id from users order by id desc";
+        $query = "select id from users order by id desc limit 1";
         $rows = mysqli_fetch_row(query($connection, $query));
         if ($rows[0] == "") {
             $id = 1;

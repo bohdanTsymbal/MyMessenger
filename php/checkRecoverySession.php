@@ -8,3 +8,4 @@ else {
     session_destroy();
     echo false;
 }
+mysqli_close($connection);

@@ -18,4 +18,5 @@ if (!empty($_POST)) {
     else {
         session_destroy();
     }
+    mysqli_close($connection);
 }
