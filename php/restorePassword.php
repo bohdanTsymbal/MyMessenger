@@ -1,6 +1,6 @@
 <?php
 if (!empty($_POST)) {
-    require("./original.php");
+    require("./initial.php");
     $username = $_POST['username'];
     $query = "select email, id from users where `username` = '$username'";
     $rows = mysqli_fetch_row(query($connection, $query));
@@ -20,4 +20,7 @@ if (!empty($_POST)) {
         echo 'The user with this username does not exist!';
     }
     mysqli_close($connection);
+}
+else {
+    echo 'POST is empty!';
 }

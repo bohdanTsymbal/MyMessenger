@@ -1,18 +1,13 @@
 <?php
-require('./original.php');
+require('./initial.php');
 session_start();
-if (isset($_SESSION['id'])) {
-    $id = $_SESSION['id'];
-    $query = "select message, fromUser, toUser from messages where `fromUser` = '$id' or `toUser` = '$id'";
-    $queryResult = query($connection, $query);
-    $result = [];
-    while($rows = mysqli_fetch_assoc($queryResult)) {
-        $result[] = $rows;
-    }
-    $result = json_encode($result);
-    echo $result;
+$id = $_SESSION['id'];
+$query = "select message, fromUser, toUser from messages where `fromUser` = '$id' or `toUser` = '$id'";
+$queryResult = query($connection, $query);
+$result = [];
+while($rows = mysqli_fetch_assoc($queryResult)) {
+    $result[] = $rows;
 }
-else {
-    session_destroy();
-}
+$result = json_encode($result);
+echo $result;
 mysqli_close($connection);

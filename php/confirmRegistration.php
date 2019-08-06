@@ -1,6 +1,6 @@
 <?php
 if (!empty($_POST)) {
-    require('./original.php');
+    require('./initial.php');
     session_start();
     $userInput = $_POST['userInput'];
     if ($userInput == $_SESSION['registrationVerificationCode']) {
@@ -9,6 +9,7 @@ if (!empty($_POST)) {
         $email = $_SESSION['registrationEmail'];
         $username = $_SESSION['registrationUsername'];
         $password = $_SESSION['registrationPassword'];
+        $token = bin2hex(random_bytes(64));
         session_destroy();
         $query = "select id from users order by id desc limit 1";
         $rows = mysqli_fetch_row(query($connection, $query));
@@ -18,7 +19,7 @@ if (!empty($_POST)) {
         else {
             $id = ++$rows[0];
         }
-        $query = "insert into `users` (`id`, `firstName`, `lastName`, `email`, `username`, `password`) values ('$id', '$firstName', '$lastName', '$email', '$username', '$password')";
+        $query = "insert into `users` (`id`, `firstName`, `lastName`, `email`, `username`, `password`, `token`) values ('$id', '$firstName', '$lastName', '$email', '$username', '$password', '$token')";
         query($connection, $query);
         mysqli_close($connection);
         echo true;
@@ -26,4 +27,7 @@ if (!empty($_POST)) {
     else {
         echo false;
     }
+}
+else {
+    echo 'POST is empty!';
 }

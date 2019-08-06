@@ -1,6 +1,6 @@
 <?php
 if (!empty($_POST)) {
-    require('./original.php');
+    require('./initial.php');
     $firstName = $_POST['firstName'];
     $lastName = $_POST['lastName'];
     $email = $_POST['email'];
@@ -10,7 +10,7 @@ if (!empty($_POST)) {
     $rows = mysqli_fetch_row(query($connection, $query));
     if ($rows[0] != '') {
         if (password_verify($password, $rows[1]) && $rows[0] == $email) {
-            echo 'You have already registered!';
+            echo 'You are already registered!';
         }
         else if ($rows[0] == $email) {
             echo 'The username and the email are already taken!';
@@ -23,7 +23,7 @@ if (!empty($_POST)) {
         $query = "select id from users where `email` = '$email'";
         $rows = mysqli_fetch_row(query($connection, $query));
         if ($rows[0] != '') {
-            echo 'The email is already used!';
+            echo 'The email is already taken!';
         }
         else {
             $verificationCode = rand(10000000, 99999999);
@@ -43,4 +43,7 @@ if (!empty($_POST)) {
         }
     }
     mysqli_close($connection);
+}
+else {
+    echo 'POST is empty!';
 }

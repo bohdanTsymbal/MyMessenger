@@ -1,5 +1,5 @@
 <?php
-require('./original.php');
+require('./initial.php');
 session_start();
 if (isset($_SESSION['id'])) {
     $id = $_SESSION['id'];
@@ -14,5 +14,6 @@ if (isset($_SESSION['id'])) {
 }
 else {
     session_destroy();
+    echo false;
 }
 mysqli_close($connection);
