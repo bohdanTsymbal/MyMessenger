@@ -77,7 +77,6 @@ $ws_worker->onMessage = function($connection, $data) use (&$users)
     query($mconnection, $query);
     
     mysqli_close($mconnection);
-    echo true; 
 };
 
 $ws_worker->onClose = function($connection) use(&$users)

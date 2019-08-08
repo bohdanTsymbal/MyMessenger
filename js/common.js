@@ -1,6 +1,6 @@
 'use strict';
 
-let errors, response, id, token, WebSocketConnection;
+let errors, response, id, token, WebSocketConnection, sHeight;
 
 errors = true;
 
@@ -42,14 +42,16 @@ function navigate(hash) {
             
             const button = document.querySelector('main .registrationPage .registrationForm #toRegistrationVerificationPage');
             button.onclick = () => checkEmptiness(selector, () => {
-                const firstName = firstNameInput.value.trim();
-                const lastName = lastNameInput.value.trim();
-                const email = emailInput.value.trim();
-                const username = usernameInput.value.trim();
-                const password = password2Input.value.trim();
-                const params = `firstName=${firstName}&lastName=${lastName}&email=${email}&username=${username}&password=${password}`;
-
-                makePostRequest(REGISTRATION_CHECKS_PHP[0], params, () => processPreliminaryResponse(selector, REGISTRATION_VERIFICATION_PAGE));
+                if (!errors) {
+                    const firstName = firstNameInput.value.trim();
+                    const lastName = lastNameInput.value.trim();
+                    const email = emailInput.value.trim();
+                    const username = usernameInput.value.trim();
+                    const password = password2Input.value.trim();
+                    const params = `firstName=${firstName}&lastName=${lastName}&email=${email}&username=${username}&password=${password}`;
+    
+                    makePostRequest(REGISTRATION_CHECKS_PHP[0], params, () => processPreliminaryResponse(selector, REGISTRATION_VERIFICATION_PAGE));
+                }
             }, firstNameInput, lastNameInput, emailInput, usernameInput, password1Input, password2Input);
             break;
         }
@@ -324,14 +326,15 @@ function switchTab(event, allTabs, allContent, className, contentSelector, displ
     }
 }
 
-function createChatInterface(interlocutorId, firstName, lastName, number=null, callback=()=>{}) {
+function createChatInterface(interlocutorId, firstName, lastName, number=null) {
     const chatsPage = document.querySelector('main .chatsPage');
     const chatUI = document.createElement('div');
     const interlocutorInfo = document.createElement('div');
     const messages = document.createElement('div');
     const userForm = document.createElement('div');
-    const userInput = document.createElement('input');
+    const userInput = document.createElement('div');
     const send = document.createElement('button');
+    const wrapDiv = document.createElement('div');
 
     chatUI.className = 'activeChatInterface';
     chatUI.id = `i${interlocutorId}`;
@@ -340,32 +343,22 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, c
     messages.className = 'messages';
     userForm.className = 'userForm';
     userInput.id = 'userInput';
-    userInput.type = 'text';
-    userInput.autocomplete = 'off';
-    userInput.placeholder = 'Type a message';
+    userInput.setAttribute('contenteditable', 'true');
+    userInput.setAttribute('data-text', 'Type a message');
     send.id = 'send';
     send.type = 'button';
     send.innerHTML = 'Send';
 
     send.onclick = () => {
-        const userInput = document.querySelector(`main .chatsPage #i${interlocutorId} .userForm #userInput`);
-        const message = userInput.value.trim();
-        if (message !== '') {
-            sendMessage(interlocutorId, message, messages);
-            userInput.value = '';
-        }
-    }
+        processMessage(interlocutorId, messages);
+    };
 
     window.onkeydown = (event) => {
         if (event.code === 'Enter') {
-            const userInput = document.querySelector(`main .chatsPage #i${interlocutorId} .userForm #userInput`);
-            const message = userInput.value.trim();
-            if (message !== '') {
-                sendMessage(interlocutorId, message, messages);
-                userInput.value = '';
-            }
+            event.preventDefault();
+            processMessage(interlocutorId, messages);
         }
-    }
+    };
 
     if (number) {
         const params = `interlocutorId=${interlocutorId}&number=${number}`;
@@ -382,8 +375,6 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, c
                 messages.appendChild(message);
                 messages.scrollTo(0, messages.scrollHeight);
             }
-
-            callback();
         });
     }
 
@@ -391,7 +382,8 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, c
     chatUI.appendChild(interlocutorInfo);
     chatUI.appendChild(messages);
     chatUI.appendChild(userForm);
-    userForm.appendChild(userInput);
+    wrapDiv.appendChild(userInput);
+    userForm.appendChild(wrapDiv);
     userForm.appendChild(send);
 
     let num1 = number;
@@ -534,7 +526,7 @@ function clearActive(chats, sidebarChats) {
 }
 
 function connect() {
-    WebSocketConnection = new WebSocket(`ws://127.0.0.1:8000/?userId=${id}&userToken=${token}`);
+    WebSocketConnection = new WebSocket(`ws://${IP[0]}:8000/?userId=${id}&userToken=${token}`);
 
     WebSocketConnection.onmessage = (event) => {
         const data = JSON.parse(event.data);
@@ -560,13 +552,7 @@ function connect() {
 
             makePostRequest(GET_FULL_NAME_PHP[0], params, () => {
                 const fullName = JSON.parse(response);
-                createChatInterface(fromUser, fullName.firstName, fullName.lastName, 50, () => {
-                    const chat = document.querySelector(`main .chatsPage #i${fromUser} .messages`);
-                    chat.appendChild(newMessage);
-                    chat.scrollTo(0, chat.scrollHeight);
-    
-                    chat.parentNode.style.display = 'none';
-                }); 
+                createChatInterface(fromUser, fullName.firstName, fullName.lastName, 50); 
             });
         }
 
@@ -682,4 +668,20 @@ function sendMessage(interlocutorId, message, chat) {
             }
         });
     }
-}   
+}
+
+function processMessage(interlocutorId, messages) {
+    const userInput = document.querySelector(`main .chatsPage #i${interlocutorId} .userForm #userInput`);
+
+    if (userInput.innerText.trim().match(REGEXP_TAG)) {
+        alert('Вийди, розбійнику!!!');
+    }
+
+    const message = userInput.innerText.trim().replace(REGEXP_TAG, '').replace(REGEXP_SPECIAL,'');
+
+    if (message !== '') {
+        sendMessage(interlocutorId, message, messages);
+    }
+
+    userInput.innerHTML = '';
+}

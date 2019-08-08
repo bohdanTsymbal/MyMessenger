@@ -1,8 +1,8 @@
 ﻿<?php
 // $location = "localhost";
-// $user = "id10206965_root";
+// $user = "id10379526_root";
 // $password = "09012004";
-// $database = "id10206965_mymessangerdatabase";
+// $database = "id10379526_mymessengerdatabase";
 $location = 'localhost';
 $user = 'root';
 $password = '';
