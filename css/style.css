@@ -271,6 +271,7 @@ main .chatsPage .activeChatInterface .messages .interlocutorMessage {
     max-width: 90%;
     overflow: hidden;
     white-space: nowrap;
+    padding: 2px 0;
 }
 
 main .chatsPage .tabContent .chat.activeChat:hover,  main .chatsPage .tabContent .chat.activeChat {
@@ -309,7 +310,7 @@ main .chatsPage .activeChatInterface .userForm div {
     max-height: 100%;
 }
 
-main .chatsPage .activeChatInterface .userForm #userInput {
+main .chatsPage .activeChatInterface .userForm .userInput {
     margin: 0 -18px;
     padding: 10px 18px 10px 38px;
     font-size: 17px;
@@ -321,7 +322,7 @@ main .chatsPage .activeChatInterface .userForm #userInput {
     max-height: calc(34.4vh - 20px);
 }
 
-main .chatsPage .activeChatInterface .userForm #send {
+main .chatsPage .activeChatInterface .userForm .send {
     margin-left: 10px; 
     padding: 10px 10px;
     font-size: 17px;

@@ -1,11 +1,11 @@
 'use strict';
 
-let errors, response, id, token, WebSocketConnection, sHeight;
+let errors, response, id, inId, token, WebSocketConnection, sHeight;
 
 errors = true;
 
 window.onhashchange = () => navigate(location.hash);
-// window.onload = removeWebhostAd;
+window.onkeydown = () => pressEnter(event, inId);
 
 const params = 'param=id&unset=0';
 makePostRequest(CHECK_SESSION_PHP[0], params, () => {
@@ -326,12 +326,12 @@ function switchTab(event, allTabs, allContent, className, contentSelector, displ
     }
 }
 
-function createChatInterface(interlocutorId, firstName, lastName, number=null) {
+function createChatInterface(interlocutorId, firstName, lastName, number=null, newMessage=null) {
     const chatsPage = document.querySelector('main .chatsPage');
     const chatUI = document.createElement('div');
     const interlocutorInfo = document.createElement('div');
     const messages = document.createElement('div');
-    const userForm = document.createElement('div');
+    const userForm = document.createElement('form');
     const userInput = document.createElement('div');
     const send = document.createElement('button');
     const wrapDiv = document.createElement('div');
@@ -342,22 +342,15 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null) {
     interlocutorInfo.innerHTML = `${firstName} ${lastName}`;
     messages.className = 'messages';
     userForm.className = 'userForm';
-    userInput.id = 'userInput';
+    userInput.className = 'userInput';
     userInput.setAttribute('contenteditable', 'true');
     userInput.setAttribute('data-text', 'Type a message');
-    send.id = 'send';
+    send.className = 'send';
     send.type = 'button';
     send.innerHTML = 'Send';
 
     send.onclick = () => {
         processMessage(interlocutorId, messages);
-    };
-
-    window.onkeydown = (event) => {
-        if (event.code === 'Enter') {
-            event.preventDefault();
-            processMessage(interlocutorId, messages);
-        }
     };
 
     if (number) {
@@ -373,8 +366,18 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null) {
                 message.innerHTML = messagesContent[i].message;
 
                 messages.appendChild(message);
-                messages.scrollTo(0, messages.scrollHeight);
             }
+
+            if (newMessage) {
+                const newMessageBlock = document.createElement('div');
+
+                newMessageBlock.className = 'interlocutorMessage';
+                newMessageBlock.innerHTML = newMessage;
+
+                messages.appendChild(newMessageBlock);
+            }
+
+            messages.scrollTo(0, messages.scrollHeight);
         });
     }
 
@@ -414,6 +417,14 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null) {
     };
 }
 
+function pressEnter (event, interlocutorId) {
+    const messages = document.querySelector(`main .chatsPage #i${interlocutorId} .messages`);
+
+    if (event.code === 'Enter') {
+        processMessage(interlocutorId, messages, event);
+    }
+}
+
 function displayAllUsers() {
     const users = JSON.parse(response);
     const usersList = document.querySelector('main .chatsPage .sidebar #tc2');
@@ -447,11 +458,13 @@ function displayAllUsers() {
 
                 if (sidebarChat) {
                     sidebarChat.classList.add('activeChat');
+                    inId = userId;
                 }
             }
             else if (sidebarChat) {
                 chat.style.display = 'flex';
                 sidebarChat.classList.add('activeChat');
+                inId = userId;
             }
             else {
                 chat.style.display = 'flex';
@@ -473,46 +486,46 @@ function displayAllChats() {
         const interlocutorId = messages[i].fromUser == id ? messages[i].toUser : messages[i].fromUser;
 
         if (displayedChats.indexOf(interlocutorId) == -1) {
-            const params = `id=${interlocutorId}`;
-
             displayedChats.push(interlocutorId);
 
-            makePostRequest(GET_FULL_NAME_PHP[0], params, () => {
-                const chat = document.createElement('div');
-                const lastMessage = document.createElement('p');
-                const name = document.createElement('h3');
-                const fullName = JSON.parse(response);
+            const chat = document.createElement('div');
+            const lastMessage = document.createElement('p');
+            const name = document.createElement('h3');
 
-                name.className = 'name';
-                name.innerHTML = `${fullName.firstName} ${fullName.lastName}`;
-                chat.className = 'chat';
-                chat.id = `u${interlocutorId}`;
-                lastMessage.className = 'lastMessage';
-                lastMessage.innerHTML = messages[i].message;
+            name.className = 'name';
+            name.innerHTML = `${messages[i].firstName} ${messages[i].lastName}`;
+            chat.className = 'chat';
+            chat.id = `u${interlocutorId}`;
+            lastMessage.className = 'lastMessage';
+            lastMessage.innerHTML = messages[i].message;
 
-                chat.appendChild(name);
-                chat.appendChild(lastMessage);
-                chatsList.appendChild(chat);
-                
-                chat.onclick = () => {
-                    let chatInterface = document.querySelector(`main .chatsPage #i${interlocutorId}`);
+            chat.appendChild(name);
+            chat.appendChild(lastMessage);
+            chatsList.appendChild(chat);
+            
+            chat.onclick = () => {
+                let chatInterface = document.querySelector(`main .chatsPage #i${interlocutorId}`);
+                let messagesBlocks = document.querySelector(`main .chatsPage #i${interlocutorId} .messages`);
 
-                    if (!chatInterface) {
-                        createChatInterface(interlocutorId, fullName.firstName, fullName.lastName, 50);
-                        chatInterface = document.querySelector(`main .chatsPage #i${interlocutorId}`);
-                    }
-
-                    const sidebarChats = document.querySelectorAll('main .chatsPage .sidebar .tabContent .chat');
-                    const chats = document.querySelectorAll('main .chatsPage .activeChatInterface');
-
-                    clearActive(chats, sidebarChats);
-
-                    chat.classList.add('activeChat');
-                    chatInterface.style.display = 'flex';
+                if (!chatInterface) {
+                    createChatInterface(interlocutorId, messages[i].firstName, messages[i].lastName, 50);
+                    chatInterface = document.querySelector(`main .chatsPage #i${interlocutorId}`);
+                    messagesBlocks = document.querySelector(`main .chatsPage #i${interlocutorId} .messages`);
                 }
-            });
+
+                const sidebarChats = document.querySelectorAll('main .chatsPage .sidebar .tabContent .chat');
+                const chats = document.querySelectorAll('main .chatsPage .activeChatInterface');
+
+                clearActive(chats, sidebarChats);
+
+                chat.classList.add('activeChat');
+                chatInterface.style.display = 'flex';
+                messagesBlocks.scrollTo(0, messagesBlocks.scrollHeight);
+
+                inId = interlocutorId;
+            }
         }
-    }
+    } 
 }
 
 function clearActive(chats, sidebarChats) {
@@ -552,7 +565,7 @@ function connect() {
 
             makePostRequest(GET_FULL_NAME_PHP[0], params, () => {
                 const fullName = JSON.parse(response);
-                createChatInterface(fromUser, fullName.firstName, fullName.lastName, 50); 
+                createChatInterface(fromUser, fullName.firstName, fullName.lastName, 50, message);
             });
         }
 
@@ -656,8 +669,7 @@ function sendMessage(interlocutorId, message, chat) {
             makeActive();   
 
             function makeActive() {
-                let chatInterface = document.querySelector(`main .chatsPage #i${interlocutorId}`);
-
+                const chatInterface = document.querySelector(`main .chatsPage #i${interlocutorId}`);
                 const sidebarChats = document.querySelectorAll('main .chatsPage .sidebar .tabContent .chat');
                 const chats = document.querySelectorAll('main .chatsPage .activeChatInterface');
 
@@ -670,8 +682,10 @@ function sendMessage(interlocutorId, message, chat) {
     }
 }
 
-function processMessage(interlocutorId, messages) {
-    const userInput = document.querySelector(`main .chatsPage #i${interlocutorId} .userForm #userInput`);
+function processMessage(interlocutorId, messages, event) {
+    event.preventDefault();
+
+    const userInput = document.querySelector(`main .chatsPage #i${interlocutorId} .userForm .userInput`);
 
     if (userInput.innerText.trim().match(REGEXP_TAG)) {
         alert('Вийди, розбійнику!!!');
