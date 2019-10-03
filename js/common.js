@@ -5,7 +5,6 @@ let errors, response, id, inId, token, WebSocketConnection, sHeight;
 errors = true;
 
 window.onhashchange = () => navigate(location.hash);
-window.onkeydown = () => pressEnter(event, inId);
 
 const params = 'param=id&unset=0';
 makePostRequest(CHECK_SESSION_PHP[0], params, () => {
@@ -164,6 +163,8 @@ function navigate(hash) {
                     makePostRequest(GET_ALL_USERS_PHP[0], '', displayAllUsers);
                 }
             }
+
+            window.onkeydown = () => pressEnter(event, inId);
             break;
         }
 
@@ -417,10 +418,10 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, n
     };
 }
 
-function pressEnter (event, interlocutorId) {
+function pressEnter(event, interlocutorId) {
     const messages = document.querySelector(`main .chatsPage #i${interlocutorId} .messages`);
 
-    if (event.code === 'Enter') {
+    if (messages && event.code === 'Enter') {
         processMessage(interlocutorId, messages, event);
     }
 }

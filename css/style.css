@@ -61,6 +61,41 @@ a {
 
 /* ---------------------------------------------- /cssReset ---------------------------------------------- */
 
+@font-face {
+    font-family: 'Asap';
+    src: url('../fonts/Asap-Bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Roboto';
+    src: url('../fonts/Roboto-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../fonts/Montserrat-Bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Noto Sans Regular';
+    src: url('../fonts/NotoSans-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Noto Sans Bold';
+    src: url('../fonts/NotoSans-Bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 :active, :hover, :focus {
     outline: 0;
     outline-offset: 0;
@@ -161,7 +196,7 @@ main .startPage .signInForm #password, main .registrationPage .registrationForm 
 main .registrationPage, main .registrationVerificationPage, main .recoveryPage, main .recoveryVerificationPage, main .newPasswordPage,  main .chatsPage {
     display: none;
 }
-/* main .chatsPage .sidebar, main .chatsPage .activeChatInterface */
+
 main .registrationPage .registrationForm input {
     margin-bottom: 15px;
 }
@@ -249,7 +284,7 @@ main .chatsPage .activeChatInterface .messages .interlocutorMessage {
 
 .chat, .user {
     padding: 24px 5px;
-    font-family: 'Noto Sans', sans-serif;
+    font-family: 'Noto Sans Regular', sans-serif;
     cursor: pointer;
     position: relative;
     text-align: left;
@@ -262,7 +297,7 @@ main .chatsPage .activeChatInterface .messages .interlocutorMessage {
 
 .name {
     color: #01855d;
-    font-weight: 700;
+    font-family: 'Noto Sans Bold', sans-serif;
 }
 
 .lastMessage {
@@ -354,7 +389,6 @@ main .chatsPage .sidebar .tabs .tab.activeTab {
 main .chatsPage .sidebar .tabContent {
     overflow-y: scroll;
     margin: 0 -17px;
-    /* overflow-x: hidden; */
 }
 
 main .chatsPage .sidebar .tabContent .user h3 {

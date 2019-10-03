@@ -1,0 +1,262 @@
+@import 'reset'
+@import 'fonts'
+@import 'wrapperMedia'
+
+$lighterGreen: #2ee69f
+$lightGreen: #17d189
+$green: #02a365
+$darkGreen: #01855d
+$lightGray: #dfdfdf
+$lighterGray: #f1f1f1
+
+%message
+    margin: 1px 0
+    border-radius: 25px
+    padding: 10px 20px
+    max-width: 70%
+    word-wrap: break-word
+    text-align: left
+
+%sidebarPoint
+    font-family: 'Noto Sans Regular', sans-serif
+    cursor: pointer
+    position: relative
+    text-align: left
+    text-indent: 35px
+    &:hover
+        background-color: rgba(1, 133, 93, 0.3)
+
+%hideScroll
+    overflow-y: scroll
+    margin: 0 -18px
+
+*:active, *:hover, *:focus
+    outline: 0
+    outline-offset: 0
+
+@import 'inputDiv'
+
+body 
+    font-family: 'Roboto', sans-serif
+    font-size: 18px
+    background: rgb(49, 48, 48)
+
+.wrapper 
+    width: 100%
+    padding: 0
+    margin: 0 auto
+
+.window 
+    margin: 10px auto
+    width: 100%
+
+header 
+    padding: 24px 15px
+    background: linear-gradient(-45deg, $lighterGreen, $lightGreen, $green, $darkGreen)
+    border-top:
+        left-radius: 25px
+        right-radius: 25px
+    .header
+        text-indent: 50px
+        font-family: 'Asap', sans-serif
+        font-weight: bold
+        font-size: 25px
+        color: white
+        letter-spacing: 1px
+
+main 
+    background: whitesmoke
+    text-align: center
+    padding: 50px 0
+    overflow: hidden
+    border-bottom:
+        left-radius: 25px
+        right-radius: 25px
+
+input, button 
+    display: block
+    text-align: center
+    font-family: 'Roboto', sans-serif
+    font-size: 20px
+    border-radius: 25px
+    border: none
+    padding: 12px 30px
+    margin: 0 0 30px
+
+button 
+    display: inline-block
+    font-size: 18px
+    padding: 10px 15px
+    margin: 0
+    background: $darkGreen
+    color: white
+    cursor: pointer
+
+.signInForm, .registrationForm, .registrationVerificationForm, .recoveryForm, .recoveryVerificationForm, .newPasswordForm
+    display: inline-block
+    margin: 0
+
+#password, #password2, #verificationCode, #username
+    margin-bottom: 20px
+
+.navigationButton 
+    font-size: 16px
+    padding: 6px 11px
+    margin: 0 auto 0
+    background: transparent
+    border: 2px solid $green
+    color: rgb(34, 29, 29)
+
+.buttonLink 
+    margin: 0
+    padding: 0
+
+.registrationPage, .registrationVerificationPage, .recoveryPage, .recoveryVerificationPage, .newPasswordPage, .chatsPage
+    display: none
+
+.registrationForm input
+    margin-bottom: 15px
+
+#toRecoveryPage
+    color: black
+    font-size: 16px
+    display: inline-block
+    margin-top: 10px
+
+.serverResponse 
+    margin-top: 10px
+    color: red
+    opacity: 0
+    font-weight: bold
+    letter-spacing: 1px
+
+.userForm input, .userForm button, .buttonLink, .navigationButton 
+    display: inline
+
+.chatsPage
+    justify-content: left
+    margin: 0
+    height: 86vh
+    background-color: $lightGray
+    .activeChatInterface
+        width: 72%
+        background: $lightGray
+        flex-direction: column
+        justify-content: flex-end
+        display: none
+    .interlocutorInfo
+        padding: 15px 10px
+        text-align: left
+        text-indent: 45px
+        font-family: 'Montserrat', sans-serif
+        background: $lighterGray
+    .messages
+        flex-grow: 1
+        display: flex
+        flex-direction: column
+        padding: 15px 60px
+        @extend %hideScroll
+    .userMessage
+        align-self: flex-end
+        background: #057e70
+        color: white
+        @extend %message
+    .interlocutorMessage
+        align-self: flex-start
+        background: white
+        @extend %message
+    .userForm
+        padding: 10px 25px
+        background: #f1f1f1
+        max-height: 40%
+        display: flex
+        align-items: flex-start
+        div
+            flex-grow: 1
+            overflow: hidden
+            border-radius: 25px
+            max-height: 100%
+    .userInput
+        padding: 10px 18px 10px 38px
+        font-size: 17px
+        text-align: left
+        background: white
+        border: none
+        line-height: 1
+        max-height: calc(34.4vh - 20px)
+        @extend %hideScroll
+    .send
+        margin-left: 10px
+        padding: 10px 10px
+        font-size: 17px
+        color: white
+        background: $green
+        line-height: 1
+    .sidebar
+        width: 28%
+        background-color: $lighterGray
+        border-right: 1px solid #acaaaa
+        overflow: hidden
+    .tabs
+        display: flex
+        justify-content: center
+    .tab
+        flex-grow: 1
+        color: #0d685d
+        font-weight: lighter
+        letter-spacing: 1px
+        font-size: 18px
+        padding: 15px 0
+        background-color: #dbdada
+        cursor: pointer
+        &.activeTab
+            background-color: $lighterGray
+    .tabContent
+        @extend %hideScroll
+    .chat
+        padding: 15px 5px
+        @extend %sidebarPoint
+        &.activeChat, &.activeChat:hover
+            background-color: $darkGreen
+            color: white
+        &.activeChat h3
+            color: white
+        &.activeChat p 
+            color: #ede6e6
+    .user
+        padding: 24px 5px
+        @extend %sidebarPoint
+        h3, .toChat
+            display: inline
+    .toChat
+        position: absolute
+        top: 20.5px
+        right: 15px
+        font-size: 15px
+        background: $darkGreen
+        border-radius: 25px
+        color: white
+        padding: 5px 10px
+        line-height: 100%
+    .name
+        color: $darkGreen
+        font-family: 'Noto Sans Bold', sans-serif
+    .lastMessage
+        margin-top: 10px
+        font-size: 15px
+        max-width: 90%
+        overflow: hidden
+        white-space: nowrap
+        padding: 2px 0
+
+.nullPadding
+    padding: 0
+
+@media screen and (max-width: 420px)
+    input
+        padding: 10px 4px
+    header
+        padding: 22px 15px
+        .header
+            text-indent: 0
+            text-align: center
