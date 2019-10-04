@@ -22,15 +22,15 @@ makePostRequest(CHECK_SESSION_PHP[0], params, () => {
 function navigate(hash) {
     switch (hash) {
         case REGISTARTION_PAGE: {
-            displayPage('main .registrationPage');
+            displayPage('.registrationPage');
             
-            const firstNameInput = document.querySelector('main .registrationPage .registrationForm #firstName');
-            const lastNameInput = document.querySelector('main .registrationPage .registrationForm #lastName');
-            const emailInput = document.querySelector('main .registrationPage .registrationForm #email');
-            const usernameInput = document.querySelector('main .registrationPage .registrationForm .username');
-            const password1Input = document.querySelector('main .registrationPage .registrationForm .password1');
-            const password2Input = document.querySelector('main .registrationPage .registrationForm .password2');
-            const selector = 'main .registrationPage .serverResponse';
+            const firstNameInput = document.querySelector('.registrationForm #firstName');
+            const lastNameInput = document.querySelector('.registrationForm #lastName');
+            const emailInput = document.querySelector('.registrationForm #email');
+            const usernameInput = document.querySelector('.registrationForm .username');
+            const password1Input = document.querySelector('.registrationForm .password1');
+            const password2Input = document.querySelector('.registrationForm .password2');
+            const selector = '.registrationPage .serverResponse';
 
             firstNameInput.oninput = () => checkInput.call(firstNameInput, REGEXP_NAME);
             lastNameInput.oninput = () => checkInput.call(lastNameInput, REGEXP_NAME);
@@ -39,125 +39,143 @@ function navigate(hash) {
             password1Input.oninput = () => checkInput.call(password1Input, REGEXP_PASSWORD);
             password2Input.oninput = () => checkPasswordCompliance(password1Input, password2Input);
             
-            const button = document.querySelector('main .registrationPage .registrationForm #toRegistrationVerificationPage');
-            button.onclick = () => checkEmptiness(selector, () => {
-                if (!errors) {
-                    const firstName = firstNameInput.value.trim();
-                    const lastName = lastNameInput.value.trim();
-                    const email = emailInput.value.trim();
-                    const username = usernameInput.value.trim();
-                    const password = password2Input.value.trim();
-                    const params = `firstName=${firstName}&lastName=${lastName}&email=${email}&username=${username}&password=${password}`;
-    
-                    makePostRequest(REGISTRATION_CHECKS_PHP[0], params, () => processPreliminaryResponse(selector, REGISTRATION_VERIFICATION_PAGE));
-                }
-            }, firstNameInput, lastNameInput, emailInput, usernameInput, password1Input, password2Input);
+            const form = document.querySelector('.registrationForm');
+            form.onsubmit = (event) => {
+                event.preventDefault();
+                checkEmptiness(selector, () => {
+                    if (!errors) {
+                        const firstName = firstNameInput.value.trim();
+                        const lastName = lastNameInput.value.trim();
+                        const email = emailInput.value.trim();
+                        const username = usernameInput.value.trim();
+                        const password = password2Input.value.trim();
+                        const params = `firstName=${firstName}&lastName=${lastName}&email=${email}&username=${username}&password=${password}`;
+        
+                        makePostRequest(REGISTRATION_CHECKS_PHP[0], params, () => processPreliminaryResponse(selector, REGISTRATION_VERIFICATION_PAGE));
+                    }
+                }, firstNameInput, lastNameInput, emailInput, usernameInput, password1Input, password2Input);
+            }
             break;
         }
 
         case SIGN_IN_PAGE: {
             displayPage();
 
-            const usernameLogInInput = document.querySelector('main .startPage .signInForm .username');
-            const passwordLogInInput = document.querySelector('main .startPage .signInForm #password');
-            const button = document.querySelector('main .startPage .signInForm #signIn');
-            const selector = 'main .startPage .serverResponse';
+            const usernameLogInInput = document.querySelector('.signInForm .username');
+            const passwordLogInInput = document.querySelector('.signInForm #password');
+            const form = document.querySelector('.signInForm');
+            const selector = '.startPage .serverResponse';
 
-            button.onclick = () => checkEmptiness(selector, () => logIn(usernameLogInInput.value.trim(), passwordLogInInput.value.trim()), usernameLogInInput, passwordLogInInput);
+            form.onsubmit = (event) => {
+                event.preventDefault();
+                checkEmptiness(selector, () => logIn(usernameLogInInput.value.trim(), passwordLogInInput.value.trim()), usernameLogInInput, passwordLogInInput);
+            }
             break;
         }
 
         case REGISTRATION_VERIFICATION_PAGE: {
-            displayPage('main .registrationVerificationPage');
+            displayPage('.registrationVerificationPage');
 
-            const input = document.querySelector('main .registrationVerificationPage .registrationVerificationForm .verificationCode');
-            const button = document.querySelector('main .registrationVerificationPage .registrationVerificationForm .confirm');
-            const selector = 'main .registrationVerificationPage .serverResponse';
+            const input = document.querySelector('.registrationVerificationForm .verificationCode');
+            const form = document.querySelector('.registrationVerificationForm');
+            const selector = '.registrationVerificationPage .serverResponse';
 
-            button.onclick = () => checkEmptiness(selector, () => {
-                const userInput = input.value.trim();
-                const params = `userInput=${userInput}`;
-                const selector = 'main .startPage .serverResponse';
-
-                makePostRequest(CONFIRM_REGISTRATION_PHP[0], params, () => processFinalResponse(() => {
-                    location.hash = SIGN_IN_PAGE;
-                    alert('Registration has been successful!');
-                }, selector));
-            }, input);
+            form.onsubmit = (event) => {
+                event.preventDefault();
+                checkEmptiness(selector, () => {
+                    const userInput = input.value.trim();
+                    const params = `userInput=${userInput}`;
+                    const selector = 'main .startPage .serverResponse';
+    
+                    makePostRequest(CONFIRM_REGISTRATION_PHP[0], params, () => processFinalResponse(() => {
+                        location.hash = SIGN_IN_PAGE;
+                        alert('Registration has been successful!');
+                    }, selector));
+                }, input);
+            }
             break;
         }
 
         case RECOVERY_PAGE: {
-            displayPage('main .recoveryPage');
+            displayPage('.recoveryPage');
 
-            const input = document.querySelector('main .recoveryPage .recoveryForm .username');
-            const button = document.querySelector('main .recoveryPage .recoveryForm #toVerificationPage');
-            const selector = 'main .recoveryPage .serverResponse';
+            const input = document.querySelector('.recoveryForm .username');
+            const form = document.querySelector('.recoveryForm');
+            const selector = '.recoveryPage .serverResponse';
 
-            button.onclick = () => checkEmptiness(selector, () => {
-                const username = input.value.trim();
-                const params = `username=${username}`;
-                const selector = 'main .recoveryPage .serverResponse';
-
-                makePostRequest(RESTORE_PASSWORD_PHP[0], params, () => processPreliminaryResponse(selector, RECOVERY_VERIFICATION_PAGE));
-            }, input);
+            form.onsubmit = (event) => {
+                event.preventDefault();
+                checkEmptiness(selector, () => {
+                    const username = input.value.trim();
+                    const params = `username=${username}`;
+                    const selector = '.recoveryPage .serverResponse';
+    
+                    makePostRequest(RESTORE_PASSWORD_PHP[0], params, () => processPreliminaryResponse(selector, RECOVERY_VERIFICATION_PAGE));
+                }, input);
+            }
             break;
         }
 
         case RECOVERY_VERIFICATION_PAGE: {
-            displayPage('main .recoveryVerificationPage');
+            displayPage('.recoveryVerificationPage');
 
-            const input = document.querySelector('main .recoveryVerificationPage .recoveryVerificationForm .verificationCode');
-            const button = document.querySelector('main .recoveryVerificationPage .recoveryVerificationForm .confirm');
-            const selector = 'main .recoveryVerificationPage .serverResponse';
+            const input = document.querySelector('.recoveryVerificationForm .verificationCode');
+            const form = document.querySelector('.recoveryVerificationForm');
+            const selector = '.recoveryVerificationPage .serverResponse';
             
-            button.onclick = () => checkEmptiness(selector, () => {
-                const userInput = input.value.trim();
-                const params = `userInput=${userInput}`;
-
-                makePostRequest(CONFIRM_RECOVERY_PHP[0], params, () => processPreliminaryResponse(selector, NEW_PASSWORD_PAGE));
-            }, input);
-                break;
+            form.onsubmit = (event) => {
+                event.preventDefault();
+                checkEmptiness(selector, () => {
+                    const userInput = input.value.trim();
+                    const params = `userInput=${userInput}`;
+    
+                    makePostRequest(CONFIRM_RECOVERY_PHP[0], params, () => processPreliminaryResponse(selector, NEW_PASSWORD_PAGE));
+                }, input);
+            }
+            break;
         }
 
         case NEW_PASSWORD_PAGE: {
-            displayPage('main .newPasswordPage');
+            displayPage('.newPasswordPage');
 
-            const password1Input = document.querySelector('main .newPasswordPage .newPasswordForm .password1');
-            const password2Input = document.querySelector('main .newPasswordPage .newPasswordForm .password2');
-            const button = document.querySelector('main .newPasswordPage .newPasswordForm .confirm');
-            const selector = 'main .newPasswordPage .serverResponse';
+            const password1Input = document.querySelector('.newPasswordForm .password1');
+            const password2Input = document.querySelector('.newPasswordForm .password2');
+            const form = document.querySelector('.newPasswordForm');
+            const selector = '.newPasswordPage .serverResponse';
 
             password1Input.oninput = () => checkInput.call(password1Input, REGEXP_PASSWORD);
             password2Input.oninput = () => checkPasswordCompliance(password1Input, password2Input);
 
-            button.onclick = () => checkEmptiness(selector, () => {
-                const newPassword = password2Input.value.trim();
-                const params = `newPassword=${newPassword}`;
-                const selector = 'main .newPasswordPage .serverResponse';
-                const message = 'Your password has been changed succefully!';
-
-                makePostRequest(SET_NEW_PASSWORD_PHP[0], params, () => processFinalResponse(() => {
-                    location.hash = SIGN_IN_PAGE;
-                    alert(message);
-                }, selector));
-            }, password1Input, password2Input);
+            form.onsubmit = (event) => {
+                event.preventDefault();
+                checkEmptiness(selector, () => {
+                    const newPassword = password2Input.value.trim();
+                    const params = `newPassword=${newPassword}`;
+                    const selector = 'main .newPasswordPage .serverResponse';
+                    const message = 'Your password has been changed succefully!';
+    
+                    makePostRequest(SET_NEW_PASSWORD_PHP[0], params, () => processFinalResponse(() => {
+                        location.hash = SIGN_IN_PAGE;
+                        alert(message);
+                    }, selector));
+                }, password1Input, password2Input);
+            }
             break;
         }
 
         case CHATS_PAGE: {
-            displayPage('main .chatsPage', 'flex');
+            displayPage('.chatsPage', 'flex');
     
             document.querySelector('main').className = 'nullPadding';
-            document.querySelector('main .chatsPage .sidebar #tc2').style.display = 'none';
+            document.querySelector('.sidebar #tc2').style.display = 'none';
             
-            const allTabs = document.querySelectorAll('main .chatsPage .sidebar .tabs .tab');
-            const allContent = document.querySelectorAll('main .chatsPage .sidebar .tabContent');  
+            const allTabs = document.querySelectorAll('.tabs .tab');
+            const allContent = document.querySelectorAll('.sidebar .tabContent');  
 
-            document.querySelector('main .chatsPage .sidebar .tabs').onclick = () => switchTab(event, allTabs, allContent, 'activeTab', 'main .chatsPage .sidebar #tc', 'block');
+            document.querySelector('.sidebar .tabs').onclick = () => switchTab(event, allTabs, allContent, 'activeTab', '.sidebar #tc', 'block');
 
-            document.querySelector('main .chatsPage .sidebar .tabs #t2').onclick = () => {
-                const content = document.querySelector('main .chatsPage .sidebar #tc2 .user');  
+            document.querySelector('.tabs #t2').onclick = () => {
+                const content = document.querySelector('#tc2 .user');  
                 
                 if (!content) {
                     makePostRequest(GET_ALL_USERS_PHP[0], '', displayAllUsers);
