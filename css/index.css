@@ -117,7 +117,7 @@ a {
 }
 
 .chatsPage .userMessage, .chatsPage .interlocutorMessage {
-  margin: 1px 0;
+  margin: 2px 0;
   border-radius: 25px;
   padding: 10px 20px;
   max-width: 70%;
@@ -147,6 +147,12 @@ input, button {
   font-family: 'Roboto', sans-serif;
   border-radius: 25px;
   border: none;
+}
+
+.navigationButton, .chatsPage .back {
+  background: transparent;
+  border: 2px solid #02a365;
+  color: #221d1d;
 }
 
 *:active, *:hover, *:focus {
@@ -210,7 +216,7 @@ input {
   font-size: 20px;
   padding: 12px 18px;
   margin: 0 0 30px;
-  width: 315px;
+  width: 330px;
 }
 
 button {
@@ -236,9 +242,6 @@ button {
   font-size: 16px;
   padding: 6px 12px;
   margin: 0 auto 0;
-  background: transparent;
-  border: 2px solid #02a365;
-  color: #221d1d;
 }
 
 .buttonLink {
@@ -251,7 +254,7 @@ button {
 }
 
 .registrationForm input {
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 #toRecoveryPage {
@@ -273,15 +276,22 @@ button {
   display: inline;
 }
 
+.instructions {
+  font-family: 'Noto Sans Bold', sans-serif;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
 .chatsPage {
   justify-content: left;
   margin: 0;
-  height: 86vh;
+  height: 100%;
+  width: 100%;
   background-color: #dfdfdf;
 }
 
 .chatsPage .activeChatInterface {
-  width: 72%;
+  width: calc(100% - 320px);
   background: #dfdfdf;
   flex-direction: column;
   justify-content: flex-end;
@@ -291,9 +301,20 @@ button {
 .chatsPage .interlocutorInfo {
   padding: 15px 10px;
   text-align: left;
-  text-indent: 45px;
+  text-indent: 50px;
   font-family: 'Montserrat', sans-serif;
   background: #f1f1f1;
+  position: relative;
+}
+
+.chatsPage .back {
+  display: none;
+  position: absolute;
+  font-size: 18px;
+  left: 10px;
+  top: 6px;
+  padding: 5px 20px;
+  margin: 0;
 }
 
 .chatsPage .messages {
@@ -349,7 +370,7 @@ button {
 }
 
 .chatsPage .sidebar {
-  width: 28%;
+  width: 320px;
   background-color: #f1f1f1;
   border-right: 1px solid #acaaaa;
   overflow: hidden;
@@ -430,15 +451,62 @@ button {
   padding: 0;
 }
 
-@media screen and (max-width: 420px) {
-  input {
-    padding: 10px 4px;
+@media screen and (max-width: 1200px) {
+  .chatsPage .activeChatInterface {
+    width: calc(100% - 300px);
   }
-  header {
-    padding: 22px 15px;
+  .chatsPage .sidebar {
+    width: 300px;
   }
-  header .header {
-    text-indent: 0;
+  .chatsPage .messages {
+    padding-left: 50px;
+    padding-right: 50px;
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .wrapper {
+    max-width: 100%;
+  }
+  .chatsPage .activeChatInterface {
+    width: 70%;
+  }
+  .chatsPage .sidebar {
+    width: 30%;
+  }
+  .chatsPage .messages {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .chatsPage .interlocutorInfo {
     text-align: center;
+    text-indent: 0;
+  }
+  .chatsPage .messages {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+  .chatsPage .sidebar, .chatsPage .activeChatInterface {
+    width: 100%;
+  }
+  .chatsPage .back {
+    display: inline;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .chatsPage .messages {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .chatsPage .messages {
+    padding-left: 15px;
+    padding-right: 15px;
   }
 }

@@ -9,8 +9,13 @@ $darkGreen: #01855d
 $lightGray: #dfdfdf
 $lighterGray: #f1f1f1
 
+@mixin paddingLeftRight($value)
+    padding: 
+        left: $value + px
+        right: $value + px
+
 %message
-    margin: 1px 0
+    margin: 2px 0
     border-radius: 25px
     padding: 10px 20px
     max-width: 70%
@@ -35,6 +40,11 @@ $lighterGray: #f1f1f1
     font-family: 'Roboto', sans-serif
     border-radius: 25px
     border: none
+
+%transpBtn
+    background: transparent
+    border: 2px solid $green
+    color: rgb(34, 29, 29)
 
 *:active, *:hover, *:focus
     outline: 0
@@ -89,7 +99,7 @@ input
     font-size: 20px
     padding: 12px 18px
     margin: 0 0 30px
-    width: 315px
+    width: 330px
     @extend %inputStyle
 
 button 
@@ -113,9 +123,7 @@ button
     font-size: 16px
     padding: 6px 12px
     margin: 0 auto 0
-    background: transparent
-    border: 2px solid $green
-    color: rgb(34, 29, 29)
+    @extend %transpBtn
 
 .buttonLink 
     margin: 0
@@ -125,7 +133,7 @@ button
     display: none
 
 .registrationForm input
-    margin-bottom: 15px
+    margin-bottom: 10px
 
 #toRecoveryPage
     color: black
@@ -143,13 +151,19 @@ button
 .userForm input, .userForm button, .buttonLink, .navigationButton 
     display: inline
 
+.instructions
+    font-family: 'Noto Sans Bold', sans-serif
+    margin-bottom: 30px
+    text-align: center
+
 .chatsPage
     justify-content: left
     margin: 0
-    height: 86vh
+    height: 100%
+    width: 100%
     background-color: $lightGray
     .activeChatInterface
-        width: 72%
+        width: calc(100% - 320px)
         background: $lightGray
         flex-direction: column
         justify-content: flex-end
@@ -157,9 +171,19 @@ button
     .interlocutorInfo
         padding: 15px 10px
         text-align: left
-        text-indent: 45px
+        text-indent: 50px
         font-family: 'Montserrat', sans-serif
         background: $lighterGray
+        position: relative
+    .back
+        display: none
+        position: absolute
+        font-size: 18px
+        left: 10px
+        top: 6px
+        padding: 5px 20px
+        margin: 0
+        @extend %transpBtn
     .messages
         flex-grow: 1
         display: flex
@@ -203,7 +227,7 @@ button
         background: $green
         line-height: 1
     .sidebar
-        width: 28%
+        width: 320px
         background-color: $lighterGray
         border-right: 1px solid #acaaaa
         overflow: hidden
@@ -262,11 +286,44 @@ button
 .nullPadding
     padding: 0
 
-@media screen and (max-width: 420px)
-    input
-        padding: 10px 4px
-    header
-        padding: 22px 15px
-        .header
-            text-indent: 0
+@media screen and (max-width: 1200px)
+    .chatsPage
+        .activeChatInterface
+            width: calc(100% - 300px)
+        .sidebar
+            width: 300px
+        .messages
+            @include paddingLeftRight(50)
+
+@media screen and (max-width: 992px)
+    .wrapper
+        max-width: 100%
+    .chatsPage
+        .activeChatInterface
+            width: 70%
+        .sidebar
+            width: 30%
+        .messages
+            @include paddingLeftRight(40)
+
+@media screen and (max-width: 768px)
+    .chatsPage
+        .interlocutorInfo
             text-align: center
+            text-indent: 0
+        .messages
+            @include paddingLeftRight(30)
+        .sidebar, .activeChatInterface
+            width: 100%
+        .back
+            display: inline
+
+@media screen and (max-width: 576px)
+    .chatsPage
+        .messages
+            @include paddingLeftRight(20)
+
+@media screen and (max-width: 320px)
+    .chatsPage
+        .messages
+            @include paddingLeftRight(15)

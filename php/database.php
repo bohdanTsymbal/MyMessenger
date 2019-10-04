@@ -31,7 +31,7 @@ if (!$databaseSelection) {
 }
 $queries = array(
     "create table if not exists users (id tinyint unsigned not null primary key, firstName tinyblob not null, lastName tinyblob not null, email tinyblob not null, username tinyblob not null, password tinyblob not null, token tinyblob not null) engine=innodb character set utf8",
-    "create table if not exists messages (id tinyint unsigned not null primary key, message blob not null, fromUser tinyint unsigned not null, toUser tinyint unsigned not null, foreign key (fromUser) references users (id) on delete cascade, foreign key (toUser) references users (id) on delete cascade) engine=innodb character set utf8"
+    "create table if not exists messages (id real unsigned not null primary key, message blob not null, fromUser tinyint unsigned not null, toUser tinyint unsigned not null, foreign key (fromUser) references users (id) on delete cascade, foreign key (toUser) references users (id) on delete cascade) engine=innodb character set utf8"
 );
 query($connection, $queries);
 mysqli_close($connection);

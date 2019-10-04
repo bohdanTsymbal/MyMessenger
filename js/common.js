@@ -151,7 +151,7 @@ function navigate(hash) {
                 checkEmptiness(selector, () => {
                     const newPassword = password2Input.value.trim();
                     const params = `newPassword=${newPassword}`;
-                    const selector = 'main .newPasswordPage .serverResponse';
+                    const selector = '.newPasswordPage .serverResponse';
                     const message = 'Your password has been changed succefully!';
     
                     makePostRequest(SET_NEW_PASSWORD_PHP[0], params, () => processFinalResponse(() => {
@@ -182,7 +182,7 @@ function navigate(hash) {
                 }
             }
 
-            window.onkeydown = () => pressEnter(event, inId);
+            window.onkeydown = (event) => pressEnter(event, inId);
             break;
         }
 
@@ -194,7 +194,7 @@ function navigate(hash) {
 
 function displayPage(elementSelector=null, displayType='block') {
     const pages = document.querySelectorAll('main *');
-    const startPage = 'main .startPage';
+    const startPage = '.startPage';
 
     for (let i = 0; i < pages.length; i++) {
         pages[i].removeAttribute('style');
@@ -305,7 +305,7 @@ function processFinalResponse(perform, outSelector) {
 
 function logIn(username, password) {
     const params = `username=${username}&password=${password}`;
-    const selector = 'main .startPage .serverResponse';
+    const selector = '.startPage .serverResponse';
 
     makePostRequest(LOG_IN_PHP[0], params, () => processFinalResponse(displayChatsPage, selector));
 }
@@ -346,9 +346,12 @@ function switchTab(event, allTabs, allContent, className, contentSelector, displ
 }
 
 function createChatInterface(interlocutorId, firstName, lastName, number=null, newMessage=null) {
-    const chatsPage = document.querySelector('main .chatsPage');
+    const chatsPage = document.querySelector('.chatsPage');
+    const sidebar = document.querySelector('.chatsPage .sidebar');
     const chatUI = document.createElement('div');
     const interlocutorInfo = document.createElement('div');
+    const span = document.createElement('span');
+    const backBtn = document.createElement('button');
     const messages = document.createElement('div');
     const userForm = document.createElement('form');
     const userInput = document.createElement('div');
@@ -358,7 +361,10 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, n
     chatUI.className = 'activeChatInterface';
     chatUI.id = `i${interlocutorId}`;
     interlocutorInfo.className = 'interlocutorInfo';
-    interlocutorInfo.innerHTML = `${firstName} ${lastName}`;
+    span.innerHTML = `${firstName} ${lastName}`;
+    backBtn.className = 'back';
+    backBtn.type = 'button';
+    backBtn.innerHTML = '&#8249;';
     messages.className = 'messages';
     userForm.className = 'userForm';
     userInput.className = 'userInput';
@@ -368,8 +374,11 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, n
     send.type = 'button';
     send.innerHTML = 'Send';
 
-    send.onclick = () => {
-        processMessage(interlocutorId, messages);
+    send.onclick = () => processMessage(interlocutorId, messages);
+
+    backBtn.onclick = () => {
+        chatUI.style.display = 'none';
+        sidebar.style.display = 'block';
     };
 
     if (number) {
@@ -402,6 +411,8 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, n
 
     chatsPage.appendChild(chatUI);
     chatUI.appendChild(interlocutorInfo);
+    interlocutorInfo.appendChild(backBtn);
+    interlocutorInfo.appendChild(span);
     chatUI.appendChild(messages);
     chatUI.appendChild(userForm);
     wrapDiv.appendChild(userInput);
@@ -437,7 +448,7 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, n
 }
 
 function pressEnter(event, interlocutorId) {
-    const messages = document.querySelector(`main .chatsPage #i${interlocutorId} .messages`);
+    const messages = document.querySelector(`#i${interlocutorId} .messages`);
 
     if (messages && event.code === 'Enter') {
         processMessage(interlocutorId, messages, event);
@@ -446,7 +457,7 @@ function pressEnter(event, interlocutorId) {
 
 function displayAllUsers() {
     const users = JSON.parse(response);
-    const usersList = document.querySelector('main .chatsPage .sidebar #tc2');
+    const usersList = document.querySelector('.sidebar #tc2');
 
     for (let i = 0; i < users.length; i++) {
         const user = document.createElement('div');
@@ -455,39 +466,44 @@ function displayAllUsers() {
         const firstName = users[i].firstName;
         const lastName = users[i].lastName;
         const userId = users[i].id;
-        const sidebarChat = document.querySelector(`main .chatsPage .sidebar .tabContent #u${userId}`);
-        const sidebarChats = document.querySelectorAll('main .chatsPage .sidebar .tabContent .chat');
+        const sidebarChat = document.querySelector(`.tabContent #u${userId}`);
+        const sidebarChats = document.querySelectorAll('.tabContent .chat');
+        const sidebar = document.querySelector('.chatsPage .sidebar');
 
         user.className = 'user';
         chatButton.className = 'toChat';
         chatButton.innerHTML = 'Chat';
         userName.innerHTML = `${firstName} ${lastName}`;
         chatButton.onclick = () => {
-            let chat = document.querySelector(`main .chatsPage #i${userId}`);
-            const chats = document.querySelectorAll('main .chatsPage .activeChatInterface');
+            let chat = document.querySelector(`.chatsPage #i${userId}`);
+            const chats = document.querySelectorAll('.chatsPage .activeChatInterface');
 
             clearActive(chats, sidebarChats);
 
             if (!chat) {
-                const sidebarChat = document.querySelector(`main .chatsPage .sidebar .tabContent #u${userId}`);
+                const sidebarChat = document.querySelector(`.tabContent #u${userId}`);
 
                 createChatInterface(userId, firstName, lastName, 50);
-                chat = document.querySelector(`main .chatsPage #i${userId}`);
+                chat = document.querySelector(`.chatsPage #i${userId}`);
                 chat.style.display = 'flex';
 
                 if (sidebarChat) {
                     sidebarChat.classList.add('activeChat');
-                    inId = userId;
                 }
             }
             else if (sidebarChat) {
                 chat.style.display = 'flex';
                 sidebarChat.classList.add('activeChat');
-                inId = userId;
             }
             else {
                 chat.style.display = 'flex';
             }
+
+            if (document.documentElement.clientWidth <= 768) {
+                sidebar.style.display = 'none';
+                if (sidebarChat) sidebarChat.classList.remove('activeChat');
+            }
+            inId = userId;
         };
 
         usersList.appendChild(user);
@@ -499,7 +515,7 @@ function displayAllUsers() {
 function displayAllChats() {
     const messages = JSON.parse(response);
     const displayedChats = [];
-    const chatsList = document.querySelector('main .chatsPage .sidebar #tc1');
+    const chatsList = document.querySelector('.sidebar #tc1');
 
     for (let i = messages.length - 1; i > -1; i--) {
         const interlocutorId = messages[i].fromUser == id ? messages[i].toUser : messages[i].fromUser;
@@ -510,6 +526,7 @@ function displayAllChats() {
             const chat = document.createElement('div');
             const lastMessage = document.createElement('p');
             const name = document.createElement('h3');
+            const sidebar = document.querySelector('.chatsPage .sidebar');
 
             name.className = 'name';
             name.innerHTML = `${messages[i].firstName} ${messages[i].lastName}`;
@@ -523,23 +540,28 @@ function displayAllChats() {
             chatsList.appendChild(chat);
             
             chat.onclick = () => {
-                let chatInterface = document.querySelector(`main .chatsPage #i${interlocutorId}`);
-                let messagesBlocks = document.querySelector(`main .chatsPage #i${interlocutorId} .messages`);
+                let chatInterface = document.querySelector(`.chatsPage #i${interlocutorId}`);
+                let messagesBlocks = document.querySelector(`#i${interlocutorId} .messages`);
 
                 if (!chatInterface) {
                     createChatInterface(interlocutorId, messages[i].firstName, messages[i].lastName, 50);
-                    chatInterface = document.querySelector(`main .chatsPage #i${interlocutorId}`);
-                    messagesBlocks = document.querySelector(`main .chatsPage #i${interlocutorId} .messages`);
+                    chatInterface = document.querySelector(`.chatsPage #i${interlocutorId}`);
+                    messagesBlocks = document.querySelector(`#i${interlocutorId} .messages`);
                 }
 
-                const sidebarChats = document.querySelectorAll('main .chatsPage .sidebar .tabContent .chat');
-                const chats = document.querySelectorAll('main .chatsPage .activeChatInterface');
+                const sidebarChats = document.querySelectorAll('.tabContent .chat');
+                const chats = document.querySelectorAll('.chatsPage .activeChatInterface');
 
                 clearActive(chats, sidebarChats);
 
                 chat.classList.add('activeChat');
                 chatInterface.style.display = 'flex';
                 messagesBlocks.scrollTo(0, messagesBlocks.scrollHeight);
+
+                if (document.documentElement.clientWidth <= 768) {
+                    sidebar.style.display = 'none';
+                    chat.classList.remove('activeChat');
+                }
 
                 inId = interlocutorId;
             }
@@ -565,9 +587,9 @@ function connect() {
         const fromUser = data.fromUser;
         const message = data.message;
 
-        const chat = document.querySelector(`main .chatsPage #i${fromUser} .messages`);
-        let chatsList = document.querySelector('main .chatsPage .sidebar #tc1');
-        const sidebarChat = document.querySelector(`main .chatsPage .sidebar #tc1 #u${fromUser}`);
+        const chat = document.querySelector(`#i${fromUser} .messages`);
+        let chatsList = document.querySelector('.sidebar #tc1');
+        const sidebarChat = document.querySelector(`#tc1 #u${fromUser}`);
         const newSidebarChat = sidebarChat;
 
         const newMessage = document.createElement('div');
@@ -592,7 +614,7 @@ function connect() {
             chatsList.removeChild(sidebarChat);
             chatsList.prepend(newSidebarChat);
         
-            const lastMessage = document.querySelector(`main .chatsPage .sidebar #tc1 #u${fromUser} .lastMessage`);
+            const lastMessage = document.querySelector(`#u${fromUser} .lastMessage`);
             lastMessage.innerHTML = message;
         }
         else {
@@ -616,15 +638,15 @@ function connect() {
                 chatsList.prepend(chat);
                 
                 chat.onclick = () => {
-                    let chatInterface = document.querySelector(`main .chatsPage #i${fromUser}`);
+                    let chatInterface = document.querySelector(`.chatsPage #i${fromUser}`);
 
                     if (!chatInterface) {
                         createChatInterface(fromUser, fullName.firstName, fullName.lastName, 50);
-                        chatInterface = document.querySelector(`main .chatsPage #i${fromUser}`);
+                        chatInterface = document.querySelector(`.chatsPage #i${fromUser}`);
                     }
 
-                    const sidebarChats = document.querySelectorAll('main .chatsPage .sidebar .tabContent .chat');
-                    const chats = document.querySelectorAll('main .chatsPage .activeChatInterface');
+                    const sidebarChats = document.querySelectorAll('.tabContent .chat');
+                    const chats = document.querySelectorAll('.chatsPage .activeChatInterface');
 
                     clearActive(chats, sidebarChats);
 
@@ -645,8 +667,8 @@ function sendMessage(interlocutorId, message, chat) {
     data = JSON.stringify(data);
     WebSocketConnection.send(data);
 
-    const chatsList = document.querySelector('main .chatsPage .sidebar #tc1');
-    const sidebarChat = document.querySelector(`main .chatsPage .sidebar #tc1 #u${interlocutorId}`);
+    const chatsList = document.querySelector('.sidebar #tc1');
+    const sidebarChat = document.querySelector(`#tc1 #u${interlocutorId}`);
     const newSidebarChat = sidebarChat;
     const messageBlock = document.createElement('div');
 
@@ -660,7 +682,7 @@ function sendMessage(interlocutorId, message, chat) {
         chatsList.removeChild(sidebarChat);
         chatsList.prepend(newSidebarChat);
     
-        const lastMessage = document.querySelector(`main .chatsPage .sidebar #tc1 #u${interlocutorId} .lastMessage`);
+        const lastMessage = document.querySelector(`#u${interlocutorId} .lastMessage`);
         lastMessage.innerHTML = message;
     }
     else {
@@ -688,9 +710,9 @@ function sendMessage(interlocutorId, message, chat) {
             makeActive();   
 
             function makeActive() {
-                const chatInterface = document.querySelector(`main .chatsPage #i${interlocutorId}`);
-                const sidebarChats = document.querySelectorAll('main .chatsPage .sidebar .tabContent .chat');
-                const chats = document.querySelectorAll('main .chatsPage .activeChatInterface');
+                const chatInterface = document.querySelector(`.chatsPage #i${interlocutorId}`);
+                const sidebarChats = document.querySelectorAll('.tabContent .chat');
+                const chats = document.querySelectorAll('.chatsPage .activeChatInterface');
 
                 clearActive(chats, sidebarChats);
 
@@ -704,7 +726,7 @@ function sendMessage(interlocutorId, message, chat) {
 function processMessage(interlocutorId, messages, event) {
     event.preventDefault();
 
-    const userInput = document.querySelector(`main .chatsPage #i${interlocutorId} .userForm .userInput`);
+    const userInput = document.querySelector(`#i${interlocutorId} .userForm .userInput`);
 
     if (userInput.innerText.trim().match(REGEXP_TAG)) {
         alert('Вийди, розбійнику!!!');

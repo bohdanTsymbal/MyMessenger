@@ -16,6 +16,7 @@
             </header>
             <main>
                 <section class="startPage">
+                    <p class="instructions">Enter your username and password below</p>
                     <form class="signInForm">
                         <input type="text" class="username" placeholder="Username" autocomplete="on">
                         <input type="password" id="password" placeholder="Password" autocomplete="on">
@@ -30,6 +31,7 @@
                     </a>
                 </section>
                 <section class="registrationPage">
+                    <p class="instructions">Please enter your data that is required for registration</p>
                     <form class="registrationForm">
                         <input type="text" id="firstName" placeholder="First name" autocomplete="off">
                         <input type="text" id="lastName" placeholder="Last name" autocomplete="off">
@@ -46,20 +48,15 @@
                     </a>
                 </section>
                 <section class="registrationVerificationPage">
+                    <p class="instructions">Enter a verification code we have sent to your email</p>
                     <form class="registrationVerificationForm">
                         <input type="text" class="verificationCode" placeholder="Verification code" autocomplete="off">
                         <button class="confirm" type="submit">Confirm</button>
                     </form>
                     <p class="serverResponse">Hidden</p>
                 </section>
-                <section class="recoveryVerificationPage">
-                    <form class="recoveryVerificationForm">
-                        <input type="text" class="verificationCode" placeholder="Verification code" autocomplete="off">
-                        <button class="confirm" type="submit">Confirm</button>
-                    </form>
-                    <p class="serverResponse">Hidden</p>
-                </section>
                 <section class="recoveryPage">
+                    <p class="instructions">Enter your username below</p>
                     <form class="recoveryForm">
                         <input type="text" class="username" placeholder="Username" autocomplete="on">
                         <button id="toVerificationPage" type="submit">Next</button>
@@ -70,7 +67,16 @@
                         <button id="toSignInPage" class="navigationButton">Back</button>
                     </a>
                 </section>
+                <section class="recoveryVerificationPage">
+                    <p class="instructions">Enter a verification code we have sent to your email</p>
+                    <form class="recoveryVerificationForm">
+                        <input type="text" class="verificationCode" placeholder="Verification code" autocomplete="off">
+                        <button class="confirm" type="submit">Confirm</button>
+                    </form>
+                    <p class="serverResponse">Hidden</p>
+                </section>
                 <section class="newPasswordPage">
+                    <p class="instructions">Enter your new password twice to finish the recovery</p>
                     <form class="newPasswordForm">
                         <input type="password" class="password1" placeholder="New password" autocomplete="off">
                         <input type="password" class="password2" placeholder="New password (confirm)" autocomplete="off">
