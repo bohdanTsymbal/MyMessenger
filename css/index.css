@@ -119,9 +119,12 @@ a {
 .chatsPage .userMessage, .chatsPage .interlocutorMessage {
   margin: 2px 0;
   border-radius: 25px;
-  padding: 10px 20px;
-  max-width: 70%;
+  padding: 10px 15px;
+  max-width: 75%;
+  word-break: break-word;
   word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
   text-align: left;
 }
 
@@ -301,6 +304,7 @@ button {
 }
 
 .chatsPage .interlocutorInfo {
+  font-size: 19px;
   padding: 15px 10px;
   text-align: left;
   text-indent: 50px;
@@ -312,7 +316,7 @@ button {
 .chatsPage .back {
   display: none;
   position: absolute;
-  font-size: 18px;
+  font-size: 19px;
   left: 10px;
   top: 6px;
   padding: 5px 20px;
@@ -330,6 +334,7 @@ button {
   align-self: flex-end;
   background: #057e70;
   color: white;
+  margin-right: -18px;
 }
 
 .chatsPage .interlocutorMessage {
@@ -347,7 +352,7 @@ button {
 
 .chatsPage .userInput {
   padding: 10px 20px;
-  font-size: 17px;
+  font-size: 18px;
   text-align: left;
   background: white;
   border: none;
@@ -367,7 +372,7 @@ button {
 
 .chatsPage .send {
   margin-left: 10px;
-  padding: 10px 10px;
+  padding: 10.5px 10px;
   font-size: 17px;
   color: white;
   background: #02a365;
@@ -464,8 +469,8 @@ button {
     width: 300px;
   }
   .chatsPage .messages {
-    padding-left: 40px;
-    padding-right: 40px;
+    padding-left: 50px;
+    padding-right: 50px;
   }
 }
 
@@ -480,8 +485,8 @@ button {
     width: 30%;
   }
   .chatsPage .messages {
-    padding-left: 30px;
-    padding-right: 30px;
+    padding-left: 40px;
+    padding-right: 40px;
   }
 }
 
@@ -495,6 +500,10 @@ button {
   }
   .chatsPage .back {
     display: inline;
+  }
+  .chatsPage .messages {
+    padding-left: 35px;
+    padding-right: 35px;
   }
 }
 
@@ -511,16 +520,14 @@ button {
     font-size: 23px;
   }
   .chatsPage .messages {
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 30px;
+    padding-right: 30px;
   }
   .chatsPage .userForm {
     padding-left: 10px;
     padding-right: 10px;
   }
   .chatsPage .send {
-    font-size: 15px;
-    padding: 11px 5px;
     margin-left: 5px;
   }
 }
@@ -538,10 +545,7 @@ button {
     font-size: 21px;
   }
   .chatsPage .messages {
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-  .chatsPage .userInput {
-    font-size: 16px;
+    padding-left: 25px;
+    padding-right: 25px;
   }
 }

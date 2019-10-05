@@ -22,9 +22,12 @@ $lighterGray: #f1f1f1
 %message
     margin: 2px 0
     border-radius: 25px
-    padding: 10px 20px
-    max-width: 70%
+    padding: 10px 15px
+    max-width: 75%
+    word-break: break-word
     word-wrap: break-word
+    overflow-wrap: break-word
+    hyphens: auto
     text-align: left
 
 %sidebarPoint
@@ -176,6 +179,7 @@ button
         justify-content: flex-end
         display: none
     .interlocutorInfo
+        font-size: 19px
         padding: 15px 10px
         text-align: left
         text-indent: 50px
@@ -185,7 +189,7 @@ button
     .back
         display: none
         position: absolute
-        font-size: 18px
+        font-size: 19px
         left: 10px
         top: 6px
         padding: 5px 20px
@@ -201,6 +205,7 @@ button
         align-self: flex-end
         background: #057e70
         color: white
+        margin-right: -18px
         @extend %message
     .interlocutorMessage
         align-self: flex-start
@@ -214,7 +219,7 @@ button
         align-items: flex-start
     .userInput
         padding: 10px 20px
-        font-size: 17px
+        font-size: 18px
         text-align: left
         background: white
         border: none
@@ -230,7 +235,7 @@ button
             display: none
     .send
         margin-left: 10px
-        padding: 10px 10px
+        padding: 10.5px 10px
         font-size: 17px
         color: white
         background: $green
@@ -302,7 +307,7 @@ button
         .sidebar
             width: 300px
         .messages
-            @include paddingLeftRight(40)
+            @include paddingLeftRight(50)
 
 @media screen and (max-width: 992px)
     .wrapper
@@ -313,7 +318,7 @@ button
         .sidebar
             width: 30%
         .messages
-            @include paddingLeftRight(30)
+            @include paddingLeftRight(40)
 
 @media screen and (max-width: 768px)
     .chatsPage
@@ -324,6 +329,8 @@ button
             width: 100%
         .back
             display: inline
+        .messages
+            @include paddingLeftRight(35)
 
 @media screen and (max-width: 576px)
     input
@@ -335,12 +342,10 @@ button
             font-size: 23px
     .chatsPage
         .messages
-            @include paddingLeftRight(20)
+            @include paddingLeftRight(30)
         .userForm
             @include paddingLeftRight(10)
         .send
-            font-size: 15px
-            padding: 11px 5px
             margin-left: 5px
 
 @media screen and (max-width: 320px)
@@ -353,6 +358,5 @@ button
             font-size: 21px
     .chatsPage
         .messages
-            @include paddingLeftRight(10)
-        .userInput
-            font-size: 16px
+            @include paddingLeftRight(25)
+        
