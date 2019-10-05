@@ -356,7 +356,6 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, n
     const userForm = document.createElement('form');
     const userInput = document.createElement('div');
     const send = document.createElement('button');
-    const wrapDiv = document.createElement('div');
 
     chatUI.className = 'activeChatInterface';
     chatUI.id = `i${interlocutorId}`;
@@ -415,8 +414,7 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, n
     interlocutorInfo.appendChild(span);
     chatUI.appendChild(messages);
     chatUI.appendChild(userForm);
-    wrapDiv.appendChild(userInput);
-    userForm.appendChild(wrapDiv);
+    userForm.appendChild(userInput);
     userForm.appendChild(send);
 
     let num1 = number;

@@ -14,6 +14,11 @@ $lighterGray: #f1f1f1
         left: $value + px
         right: $value + px
 
+@mixin paddingTopBottom($value)
+    padding: 
+        top: $value + px
+        bottom: $value + px
+
 %message
     margin: 2px 0
     border-radius: 25px
@@ -32,6 +37,7 @@ $lighterGray: #f1f1f1
         background-color: rgba(1, 133, 93, 0.3)
 
 %hideScroll
+    overflow-x: hidden
     overflow-y: scroll
     margin: 0 -18px
 
@@ -84,7 +90,7 @@ header
 main 
     background: whitesmoke
     text-align: center  
-    padding: 50px 0
+    padding: 50px 15px
     overflow: hidden
     border-bottom:
         left-radius: 25px
@@ -155,6 +161,7 @@ button
     font-family: 'Noto Sans Bold', sans-serif
     margin-bottom: 30px
     text-align: center
+    line-height: 1.25
 
 .chatsPage
     justify-content: left
@@ -188,7 +195,7 @@ button
         flex-grow: 1
         display: flex
         flex-direction: column
-        padding: 15px 60px
+        padding: 10px 60px 5px
         @extend %hideScroll
     .userMessage
         align-self: flex-end
@@ -202,23 +209,25 @@ button
     .userForm
         padding: 10px 25px
         background: #f1f1f1
-        max-height: 40%
+        max-height: 35%
         display: flex
         align-items: flex-start
-        div
-            flex-grow: 1
-            overflow: hidden
-            border-radius: 25px
-            max-height: 100%
     .userInput
-        padding: 10px 18px 10px 38px
+        padding: 10px 20px
         font-size: 17px
         text-align: left
         background: white
         border: none
         line-height: 1
-        max-height: calc(34.4vh - 20px)
-        @extend %hideScroll
+        flex-grow: 1
+        overflow-x: hidden
+        overflow-y: scroll
+        border-radius: 25px
+        max-height: 100%
+        scrollbar-width: none
+        -ms-overflow-style: none
+        &::-webkit-scrollbar 
+            display: none
     .send
         margin-left: 10px
         padding: 10px 10px
@@ -293,7 +302,7 @@ button
         .sidebar
             width: 300px
         .messages
-            @include paddingLeftRight(50)
+            @include paddingLeftRight(40)
 
 @media screen and (max-width: 992px)
     .wrapper
@@ -304,26 +313,46 @@ button
         .sidebar
             width: 30%
         .messages
-            @include paddingLeftRight(40)
+            @include paddingLeftRight(30)
 
 @media screen and (max-width: 768px)
     .chatsPage
         .interlocutorInfo
             text-align: center
             text-indent: 0
-        .messages
-            @include paddingLeftRight(30)
         .sidebar, .activeChatInterface
             width: 100%
         .back
             display: inline
 
 @media screen and (max-width: 576px)
+    input
+        width: 280px
+    header 
+        @include paddingTopBottom(22)
+        .header
+            text-indent: 30px
+            font-size: 23px
     .chatsPage
         .messages
             @include paddingLeftRight(20)
+        .userForm
+            @include paddingLeftRight(10)
+        .send
+            font-size: 15px
+            padding: 11px 5px
+            margin-left: 5px
 
 @media screen and (max-width: 320px)
+    input
+        width: 100%
+    header 
+        @include paddingTopBottom(20)
+        .header
+            text-indent: 20px
+            font-size: 21px
     .chatsPage
         .messages
-            @include paddingLeftRight(15)
+            @include paddingLeftRight(10)
+        .userInput
+            font-size: 16px
