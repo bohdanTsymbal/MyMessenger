@@ -5,8 +5,10 @@ if (!empty($_POST)) {
     $id = $_SESSION['recoveryUserId'];
     $newPassword = $_POST['newPassword'];
     $newPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-    $query = "update users set `password` = '$newPassword' where `id` = '$id'";
-    query($connection, $query);
+    
+    $query = "update users set `password` = ? where `id` = ?";
+    $stmt = preparedQuery($connection, $query, [&$newPassword, &$id]);
+
     session_destroy();
     mysqli_close($connection);
     echo true;

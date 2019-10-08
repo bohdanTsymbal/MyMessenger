@@ -85,3 +85,48 @@ Stack trace:
 2019-10-04 19:03:57 pid:1 Worker process terminated
 2019-10-04 19:08:08 pid:1 Worker process terminated
 2019-10-05 20:59:12 pid:1 Worker process terminated
+2019-10-06 16:06:52 pid:1 Error: Cannot pass parameter 3 by reference in C:\Server\data\htdocs\Projects\MyMessenger\php\WebSocketServer.php:20
+Stack trace:
+#0 [internal function]: {closure}(Object(Workerman\Connection\TcpConnection), 'GET /?userId=1&...')
+#1 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Protocols\Websocket.php(393): call_user_func(Object(Closure), Object(Workerman\Connection\TcpConnection), 'GET /?userId=1&...')
+#2 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Protocols\Websocket.php(57): Workerman\Protocols\Websocket::dealHandshake('GET /?userId=1&...', Object(Workerman\Connection\TcpConnection))
+#3 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Connection\TcpConnection.php(621): Workerman\Protocols\Websocket::input('GET /?userId=1&...', Object(Workerman\Connection\TcpConnection))
+#4 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #24)
+#5 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Events\Select.php(294): call_user_func_array(Array, Array)
+#6 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Worker.php(2357): Workerman\Events\Select->loop()
+#7 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Worker.php(1351): Workerman\Worker->run()
+#8 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Worker.php(1294): Workerman\Worker::forkWorkersForWindows()
+#9 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Worker.php(509): Workerman\Worker::forkWorkers()
+#10 C:\Server\data\htdocs\Projects\MyMessenger\php\WebSocketServer.php(81): Workerman\Worker::runAll()
+#11 {main}
+2019-10-06 16:06:52 pid:1 Worker process terminated
+2019-10-06 16:10:32 pid:1 Error: Cannot pass parameter 3 by reference in C:\Server\data\htdocs\Projects\MyMessenger\php\WebSocketServer.php:20
+Stack trace:
+#0 [internal function]: {closure}(Object(Workerman\Connection\TcpConnection), 'GET /?userId=1&...')
+#1 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Protocols\Websocket.php(393): call_user_func(Object(Closure), Object(Workerman\Connection\TcpConnection), 'GET /?userId=1&...')
+#2 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Protocols\Websocket.php(57): Workerman\Protocols\Websocket::dealHandshake('GET /?userId=1&...', Object(Workerman\Connection\TcpConnection))
+#3 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Connection\TcpConnection.php(621): Workerman\Protocols\Websocket::input('GET /?userId=1&...', Object(Workerman\Connection\TcpConnection))
+#4 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #24)
+#5 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Events\Select.php(294): call_user_func_array(Array, Array)
+#6 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Worker.php(2357): Workerman\Events\Select->loop()
+#7 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Worker.php(1351): Workerman\Worker->run()
+#8 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Worker.php(1294): Workerman\Worker::forkWorkersForWindows()
+#9 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Worker.php(509): Workerman\Worker::forkWorkers()
+#10 C:\Server\data\htdocs\Projects\MyMessenger\php\WebSocketServer.php(81): Workerman\Worker::runAll()
+#11 {main}
+2019-10-06 16:10:32 pid:1 Worker process terminated
+2019-10-06 16:20:04 pid:1 Error: Cannot pass parameter 3 by reference in C:\Server\data\htdocs\Projects\MyMessenger\php\WebSocketServer.php:20
+Stack trace:
+#0 [internal function]: {closure}(Object(Workerman\Connection\TcpConnection), 'GET /?userId=1&...')
+#1 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Protocols\Websocket.php(393): call_user_func(Object(Closure), Object(Workerman\Connection\TcpConnection), 'GET /?userId=1&...')
+#2 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Protocols\Websocket.php(57): Workerman\Protocols\Websocket::dealHandshake('GET /?userId=1&...', Object(Workerman\Connection\TcpConnection))
+#3 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Connection\TcpConnection.php(621): Workerman\Protocols\Websocket::input('GET /?userId=1&...', Object(Workerman\Connection\TcpConnection))
+#4 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #24)
+#5 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Events\Select.php(294): call_user_func_array(Array, Array)
+#6 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Worker.php(2357): Workerman\Events\Select->loop()
+#7 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Worker.php(1351): Workerman\Worker->run()
+#8 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Worker.php(1294): Workerman\Worker::forkWorkersForWindows()
+#9 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Worker.php(509): Workerman\Worker::forkWorkers()
+#10 C:\Server\data\htdocs\Projects\MyMessenger\php\WebSocketServer.php(81): Workerman\Worker::runAll()
+#11 {main}
+2019-10-06 16:20:04 pid:1 Worker process terminated

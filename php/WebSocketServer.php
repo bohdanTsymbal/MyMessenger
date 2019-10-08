@@ -1,8 +1,4 @@
 <?php
-// ini_set('session.save_path', '../session');
-// ini_set('session.gc_probability', '0');
-// ini_set('session.gc_maxlifetime', '86400');
-// session_start();
 
 require_once __DIR__.'/vendor/autoload.php';
 use Workerman\Worker;
@@ -15,25 +11,22 @@ $ws_worker->onConnect = function($connection) use (&$users)
 {
     $connection->onWebSocketConnect = function($connection) use (&$users)
     {
-        $location = 'localhost';
-        $user = 'root';
-        $password = '';
-        $database = 'mymessengerdatabase';
-        $mconnection = mysqli_connect($location, $user, $password);
-        $databaseSelection = mysqli_select_db($mconnection, $database);
+        databaseConnection($mconnection);
 
-        $userId = $_GET['userId'];
+        $userId = (int) $_GET['userId'];
         $token = $_GET['userToken'];
 
-        $query = "select token from users where `id` = '$userId'";
-        $rows = mysqli_fetch_row(query($mconnection, $query));
+        $query = "select token from users where `id` = ?";
+        $rows = preparedQuery($mconnection, $query, [&$userId], true);
 
-        if ($rows[0] == $token) {
+        if ($rows == $token) {
             $users[$_GET['userId']] = $connection;
         }
         else {
             $connection->close();
         }
+
+        mysqli_close($mconnection);
     };
 };
 
@@ -58,12 +51,7 @@ $ws_worker->onMessage = function($connection, $data) use (&$users)
     $interlocutorId = $data->toUser;
     $message = $data->message;
 
-    $location = 'localhost';
-    $user = 'root';
-    $password = '';
-    $database = 'mymessengerdatabase';
-    $mconnection = mysqli_connect($location, $user, $password);
-    $databaseSelection = mysqli_select_db($mconnection, $database);
+    databaseConnection($mconnection);
 
     $query = 'select id from messages order by id desc limit 1';
     $rows = mysqli_fetch_row(query($mconnection, $query));
@@ -73,8 +61,9 @@ $ws_worker->onMessage = function($connection, $data) use (&$users)
     else {
         $id = ++$rows[0];
     }
-    $query = "insert into messages (`id`, `fromUser`, `toUser`, `message`) values ('$id', '$userId', '$interlocutorId', '$message')";
-    query($mconnection, $query);
+
+    $query = "insert into messages (`id`, `fromUser`, `toUser`, `message`) values (?, ?, ?, ?)";
+    preparedQuery($mconnection, $query, [&$id, &$userId, &$interlocutorId, &$message], false);
     
     mysqli_close($mconnection);
 };
@@ -87,10 +76,45 @@ $ws_worker->onClose = function($connection) use(&$users)
 
 Worker::runAll();
 
+function databaseConnection(&$mconnection) {
+    $location = 'localhost';
+    $user = 'root';
+    $password = '';
+    $database = 'mymessengerdatabase';
+    $mconnection = mysqli_connect($location, $user, $password);
+    $databaseSelection = mysqli_select_db($mconnection, $database);
+}
+
 function query($mconnection, $query) {
     $result = mysqli_query($mconnection, $query);
     if (!$result) {
         die(mysqli_error($mconnection));
     }
     return $result;
+}
+
+function preparedQuery($mconnection, $query, $params, $return) {
+    $stmt = mysqli_prepare($mconnection, $query);
+    $markers = "";
+    for ($i = 0; $i < count($params); $i++) {
+        if (gettype($params[$i]) === "integer") {
+            $markers .= "i";
+        }
+        else if (gettype($params[$i]) === "string") {
+            $markers .= "s";
+        }
+        else $markers .= "d";
+    }
+    array_unshift($params, $stmt, $markers);
+    call_user_func_array("mysqli_stmt_bind_param", $params);
+    mysqli_stmt_execute($stmt);
+
+    if ($return) {
+        mysqli_stmt_bind_result($stmt, $rows);
+        mysqli_stmt_fetch($stmt);
+        mysqli_stmt_close($stmt);
+        return $rows;
+    }
+
+    mysqli_stmt_close($stmt);
 }

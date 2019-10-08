@@ -19,8 +19,11 @@ if (!empty($_POST)) {
         else {
             $id = ++$rows[0];
         }
-        $query = "insert into `users` (`id`, `firstName`, `lastName`, `email`, `username`, `password`, `token`) values ('$id', '$firstName', '$lastName', '$email', '$username', '$password', '$token')";
-        query($connection, $query);
+
+        $query = "insert into `users` (`id`, `firstName`, `lastName`, `email`, `username`, `password`, `token`) values (?, ?, ?, ?, ?, ?, ?)";
+        $stmt = preparedQuery($connection, $query, [&$id, &$firstName, &$lastName, &$email, &$username, &$password, &$token]);
+        mysqli_stmt_close($stmt);
+
         mysqli_close($connection);
         echo true;
     }
