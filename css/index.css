@@ -159,6 +159,15 @@ input, button {
   color: #221d1d;
 }
 
+.registrationForm input, .newPasswordForm input {
+  border-bottom: 2px solid white;
+  padding-bottom: 10px;
+}
+
+.registrationForm input.error, .newPasswordForm input.error {
+  border-bottom: 2px solid red;
+}
+
 *:active, *:hover, *:focus {
   outline: 0;
   outline-offset: 0;
@@ -218,7 +227,7 @@ main {
 input {
   display: block;
   font-size: 20px;
-  padding: 12px 18px;
+  padding: 13px 18px;
   margin: 0 0 30px;
   width: 330px;
 }
@@ -285,6 +294,22 @@ button {
   margin-bottom: 30px;
   text-align: center;
   line-height: 1.25;
+}
+
+.registrationPage input, .newPasswordPage input {
+  margin-top: -14px;
+}
+
+.registrationPage .registrationInputAlert, .newPasswordPage .registrationInputAlert {
+  font-family: 'Montserrat';
+  font-size: 11px;
+  color: red;
+  left: 0;
+  opacity: 0;
+}
+
+.registrationPage .registrationInputAlert.active, .newPasswordPage .registrationInputAlert.active {
+  opacity: 1;
 }
 
 .chatsPage {

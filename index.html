@@ -33,11 +33,17 @@
                 <section class="registrationPage">
                     <p class="instructions">Please enter your data that is required for registration</p>
                     <form class="registrationForm">
+                        <span class="registrationInputAlert" id="firstNameAlert">Only latin or cyrillic letters!</span>
                         <input type="text" id="firstName" placeholder="First name" autocomplete="off">
+                        <span class="registrationInputAlert" id="lastNameAlert">Only latin or cyrillic letters!</span>
                         <input type="text" id="lastName" placeholder="Last name" autocomplete="off">
-                        <input type="text" id="email" placeholder="Email" autocomplete="off">
+                        <span class="registrationInputAlert" id="emailAlert">Invalid mail format!</span>
+                        <input type="email" id="email" placeholder="Email" autocomplete="off">
+                        <span class="registrationInputAlert" id="usernameAlert">Only latin letters, digits, special symbols (min 5 ch.)!</span>
                         <input type="text" class="username" placeholder="Username" autocomplete="off">
+                        <span class="registrationInputAlert" id="password1Alert">Only latin letters and digits (min 8 ch.)!</span>
                         <input type="password" class="password1" placeholder="Password" autocomplete="off">
+                        <span class="registrationInputAlert" id="password2Alert">Passwords do not match!</span>
                         <input type="password" class="password2" placeholder="Password (confirm)" autocomplete="off">
                         <button id="toRegistrationVerificationPage" type="submit" autocomplete="off">Next</button>
                     </form>
@@ -78,8 +84,10 @@
                 <section class="newPasswordPage">
                     <p class="instructions">Enter your new password twice to finish the recovery</p>
                     <form class="newPasswordForm">
+                        <span class="registrationInputAlert" id="password1Alert">Only latin letters and digits (min 8 ch.)!</span>
                         <input type="password" class="password1" placeholder="New password" autocomplete="off">
-                        <input type="password" class="password2" placeholder="New password (confirm)" autocomplete="off">
+                        <span class="registrationInputAlert" id="password2Alert">Passwords do not match!</span>
+                        <input type="password" class="password2" id="password2" placeholder="New password (confirm)" autocomplete="off">
                         <button class="confirm" type="submit">Confirm</button>
                     </form>
                     <p class="serverResponse">Hidden</p>

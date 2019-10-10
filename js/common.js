@@ -227,25 +227,37 @@ function checkEmptiness(outSelector, perform, ...elements) {
 }
 
 function checkInput(pattern) {
+    const alertId = this.id !== '' ? this.id : this.className.replace(/error/, '').trim();
+
     if (!pattern.test(this.value.trim())) {
-        this.style.borderBottom = '2px solid red';
+        this.classList.add('error');
+        document.querySelector(`.${this.parentNode.className} #${alertId}Alert`).classList.add('active');
+
         errors = true;
     }
     else {
-        this.removeAttribute('style');
+        this.classList.remove('error');
+        document.querySelector(`.${this.parentNode.className} #${alertId}Alert`).classList.remove('active');
+
         errors = false;
     }
 }
 
 function checkPasswordCompliance(firstElement, secondElement) {
+    const alertId = secondElement.className.replace(/error/, '').trim();
+
     if (firstElement.value.trim() != secondElement.value.trim() || !REGEXP_PASSWORD.test(secondElement.value.trim())) {
-        firstElement.style.borderBottom = '2px solid red';
-        secondElement.style.borderBottom = '2px solid red';
+        firstElement.classList.add('error');
+        secondElement.classList.add('error');
+        document.querySelector(`.${secondElement.parentNode.className} #${alertId}Alert`).classList.add('active');
+
         errors = true;
     }
     else {
-        firstElement.removeAttribute('style');
-        secondElement.removeAttribute('style');
+        firstElement.classList.remove('error');
+        secondElement.classList.remove('error');
+        document.querySelector(`.${secondElement.parentNode.className} #${alertId}Alert`).classList.remove('active');
+
         errors = false;
     }
 }
