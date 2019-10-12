@@ -1,6 +1,6 @@
 'use strict';
 
-let errors, response, id, inId, token, MessagesWebSocketConnection, TimeWebSocketConnection, sHeight;
+let errors, response, id, inId, token, WebSocketConnection, sHeight;
 
 errors = true;
 
@@ -404,7 +404,7 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, n
                 const date = new Date(messagesContent[i].sendingTime);
 
                 sendingTime.className = 'sendingTime';
-                sendingTime.innerHTML = `${date.getHours() + 3}:${String(date.getMinutes()).padStart(2, '0')}`;
+                sendingTime.innerHTML = `${date.getHours() - new Date().getTimezoneOffset() / 60}:${String(date.getMinutes()).padStart(2, '0')}`;
                 
                 message.className = messagesContent[i].fromUser == id ? 'userMessage' : 'interlocutorMessage';
                 message.innerHTML = messagesContent[i].message;
@@ -454,7 +454,7 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, n
                     const date = new Date(messagesContent[i].sendingTime);
 
                     sendingTime.className = 'sendingTime';
-                    sendingTime.innerHTML = `${date.getHours() + 3}:${String(date.getMinutes()).padStart(2, '0')}`;
+                    sendingTime.innerHTML = `${date.getHours() - new Date().getTimezoneOffset() / 60}:${String(date.getMinutes()).padStart(2, '0')}`;
                     
                     message.className = messagesContent[i].fromUser == id ? 'userMessage' : 'interlocutorMessage';
                     message.innerHTML = messagesContent[i].message;
@@ -602,95 +602,106 @@ function clearActive(chats, sidebarChats) {
 }
 
 function connect() {
-    MessagesWebSocketConnection = new WebSocket(`ws://${IP[0]}:8000/?userId=${id}&userToken=${token}`);
-    TimeWebSocketConnection = new WebSocket(`ws://${IP[0]}:4000/?userId=${id}&userToken=${token}`);
+    WebSocketConnection = new WebSocket(`ws://${IP[0]}:0666/?userId=${id}&userToken=${token}`);
 
-    MessagesWebSocketConnection.onmessage = (event) => {
+    WebSocketConnection.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        const fromUser = data.fromUser;
-        const message = data.message;
 
-        const chat = document.querySelector(`#i${fromUser} .messages`);
-        let chatsList = document.querySelector('.sidebar #tc1');
-        const sidebarChat = document.querySelector(`#tc1 #u${fromUser}`);
-        const newSidebarChat = sidebarChat;
-
-        const newMessage = document.createElement('div');
-        const sendingTime = document.createElement('span');
-        const date = new Date(data.sendingTime);
-
-        sendingTime.className = 'sendingTime';
-        sendingTime.innerHTML = `${date.getHours() + 3}:${String(date.getMinutes()).padStart(2, '0')}`;
-
-        newMessage.className = 'interlocutorMessage';
-        newMessage.innerHTML = message;
-
-        newMessage.appendChild(sendingTime);
-
-        if (chat) {
-            chat.appendChild(newMessage);
-            chat.scrollTo(0, chat.scrollHeight);
-        }
-        else {
-            const params = `id=${fromUser}`;
-
-            makePostRequest(GET_FULL_NAME_PHP[0], params, () => {
-                const fullName = JSON.parse(response);
-                createChatInterface(fromUser, fullName.firstName, fullName.lastName, 50, message);
-            });
-        }
-
-        if (sidebarChat) {
-            chatsList.removeChild(sidebarChat);
-            chatsList.prepend(newSidebarChat);
+        switch (data.type) {
+            case 'message': {
+                const fromUser = data.fromUser;
+                const message = data.message;
         
-            const lastMessage = document.querySelector(`#u${fromUser} .lastMessage`);
-            lastMessage.innerHTML = message;
-        }
-        else {
-            const params = `id=${fromUser}`;
-
-            makePostRequest(GET_FULL_NAME_PHP[0], params, () => {
-                const chat = document.createElement('div');
-                let lastMessage = document.createElement('p');
-                const name = document.createElement('h3');
-                const fullName = JSON.parse(response);
-
-                name.className = 'name';
-                name.innerHTML = `${fullName.firstName} ${fullName.lastName}`;
-                chat.className = 'chat';
-                chat.id = `u${fromUser}`;
-                lastMessage.className = 'lastMessage';
-                lastMessage.innerHTML = message;
-
-                chat.appendChild(name);
-                chat.appendChild(lastMessage);
-                chatsList.prepend(chat);
-                
-                chat.onclick = () => {
-                    let chatInterface = document.querySelector(`.chatsPage #i${fromUser}`);
-
-                    if (!chatInterface) {
-                        createChatInterface(fromUser, fullName.firstName, fullName.lastName, 50);
-                        chatInterface = document.querySelector(`.chatsPage #i${fromUser}`);
-                    }
-
-                    const sidebarChats = document.querySelectorAll('.tabContent .chat');
-                    const chats = document.querySelectorAll('.chatsPage .activeChatInterface');
-
-                    clearActive(chats, sidebarChats);
-
-                    chat.classList.add('activeChat');
-                    chatInterface.style.display = 'flex';
+                const chat = document.querySelector(`#i${fromUser} .messages`);
+                let chatsList = document.querySelector('.sidebar #tc1');
+                const sidebarChat = document.querySelector(`#tc1 #u${fromUser}`);
+                const newSidebarChat = sidebarChat;
+        
+                const newMessage = document.createElement('div');
+                const sendingTime = document.createElement('span');
+                const date = new Date(data.sendingTime);
+        
+                sendingTime.className = 'sendingTime';
+                sendingTime.innerHTML = `${date.getHours() - new Date().getTimezoneOffset() / 60}:${String(date.getMinutes()).padStart(2, '0')}`;
+        
+                newMessage.className = 'interlocutorMessage';
+                newMessage.innerHTML = message;
+        
+                newMessage.appendChild(sendingTime);
+        
+                if (chat) {
+                    chat.appendChild(newMessage);
+                    chat.scrollTo(0, chat.scrollHeight);
                 }
-            });
+                else {
+                    const params = `id=${fromUser}`;
+        
+                    makePostRequest(GET_FULL_NAME_PHP[0], params, () => {
+                        const fullName = JSON.parse(response);
+                        createChatInterface(fromUser, fullName.firstName, fullName.lastName, 50, message);
+                    });
+                }
+        
+                if (sidebarChat) {
+                    chatsList.removeChild(sidebarChat);
+                    chatsList.prepend(newSidebarChat);
+                
+                    const lastMessage = document.querySelector(`#u${fromUser} .lastMessage`);
+                    lastMessage.innerHTML = message;
+                }
+                else {
+                    const params = `id=${fromUser}`;
+        
+                    makePostRequest(GET_FULL_NAME_PHP[0], params, () => {
+                        const chat = document.createElement('div');
+                        let lastMessage = document.createElement('p');
+                        const name = document.createElement('h3');
+                        const fullName = JSON.parse(response);
+        
+                        name.className = 'name';
+                        name.innerHTML = `${fullName.firstName} ${fullName.lastName}`;
+                        chat.className = 'chat';
+                        chat.id = `u${fromUser}`;
+                        lastMessage.className = 'lastMessage';
+                        lastMessage.innerHTML = message;
+        
+                        chat.appendChild(name);
+                        chat.appendChild(lastMessage);
+                        chatsList.prepend(chat);
+                        
+                        chat.onclick = () => {
+                            let chatInterface = document.querySelector(`.chatsPage #i${fromUser}`);
+        
+                            if (!chatInterface) {
+                                createChatInterface(fromUser, fullName.firstName, fullName.lastName, 50);
+                                chatInterface = document.querySelector(`.chatsPage #i${fromUser}`);
+                            }
+        
+                            const sidebarChats = document.querySelectorAll('.tabContent .chat');
+                            const chats = document.querySelectorAll('.chatsPage .activeChatInterface');
+        
+                            clearActive(chats, sidebarChats);
+        
+                            chat.classList.add('activeChat');
+                            chatInterface.style.display = 'flex';
+                        }
+                    });
+                }
+
+                break;
+            }
+
+            case 'sendingTime': {
+                const data = JSON.parse(event.data);
+                addMessageToChat(data.toUser, data.message, data.sendingTime);
+
+                break;
+            }
+
+            default:
+                break;
         }
     };
-
-    TimeWebSocketConnection.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        addMessageToChat(data.toUser, data.message, data.sendingTime);
-    }
 }
 
 function sendMessage(interlocutorId, message, chat) {
@@ -699,18 +710,10 @@ function sendMessage(interlocutorId, message, chat) {
         toUser: interlocutorId,
         message: message
     };
-    let userData = {
-        fromUser: id,
-        toUser: interlocutorId,
-        message: message,
-        chat: chat
-    };
 
     messageData = JSON.stringify(messageData);
-    userData = JSON.stringify(userData);
 
-    MessagesWebSocketConnection.send(messageData);
-    TimeWebSocketConnection.send(userData);
+    WebSocketConnection.send(messageData);
 }
 
 function addMessageToChat(interlocutorId, message, time) {

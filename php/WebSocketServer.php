@@ -5,7 +5,7 @@ use Workerman\Worker;
 
 $users = [];
 
-$ws_worker_messages = new Worker("websocket://0.0.0.0:8000");
+$ws_worker_messages = new Worker("websocket://0.0.0.0:0666");
 
 $ws_worker_messages->onConnect = function($connection) use (&$users)
 {
@@ -42,7 +42,22 @@ $ws_worker_messages->onMessage = function($connection, $data) use (&$users)
         $webconnection = $users[$data->toUser];
 
         $initialData = [
+            'type' => 'message',
             'fromUser' => $userId,
+            'message' => $data->message,
+            'sendingTime' => $sendingTime
+        ];
+        $initialData = json_encode($initialData);
+
+        $webconnection->send($initialData);
+    }
+
+    if (isset($users[$userId])) {
+        $webconnection = $users[$userId];
+
+        $initialData = [
+            'type' => 'sendingTime',
+            'toUser' => $data->toUser,
             'message' => $data->message,
             'sendingTime' => $sendingTime
         ];
