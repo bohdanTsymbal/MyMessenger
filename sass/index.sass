@@ -8,6 +8,7 @@ $green: #02a365
 $darkGreen: #01855d
 $lightGray: #dfdfdf
 $lighterGray: #f1f1f1
+$gray: #ede6e6
 
 @mixin paddingLeftRight($value)
     padding: 
@@ -21,8 +22,8 @@ $lighterGray: #f1f1f1
 
 %message
     margin: 2px 0
-    border-radius: 25px
-    padding: 10px 15px
+    border-radius: 20px
+    padding: 10px 55px 5px 15px
     max-width: 75%
     word-break: break-word
     word-wrap: break-word
@@ -228,11 +229,20 @@ button
         background: #057e70
         color: white
         margin-right: -18px
+        .sendingTime
+            color: $lightGray
         @extend %message
     .interlocutorMessage
         align-self: flex-start
         background: white
+        .sendingTime
+            color: rgb(132, 132, 132)
         @extend %message
+    .sendingTime
+        display: block
+        text-align: right
+        font-size: 12px
+        margin: -8px -43px 0 0
     .userForm
         padding: 10px 25px
         background: #f1f1f1
@@ -292,7 +302,7 @@ button
         &.activeChat h3
             color: white
         &.activeChat p 
-            color: #ede6e6
+            color: $gray
     .user
         padding: 24px 5px
         @extend %sidebarPoint

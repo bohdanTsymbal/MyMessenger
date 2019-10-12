@@ -393,17 +393,23 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, n
     };
 
     if (number) {
-        const params = `interlocutorId=${interlocutorId}&number=${number}`;
+        const params = `interlocutorId=${interlocutorId}&number=0_${number}`;
 
         makePostRequest(GET_MESSAGES_PHP[0], params, () => {
             const messagesContent = JSON.parse(response);
 
             for (let i = messagesContent.length - 1; i > -1; i--) {
                 const message = document.createElement('div');
+                const sendingTime = document.createElement('span');
+                const date = new Date(messagesContent[i].sendingTime);
+
+                sendingTime.className = 'sendingTime';
+                sendingTime.innerHTML = `${date.getHours() + 3}:${String(date.getMinutes()).padStart(2, '0')}`;
                 
                 message.className = messagesContent[i].fromUser == id ? 'userMessage' : 'interlocutorMessage';
                 message.innerHTML = messagesContent[i].message;
 
+                message.appendChild(sendingTime);
                 messages.appendChild(message);
             }
 
@@ -435,19 +441,25 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, n
     messages.onmousewheel = function () {
         if (this.scrollTop <= 200 && !top) {
             const num2 = 50;
-            const number = `${num1},${num2}`;
+            const number = `${num1}_${num2}`;
             const params = `interlocutorId=${interlocutorId}&number=${number}`;
 
             makePostRequest(GET_MESSAGES_PHP[0], params, () => {
                 const messagesContent = JSON.parse(response);
-                if (messagesContent.length === 0) top = true;
+                top = messagesContent.length === 0;
     
                 for (let i = 0; i < messagesContent.length; i++) {
                     const message = document.createElement('div');
+                    const sendingTime = document.createElement('span');
+                    const date = new Date(messagesContent[i].sendingTime);
+
+                    sendingTime.className = 'sendingTime';
+                    sendingTime.innerHTML = `${date.getHours() + 3}:${String(date.getMinutes()).padStart(2, '0')}`;
                     
                     message.className = messagesContent[i].fromUser == id ? 'userMessage' : 'interlocutorMessage';
                     message.innerHTML = messagesContent[i].message;
     
+                    message.appendChild(sendingTime);
                     messages.prepend(message);
                 }
             });
@@ -603,9 +615,16 @@ function connect() {
         const newSidebarChat = sidebarChat;
 
         const newMessage = document.createElement('div');
+        const sendingTime = document.createElement('span');
+        const date = new Date(data.sendingTime);
+
+        sendingTime.className = 'sendingTime';
+        sendingTime.innerHTML = `${date.getHours() + 3}:${String(date.getMinutes()).padStart(2, '0')}`;
 
         newMessage.className = 'interlocutorMessage';
         newMessage.innerHTML = message;
+
+        newMessage.appendChild(sendingTime);
 
         if (chat) {
             chat.appendChild(newMessage);
@@ -681,10 +700,16 @@ function sendMessage(interlocutorId, message, chat) {
     const sidebarChat = document.querySelector(`#tc1 #u${interlocutorId}`);
     const newSidebarChat = sidebarChat;
     const messageBlock = document.createElement('div');
+    const sendingTime = document.createElement('span');
+    const date = new Date();
+
+    sendingTime.className = 'sendingTime';
+    sendingTime.innerHTML = `${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
 
     messageBlock.className = 'userMessage';
     messageBlock.innerHTML = message;
 
+    messageBlock.appendChild(sendingTime);
     chat.appendChild(messageBlock);
     chat.scrollTo(0, chat.scrollHeight);
 

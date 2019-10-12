@@ -130,3 +130,5 @@ Stack trace:
 #10 C:\Server\data\htdocs\Projects\MyMessenger\php\WebSocketServer.php(81): Workerman\Worker::runAll()
 #11 {main}
 2019-10-06 16:20:04 pid:1 Worker process terminated
+2019-10-12 08:52:03 pid:1 Worker process terminated with ERROR: E_RECOVERABLE_ERROR "Object of class mysqli_stmt could not be converted to string in C:\Server\data\htdocs\Projects\MyMessenger\php\WebSocketServer.php on line 100"
+2019-10-12 09:55:51 pid:1 Worker process terminated

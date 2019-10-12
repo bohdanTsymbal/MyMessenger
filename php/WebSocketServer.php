@@ -32,6 +32,9 @@ $ws_worker->onConnect = function($connection) use (&$users)
 
 $ws_worker->onMessage = function($connection, $data) use (&$users)
 {
+    $sendingTime = date('c');
+    $sendingTime = substr($sendingTime, 0, 10)." ".substr($sendingTime, 11, 8);
+
     $data = json_decode($data);
     $userId = $data->fromUser;
 
@@ -40,7 +43,8 @@ $ws_worker->onMessage = function($connection, $data) use (&$users)
 
         $initialData = [
             'fromUser' => $userId,
-            'message' => $data->message
+            'message' => $data->message,
+            'sendingTime' => $sendingTime
         ];
         $initialData = json_encode($initialData);
 
@@ -62,8 +66,8 @@ $ws_worker->onMessage = function($connection, $data) use (&$users)
         $id = ++$rows[0];
     }
 
-    $query = "insert into messages (`id`, `fromUser`, `toUser`, `message`) values (?, ?, ?, ?)";
-    preparedQuery($mconnection, $query, [&$id, &$userId, &$interlocutorId, &$message], false);
+    $query = "insert into messages (`id`, `fromUser`, `toUser`, `message`, `sendingTime`) values (?, ?, ?, ?, ?)";
+    preparedQuery($mconnection, $query, [&$id, &$userId, &$interlocutorId, &$message, &$sendingTime], false);
     
     mysqli_close($mconnection);
 };

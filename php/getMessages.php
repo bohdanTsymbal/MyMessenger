@@ -5,10 +5,11 @@ if (!empty($_POST)) {
     $userId = $_SESSION['id'];
     $interlocatorId = $_POST['interlocutorId'];
     $number = $_POST['number'];
+    $number = explode('_', $number);
     
-    $query = "select message, fromUser, toUser from messages where (`fromUser` = ? and `toUser` = ?) or (`fromUser` = ? and `toUser` = ?) order by id desc limit ?";
-    $stmt = preparedQuery($connection, $query, [&$userId, &$interlocatorId, &$interlocatorId, &$userId, &$number]);
-    mysqli_stmt_bind_result($stmt, $message, $fromUser, $toUser);    
+    $query = "select message, fromUser, toUser, sendingTime from messages where (`fromUser` = ? and `toUser` = ?) or (`fromUser` = ? and `toUser` = ?) order by id desc limit ?, ?";
+    $stmt = preparedQuery($connection, $query, [&$userId, &$interlocatorId, &$interlocatorId, &$userId, &$number[0], &$number[1]]);
+    mysqli_stmt_bind_result($stmt, $message, $fromUser, $toUser, $sendingTime);    
 
     $result = [];
     $i = 0;
@@ -16,6 +17,7 @@ if (!empty($_POST)) {
         $result[$i]['message'] = $message;
         $result[$i]['fromUser'] = $fromUser;
         $result[$i]['toUser'] = $toUser;
+        $result[$i]['sendingTime'] = $sendingTime;
         $i++;
     }
     mysqli_stmt_close($stmt);
