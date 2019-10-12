@@ -7,12 +7,12 @@ $users = [];
 
 $ws_worker_messages = new Worker("websocket://0.0.0.0:0666");
 
-$ws_worker_messages->onConnect = function($connection) use (&$users)
-{
-    $connection->onWebSocketConnect = function($connection) use (&$users)
-    {
-        databaseConnection($mconnection);
+databaseConnection($mconnection);
 
+$ws_worker_messages->onConnect = function($connection) use (&$users, &$mconnection)
+{
+    $connection->onWebSocketConnect = function($connection) use (&$users, &$mconnection)
+    {
         $userId = (int) $_GET['userId'];
         $token = $_GET['userToken'];
 
@@ -25,12 +25,10 @@ $ws_worker_messages->onConnect = function($connection) use (&$users)
         else {
             $connection->close();
         }
-
-        mysqli_close($mconnection);
     };
 };
 
-$ws_worker_messages->onMessage = function($connection, $data) use (&$users)
+$ws_worker_messages->onMessage = function($connection, $data) use (&$users, &$mconnection)
 {
     $sendingTime = date('c');
     $sendingTime = substr($sendingTime, 0, 10)." ".substr($sendingTime, 11, 8);
@@ -70,8 +68,6 @@ $ws_worker_messages->onMessage = function($connection, $data) use (&$users)
     $interlocutorId = $data->toUser;
     $message = $data->message;
 
-    databaseConnection($mconnection);
-
     $query = 'select id from messages order by id desc limit 1';
     $rows = mysqli_fetch_row(query($mconnection, $query));
     if ($rows[0] == "") {
@@ -83,11 +79,9 @@ $ws_worker_messages->onMessage = function($connection, $data) use (&$users)
 
     $query = "insert into messages (`id`, `fromUser`, `toUser`, `message`, `sendingTime`) values (?, ?, ?, ?, ?)";
     preparedQuery($mconnection, $query, [&$id, &$userId, &$interlocutorId, &$message, &$sendingTime], false);
-    
-    mysqli_close($mconnection);
 };
 
-$ws_worker_messages->onClose = function($connection) use(&$users)
+$ws_worker_messages->onClose = function($connection) use (&$users, &$mconnection)
 {
     $user = array_search($connection, $users);
     unset($users[$user]);
@@ -104,16 +98,16 @@ function databaseConnection(&$mconnection) {
     $databaseSelection = mysqli_select_db($mconnection, $database);
 }
 
-function query($mconnection, $query) {
-    $result = mysqli_query($mconnection, $query);
+function query($сmconnection, $query) {
+    $result = mysqli_query($сmconnection, $query);
     if (!$result) {
-        die(mysqli_error($mconnection));
+        die(mysqli_error($сmconnection));
     }
     return $result;
 }
 
-function preparedQuery($mconnection, $query, $params, $return) {
-    $stmt = mysqli_prepare($mconnection, $query);
+function preparedQuery($сmconnection, $query, $params, $return) {
+    $stmt = mysqli_prepare($сmconnection, $query);
     $markers = "";
     for ($i = 0; $i < count($params); $i++) {
         if (gettype($params[$i]) === "integer") {

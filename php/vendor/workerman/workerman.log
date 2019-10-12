@@ -132,3 +132,16 @@ Stack trace:
 2019-10-06 16:20:04 pid:1 Worker process terminated
 2019-10-12 08:52:03 pid:1 Worker process terminated with ERROR: E_RECOVERABLE_ERROR "Object of class mysqli_stmt could not be converted to string in C:\Server\data\htdocs\Projects\MyMessenger\php\WebSocketServer.php on line 100"
 2019-10-12 09:55:51 pid:1 Worker process terminated
+2019-10-12 19:21:52 pid:1 ArgumentCountError: Too few arguments to function {closure}(), 1 passed and exactly 2 expected in C:\Server\data\htdocs\Projects\MyMessenger\php\WebSocketServer.php:12
+Stack trace:
+#0 [internal function]: {closure}(Object(Workerman\Connection\TcpConnection))
+#1 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Worker.php(2424): call_user_func(Object(Closure), Object(Workerman\Connection\TcpConnection))
+#2 [internal function]: Workerman\Worker->acceptConnection(Resource id #19)
+#3 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Events\Select.php(294): call_user_func_array(Array, Array)
+#4 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Worker.php(2357): Workerman\Events\Select->loop()
+#5 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Worker.php(1351): Workerman\Worker->run()
+#6 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Worker.php(1294): Workerman\Worker::forkWorkersForWindows()
+#7 C:\Server\data\htdocs\Projects\MyMessenger\php\vendor\workerman\workerman\Worker.php(509): Workerman\Worker::forkWorkers()
+#8 C:\Server\data\htdocs\Projects\MyMessenger\php\WebSocketServer.php(92): Workerman\Worker::runAll()
+#9 {main}
+2019-10-12 19:21:52 pid:1 Worker process terminated
