@@ -5,9 +5,9 @@ use Workerman\Worker;
 
 $users = [];
 
-$ws_worker = new Worker("websocket://0.0.0.0:8000");
+$ws_worker_messages = new Worker("websocket://0.0.0.0:8000");
 
-$ws_worker->onConnect = function($connection) use (&$users)
+$ws_worker_messages->onConnect = function($connection) use (&$users)
 {
     $connection->onWebSocketConnect = function($connection) use (&$users)
     {
@@ -30,7 +30,7 @@ $ws_worker->onConnect = function($connection) use (&$users)
     };
 };
 
-$ws_worker->onMessage = function($connection, $data) use (&$users)
+$ws_worker_messages->onMessage = function($connection, $data) use (&$users)
 {
     $sendingTime = date('c');
     $sendingTime = substr($sendingTime, 0, 10)." ".substr($sendingTime, 11, 8);
@@ -72,7 +72,7 @@ $ws_worker->onMessage = function($connection, $data) use (&$users)
     mysqli_close($mconnection);
 };
 
-$ws_worker->onClose = function($connection) use(&$users)
+$ws_worker_messages->onClose = function($connection) use(&$users)
 {
     $user = array_search($connection, $users);
     unset($users[$user]);

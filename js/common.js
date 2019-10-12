@@ -1,6 +1,6 @@
 'use strict';
 
-let errors, response, id, inId, token, WebSocketConnection, sHeight;
+let errors, response, id, inId, token, MessagesWebSocketConnection, TimeWebSocketConnection, sHeight;
 
 errors = true;
 
@@ -602,9 +602,10 @@ function clearActive(chats, sidebarChats) {
 }
 
 function connect() {
-    WebSocketConnection = new WebSocket(`ws://${IP[0]}:8000/?userId=${id}&userToken=${token}`);
+    MessagesWebSocketConnection = new WebSocket(`ws://${IP[0]}:8000/?userId=${id}&userToken=${token}`);
+    TimeWebSocketConnection = new WebSocket(`ws://${IP[0]}:4000/?userId=${id}&userToken=${token}`);
 
-    WebSocketConnection.onmessage = (event) => {
+    MessagesWebSocketConnection.onmessage = (event) => {
         const data = JSON.parse(event.data);
         const fromUser = data.fromUser;
         const message = data.message;
@@ -685,26 +686,44 @@ function connect() {
             });
         }
     };
+
+    TimeWebSocketConnection.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        addMessageToChat(data.toUser, data.message, data.sendingTime);
+    }
 }
 
 function sendMessage(interlocutorId, message, chat) {
-    let data = {
+    let messageData = {
         fromUser: id,
         toUser: interlocutorId,
         message: message
     };
-    data = JSON.stringify(data);
-    WebSocketConnection.send(data);
+    let userData = {
+        fromUser: id,
+        toUser: interlocutorId,
+        message: message,
+        chat: chat
+    };
 
+    messageData = JSON.stringify(messageData);
+    userData = JSON.stringify(userData);
+
+    MessagesWebSocketConnection.send(messageData);
+    TimeWebSocketConnection.send(userData);
+}
+
+function addMessageToChat(interlocutorId, message, time) {
     const chatsList = document.querySelector('.sidebar #tc1');
     const sidebarChat = document.querySelector(`#tc1 #u${interlocutorId}`);
+    const chat = document.querySelector(`#i${interlocutorId} .messages`);
     const newSidebarChat = sidebarChat;
     const messageBlock = document.createElement('div');
     const sendingTime = document.createElement('span');
-    const date = new Date();
+    const date = new Date(time);
 
     sendingTime.className = 'sendingTime';
-    sendingTime.innerHTML = `${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+    sendingTime.innerHTML = `${date.getHours() - new Date().getTimezoneOffset() / 60}:${String(date.getMinutes()).padStart(2, '0')}`;
 
     messageBlock.className = 'userMessage';
     messageBlock.innerHTML = message;
@@ -762,11 +781,6 @@ function processMessage(interlocutorId, messages, event) {
     event.preventDefault();
 
     const userInput = document.querySelector(`#i${interlocutorId} .userForm .userInput`);
-
-    if (userInput.innerText.trim().match(REGEXP_TAG)) {
-        alert('Вийди, розбійнику!!!');
-    }
-
     const message = userInput.innerText.trim().replace(REGEXP_TAG, '').replace(REGEXP_SPECIAL,'');
 
     if (message !== '') {
