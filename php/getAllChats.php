@@ -4,9 +4,9 @@ require('./initial.php');
 session_start();
 $id = (int) $_SESSION['id'];
 
-$query = "select message, fromUser, toUser from messages where `fromUser` = ? or `toUser` = ?";
+$query = "select message, fromUser, toUser, sendingTime from messages where `fromUser` = ? or `toUser` = ?";
 $stmt = preparedQuery($connection, $query, [&$id, &$id]);
-mysqli_stmt_bind_result($stmt, $message, $fromUser, $toUser);
+mysqli_stmt_bind_result($stmt, $message, $fromUser, $toUser, $sendingTime);
 
 $result = [];
 $i = 0;
@@ -14,6 +14,7 @@ while (mysqli_stmt_fetch($stmt)) {
     $result[$i]['message'] = $message;
     $result[$i]['fromUser'] = $fromUser;
     $result[$i]['toUser'] = $toUser;
+    $result[$i]['sendingTime'] = $sendingTime;
     $i++;
 }
 mysqli_stmt_close($stmt);

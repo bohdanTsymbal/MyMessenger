@@ -548,7 +548,9 @@ function displayAllChats() {
             const chat = document.createElement('div');
             const lastMessage = document.createElement('p');
             const name = document.createElement('h3');
+            const lastMessageSendingTime = document.createElement('span');
             const sidebar = document.querySelector('.chatsPage .sidebar');
+            const date = new Date(messages[i].sendingTime);
 
             name.className = 'name';
             name.innerHTML = `${messages[i].firstName} ${messages[i].lastName}`;
@@ -556,8 +558,11 @@ function displayAllChats() {
             chat.id = `u${interlocutorId}`;
             lastMessage.className = 'lastMessage';
             lastMessage.innerHTML = messages[i].message;
+            lastMessageSendingTime.className = 'lastMessageSendingTime';
+            lastMessageSendingTime.innerHTML = `${date.getHours() - new Date().getTimezoneOffset() / 60}:${String(date.getMinutes()).padStart(2, '0')}`;
 
             chat.appendChild(name);
+            chat.appendChild(lastMessageSendingTime);
             chat.appendChild(lastMessage);
             chatsList.appendChild(chat);
             
@@ -620,9 +625,10 @@ function connect() {
                 const newMessage = document.createElement('div');
                 const sendingTime = document.createElement('span');
                 const date = new Date(data.sendingTime);
+                const sendingTimeValue = `${date.getHours() - new Date().getTimezoneOffset() / 60}:${String(date.getMinutes()).padStart(2, '0')}`;
         
                 sendingTime.className = 'sendingTime';
-                sendingTime.innerHTML = `${date.getHours() - new Date().getTimezoneOffset() / 60}:${String(date.getMinutes()).padStart(2, '0')}`;
+                sendingTime.innerHTML = sendingTimeValue;
         
                 newMessage.className = 'interlocutorMessage';
                 newMessage.innerHTML = message;
@@ -647,14 +653,18 @@ function connect() {
                     chatsList.prepend(newSidebarChat);
                 
                     const lastMessage = document.querySelector(`#u${fromUser} .lastMessage`);
+                    const lastMessageSendingTime = document.querySelector(`#u${fromUser} .lastMessageSendingTime`);
+
                     lastMessage.innerHTML = message;
+                    lastMessageSendingTime.innerHTML = sendingTimeValue;
                 }
                 else {
                     const params = `id=${fromUser}`;
         
                     makePostRequest(GET_FULL_NAME_PHP[0], params, () => {
                         const chat = document.createElement('div');
-                        let lastMessage = document.createElement('p');
+                        const lastMessage = document.createElement('p');
+                        const lastMessageSendingTime = document.createElement('span');
                         const name = document.createElement('h3');
                         const fullName = JSON.parse(response);
         
@@ -664,8 +674,11 @@ function connect() {
                         chat.id = `u${fromUser}`;
                         lastMessage.className = 'lastMessage';
                         lastMessage.innerHTML = message;
+                        lastMessageSendingTime.className = 'lastMessageSendingTime';
+                        lastMessageSendingTime.innerHTML = sendingTimeValue;
         
                         chat.appendChild(name);
+                        chat.appendChild(lastMessageSendingTime);
                         chat.appendChild(lastMessage);
                         chatsList.prepend(chat);
                         
@@ -724,9 +737,10 @@ function addMessageToChat(interlocutorId, message, time) {
     const messageBlock = document.createElement('div');
     const sendingTime = document.createElement('span');
     const date = new Date(time);
+    const sendingTimeValue = `${date.getHours() - new Date().getTimezoneOffset() / 60}:${String(date.getMinutes()).padStart(2, '0')}`;
 
     sendingTime.className = 'sendingTime';
-    sendingTime.innerHTML = `${date.getHours() - new Date().getTimezoneOffset() / 60}:${String(date.getMinutes()).padStart(2, '0')}`;
+    sendingTime.innerHTML = sendingTimeValue;
 
     messageBlock.className = 'userMessage';
     messageBlock.innerHTML = message;
@@ -740,14 +754,18 @@ function addMessageToChat(interlocutorId, message, time) {
         chatsList.prepend(newSidebarChat);
     
         const lastMessage = document.querySelector(`#u${interlocutorId} .lastMessage`);
+        const lastMessageSendingTime = document.querySelector(`#u${interlocutorId} .lastMessageSendingTime`);
+
         lastMessage.innerHTML = message;
+        lastMessageSendingTime.innerHTML = sendingTimeValue;
     }
     else {
         const params = `id=${interlocutorId}`;
 
         makePostRequest(GET_FULL_NAME_PHP[0], params, () => {
             const chat = document.createElement('div');
-            let lastMessage = document.createElement('p');
+            const lastMessage = document.createElement('p');
+            const lastMessageSendingTime = document.createElement('p');
             const name = document.createElement('h3');
             const fullName = JSON.parse(response);
 
@@ -757,8 +775,11 @@ function addMessageToChat(interlocutorId, message, time) {
             chat.id = `u${interlocutorId}`;
             lastMessage.className = 'lastMessage';
             lastMessage.innerHTML = message;
+            lastMessageSendingTime.className = 'lastMessageSendingTime';
+            lastMessageSendingTime.innerHTML = sendingTimeValue;
 
             chat.appendChild(name);
+            chat.appendChild(lastMessageSendingTime);
             chat.appendChild(lastMessage);
             chatsList.prepend(chat);
             

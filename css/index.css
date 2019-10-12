@@ -460,6 +460,10 @@ button {
 }
 
 .chatsPage .chat.activeChat p {
+  color: #f1f1f1;
+}
+
+.chatsPage .chat.activeChat .lastMessageSendingTime {
   color: #ede6e6;
 }
 
@@ -486,6 +490,7 @@ button {
 .chatsPage .name {
   color: #01855d;
   font-family: 'Noto Sans Bold', sans-serif;
+  display: inline;
 }
 
 .chatsPage .lastMessage {
@@ -495,6 +500,14 @@ button {
   overflow: hidden;
   white-space: nowrap;
   padding: 2px 0;
+}
+
+.chatsPage .lastMessageSendingTime {
+  font-size: 14px;
+  position: absolute;
+  right: 7px;
+  top: 19px;
+  color: #848484;
 }
 
 .nullPadding {

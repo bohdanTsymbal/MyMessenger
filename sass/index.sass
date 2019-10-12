@@ -9,6 +9,7 @@ $darkGreen: #01855d
 $lightGray: #dfdfdf
 $lighterGray: #f1f1f1
 $gray: #ede6e6
+$sendingTimeGray: rgb(132, 132, 132)
 
 @mixin paddingLeftRight($value)
     padding: 
@@ -236,7 +237,7 @@ button
         align-self: flex-start
         background: white
         .sendingTime
-            color: rgb(132, 132, 132)
+            color: $sendingTimeGray
         @extend %message
     .sendingTime
         display: block
@@ -302,6 +303,8 @@ button
         &.activeChat h3
             color: white
         &.activeChat p 
+            color: $lighterGray
+        &.activeChat .lastMessageSendingTime
             color: $gray
     .user
         padding: 24px 5px
@@ -321,6 +324,7 @@ button
     .name
         color: $darkGreen
         font-family: 'Noto Sans Bold', sans-serif
+        display: inline
     .lastMessage
         margin-top: 10px
         font-size: 15px
@@ -328,6 +332,12 @@ button
         overflow: hidden
         white-space: nowrap
         padding: 2px 0
+    .lastMessageSendingTime
+        font-size: 14px
+        position: absolute
+        right: 7px
+        top: 19px
+        color: $sendingTimeGray
 
 .nullPadding
     padding: 0
