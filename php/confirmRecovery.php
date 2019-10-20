@@ -9,7 +9,7 @@ if (!empty($_POST)) {
         echo true;
     }
     else {
-        echo false;
+        echo "The code you entered doesn`t match!";
     }
     mysqli_close($connection);
 }
