@@ -2,7 +2,7 @@
 if (!empty($_POST)) {
     require('./initial.php');
     session_start();
-    $userInput = $_POST['userInput'];
+    $userInput = $_POST['userCode'];
     if ($userInput == $_SESSION['registrationVerificationCode']) {
         $firstName = $_SESSION['registrationFirstName'];
         $lastName = $_SESSION['registrationLastName'];

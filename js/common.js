@@ -7,54 +7,37 @@ errors = true;
 window.onhashchange = () => navigate(location.hash);
 
 const params = 'param=id&unset=0';
-makePostRequest(CHECK_SESSION_PHP[0], params, () => {
-    if (response) {
-        location.hash = CHATS_PAGE;
-        navigate(CHATS_PAGE);
-        displayChatsPage();
-    }
-    else {
-        location.hash = SIGN_IN_PAGE;
-        navigate(SIGN_IN_PAGE);        
-    }
-});
+makePostRequest(CHECK_SESSION_PHP[0], params, checkSession);
 
 function navigate(hash) {
     switch (hash) {
         case REGISTARTION_PAGE: {
             displayPage('.registrationPage');
-            
-            const firstNameInput = document.querySelector('.registrationForm #firstName');
-            const lastNameInput = document.querySelector('.registrationForm #lastName');
-            const emailInput = document.querySelector('.registrationForm #email');
-            const usernameInput = document.querySelector('.registrationForm .username');
-            const password1Input = document.querySelector('.registrationForm .password1');
-            const password2Input = document.querySelector('.registrationForm .password2');
+
+            const inputs = {
+                firstNameInput: document.querySelector('.registrationForm #firstName'),
+                lastNameInput: document.querySelector('.registrationForm #lastName'),
+                emailInput: document.querySelector('.registrationForm #email'),
+                usernameInput: document.querySelector('.registrationForm .username'),
+                password1Input: document.querySelector('.registrationForm .password1'),
+                password2Input: document.querySelector('.registrationForm .password2')
+            };
             const selector = '.registrationPage .serverResponse';
 
-            firstNameInput.oninput = () => checkInput.call(firstNameInput, REGEXP_NAME);
-            lastNameInput.oninput = () => checkInput.call(lastNameInput, REGEXP_NAME);
-            emailInput.oninput = () => checkInput.call(emailInput, REGEXP_EMAIL);
-            usernameInput.oninput = () => checkInput.call(usernameInput, REGEXP_USERNAME);
-            password1Input.oninput = () => checkInput.call(password1Input, REGEXP_PASSWORD);
-            password2Input.oninput = () => checkPasswordCompliance(password1Input, password2Input);
+            inputs.firstNameInput.oninput = () => checkInput.call(inputs.firstNameInput, REGEXP_NAME);
+            inputs.lastNameInput.oninput = () => checkInput.call(inputs.lastNameInput, REGEXP_NAME);
+            inputs.emailInput.oninput = () => checkInput.call(inputs.emailInput, REGEXP_EMAIL);
+            inputs.usernameInput.oninput = () => checkInput.call(inputs.usernameInput, REGEXP_USERNAME);
+            inputs.password1Input.oninput = () => checkInput.call(inputs.password1Input, REGEXP_PASSWORD);
+            inputs.password2Input.oninput = () => checkPasswordCompliance(inputs.password1Input, inputs.password2Input);
             
             const form = document.querySelector('.registrationForm');
             form.onsubmit = (event) => {
                 event.preventDefault();
-                checkEmptiness(selector, () => {
-                    if (!errors) {
-                        const firstName = firstNameInput.value.trim();
-                        const lastName = lastNameInput.value.trim();
-                        const email = emailInput.value.trim();
-                        const username = usernameInput.value.trim();
-                        const password = password2Input.value.trim();
-                        const params = `firstName=${firstName}&lastName=${lastName}&email=${email}&username=${username}&password=${password}`;
-        
-                        makePostRequest(REGISTRATION_CHECKS_PHP[0], params, () => processPreliminaryResponse(selector, REGISTRATION_VERIFICATION_PAGE));
-                    }
-                }, firstNameInput, lastNameInput, emailInput, usernameInput, password1Input, password2Input);
-            }
+
+                checkEmptiness(selector, () => getServerResponce(inputs, REGISTRATION_CHECKS_PHP[0], selector, processPreliminaryResponse, REGISTRATION_VERIFICATION_PAGE), inputs);
+            }    
+
             break;
         }
 
@@ -68,98 +51,86 @@ function navigate(hash) {
 
             form.onsubmit = (event) => {
                 event.preventDefault();
-                checkEmptiness(selector, () => logIn(usernameLogInInput.value.trim(), passwordLogInInput.value.trim()), usernameLogInInput, passwordLogInInput);
+
+                checkEmptiness(selector, () => logIn(usernameLogInInput.value.trim(), passwordLogInInput.value.trim()), [usernameLogInInput, passwordLogInInput]);
             }
+
             break;
         }
 
         case REGISTRATION_VERIFICATION_PAGE: {
             displayPage('.registrationVerificationPage');
 
-            const input = document.querySelector('.registrationVerificationForm .verificationCode');
+            const inputs = {
+                userCodeInput: document.querySelector('.registrationVerificationForm .verificationCode')
+            };
             const form = document.querySelector('.registrationVerificationForm');
             const selector = '.registrationVerificationPage .serverResponse';
 
             form.onsubmit = (event) => {
                 event.preventDefault();
-                checkEmptiness(selector, () => {
-                    const userInput = input.value.trim();
-                    const params = `userInput=${userInput}`;
-                    const selector = 'main .startPage .serverResponse';
-    
-                    makePostRequest(CONFIRM_REGISTRATION_PHP[0], params, () => processFinalResponse(() => {
-                        location.hash = SIGN_IN_PAGE;
-                        alert('Registration has been successful!');
-                    }, selector));
-                }, input);
+                checkEmptiness(selector, () => getServerResponce(inputs, CONFIRM_REGISTRATION_PHP[0], selector, processFinalResponse, () => completeOperation(SIGN_IN_PAGE, 'Registration has been successful!')), inputs);
             }
+
             break;
         }
 
         case RECOVERY_PAGE: {
             displayPage('.recoveryPage');
 
-            const input = document.querySelector('.recoveryForm .username');
+            const inputs = {
+                usernameInput: document.querySelector('.recoveryForm .username')
+            };
             const form = document.querySelector('.recoveryForm');
             const selector = '.recoveryPage .serverResponse';
 
             form.onsubmit = (event) => {
                 event.preventDefault();
-                checkEmptiness(selector, () => {
-                    const username = input.value.trim();
-                    const params = `username=${username}`;
-                    const selector = '.recoveryPage .serverResponse';
-    
-                    makePostRequest(RESTORE_PASSWORD_PHP[0], params, () => processPreliminaryResponse(selector, RECOVERY_VERIFICATION_PAGE));
-                }, input);
+                errors = false;
+
+                checkEmptiness(selector, () => getServerResponce(inputs, RESTORE_PASSWORD_PHP[0], selector, processPreliminaryResponse, RECOVERY_VERIFICATION_PAGE), inputs);
             }
+
             break;
         }
 
         case RECOVERY_VERIFICATION_PAGE: {
             displayPage('.recoveryVerificationPage');
-
-            const input = document.querySelector('.recoveryVerificationForm .verificationCode');
+            
+            const inputs = {
+                userCodeInput: document.querySelector('.recoveryVerificationForm .verificationCode')
+            };
             const form = document.querySelector('.recoveryVerificationForm');
             const selector = '.recoveryVerificationPage .serverResponse';
             
             form.onsubmit = (event) => {
                 event.preventDefault();
-                checkEmptiness(selector, () => {
-                    const userInput = input.value.trim();
-                    const params = `userInput=${userInput}`;
-    
-                    makePostRequest(CONFIRM_RECOVERY_PHP[0], params, () => processPreliminaryResponse(selector, NEW_PASSWORD_PAGE));
-                }, input);
+
+                checkEmptiness(selector, () => getServerResponce(inputs, CONFIRM_RECOVERY_PHP[0], selector, processPreliminaryResponse, NEW_PASSWORD_PAGE), inputs);
             }
+
             break;
         }
 
         case NEW_PASSWORD_PAGE: {
             displayPage('.newPasswordPage');
 
-            const password1Input = document.querySelector('.newPasswordForm .password1');
-            const password2Input = document.querySelector('.newPasswordForm .password2');
+            const inputs = {
+                password1Input: document.querySelector('.newPasswordForm .password1'),
+                password2Input: document.querySelector('.newPasswordForm .password2')
+            };
             const form = document.querySelector('.newPasswordForm');
             const selector = '.newPasswordPage .serverResponse';
 
-            password1Input.oninput = () => checkInput.call(password1Input, REGEXP_PASSWORD);
-            password2Input.oninput = () => checkPasswordCompliance(password1Input, password2Input);
+            inputs.password1Input.oninput = () => checkInput.call(inputs.password1Input, REGEXP_PASSWORD);
+            inputs.password2Input.oninput = () => checkPasswordCompliance(inputs.password1Input, inputs.password2Input);
 
             form.onsubmit = (event) => {
                 event.preventDefault();
-                checkEmptiness(selector, () => {
-                    const newPassword = password2Input.value.trim();
-                    const params = `newPassword=${newPassword}`;
-                    const selector = '.newPasswordPage .serverResponse';
-                    const message = 'Your password has been changed succefully!';
-    
-                    makePostRequest(SET_NEW_PASSWORD_PHP[0], params, () => processFinalResponse(() => {
-                        location.hash = SIGN_IN_PAGE;
-                        alert(message);
-                    }, selector));
-                }, password1Input, password2Input);
+
+                checkEmptiness(selector, () => getServerResponce(inputs, SET_NEW_PASSWORD_PHP[0], selector, processFinalResponse, () => completeOperation(SIGN_IN_PAGE, 'Your password has been changed succefully!')), inputs);
             }
+
             break;
         }
 
@@ -183,6 +154,7 @@ function navigate(hash) {
             }
 
             window.onkeydown = (event) => pressEnter(event, inId);
+
             break;
         }
 
@@ -190,6 +162,23 @@ function navigate(hash) {
             break;
         }
     }
+}
+
+function checkSession() {
+    if (response) {
+        location.hash = CHATS_PAGE;
+        navigate(CHATS_PAGE);
+        displayChatsPage();
+    }
+    else {
+        location.hash = SIGN_IN_PAGE;
+        navigate(SIGN_IN_PAGE);        
+    }
+}
+
+function completeOperation(toPage, message) {
+    location.hash = toPage;
+    alert(message);
 }
 
 function displayPage(elementSelector=null, displayType='block') {
@@ -206,7 +195,7 @@ function displayPage(elementSelector=null, displayType='block') {
     }
 }
 
-function checkEmptiness(outSelector, perform, ...elements) {
+function checkEmptiness(outSelector, perform, elements) {
     let condition = true;
     const out = document.querySelector(outSelector);
 
@@ -289,7 +278,23 @@ function makePostRequest(url, params, perform) {
     }
 }
 
-function processPreliminaryResponse(outSelector, toPage) {
+function getServerResponce(inputs, api, selector, callback, callbackParam) {
+    if (!errors) {
+        let params = "";
+
+        for (let key in inputs) {
+            const value = inputs[key].value.trim();
+            const newKey = key.replace('Input', '').replace(/\d/g, '');
+            params += `${newKey}=${value}&`;
+            if (newKey === 'password') break;
+        }
+        params = params.slice(0, params.length - 1);
+
+        makePostRequest(api, params, () => callback(callbackParam, selector));
+    }
+}
+
+function processPreliminaryResponse(toPage, outSelector) {
     const out = document.querySelector(outSelector);
 
     if (response == true) {
@@ -717,7 +722,7 @@ function connect() {
     };
 }
 
-function sendMessage(interlocutorId, message, chat) {
+function sendMessage(interlocutorId, message) {
     let messageData = {
         fromUser: id,
         toUser: interlocutorId,
@@ -725,7 +730,6 @@ function sendMessage(interlocutorId, message, chat) {
     };
 
     messageData = JSON.stringify(messageData);
-
     WebSocketConnection.send(messageData);
 }
 
