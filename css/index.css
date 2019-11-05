@@ -583,6 +583,9 @@ button {
   .chatsPage .send {
     margin-left: 5px;
   }
+  .registrationPage #usernameAlert, .newPasswordPage #usernameAlert {
+    font-size: 9px;
+  }
 }
 
 @media screen and (max-width: 320px) {

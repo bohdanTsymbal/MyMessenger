@@ -199,8 +199,8 @@ function checkEmptiness(outSelector, perform, elements) {
     let condition = true;
     const out = document.querySelector(outSelector);
 
-    for (let i = 0; i < elements.length; i++) {
-        if (!elements[i].value.trim()) {
+    for (let element of Object.keys(elements)) {
+        if (!elements[element].value.trim()) {
             condition = false;
             break;
         }
