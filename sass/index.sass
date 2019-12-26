@@ -10,6 +10,7 @@ $lightGray: #dfdfdf
 $lighterGray: #f1f1f1
 $gray: #ede6e6
 $sendingTimeGray: rgb(132, 132, 132)
+$violet: #693175
 
 @mixin paddingLeftRight($value)
     padding: 
@@ -309,6 +310,22 @@ button
         @extend %sidebarPoint
         &.activeChat, &.activeChat:hover
             background-color: $darkGreen
+            color: white
+        &.activeChat h3
+            color: white
+        &.activeChat p 
+            color: $lighterGray
+        &.activeChat .lastMessageSendingTime
+            color: $gray
+    .tasksSidebar
+        padding: 15px 5px
+        @extend %sidebarPoint
+        h3
+            color: $violet
+        &:hover
+            background-color: rgba(105, 49, 117, 0.3)
+        &.activeChat, &.activeChat:hover
+            background-color: $violet
             color: white
         &.activeChat h3
             color: white

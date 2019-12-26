@@ -156,6 +156,14 @@ function navigate(hash) {
 
             window.onkeydown = (event) => pressEnter(event, inId);
 
+            const tasksSidebar = document.querySelector('.sidebar .tasksSidebar');
+            tasksSidebar.onclick = function () {
+                const sidebarChats = document.querySelectorAll('.tabContent .chat');
+                const chats = document.querySelectorAll('.chatsPage .activeChatInterface');
+                clearActive(chats, sidebarChats);
+                this.classList.add('activeChat');
+            }
+
             break;
         }
 
@@ -631,6 +639,8 @@ function clearActive(chats, sidebarChats) {
     for (let i = 0; i < sidebarChats.length; i++) {
         sidebarChats[i].classList.remove('activeChat');
     }
+
+    document.querySelector('.sidebar .tasksSidebar').classList.remove('activeChat');
 }
 
 function connect() {

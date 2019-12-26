@@ -128,7 +128,7 @@ a {
   text-align: left;
 }
 
-.chatsPage .chat, .chatsPage .user {
+.chatsPage .chat, .chatsPage .tasksSidebar, .chatsPage .user {
   font-family: 'Noto Sans Regular', sans-serif;
   cursor: pointer;
   position: relative;
@@ -136,7 +136,7 @@ a {
   text-indent: 35px;
 }
 
-.chatsPage .chat:hover, .chatsPage .user:hover {
+.chatsPage .chat:hover, .chatsPage .tasksSidebar:hover, .chatsPage .user:hover {
   background-color: rgba(1, 133, 93, 0.3);
 }
 
@@ -476,6 +476,35 @@ button {
 }
 
 .chatsPage .chat.activeChat .lastMessageSendingTime {
+  color: #ede6e6;
+}
+
+.chatsPage .tasksSidebar {
+  padding: 15px 5px;
+}
+
+.chatsPage .tasksSidebar h3 {
+  color: #693175;
+}
+
+.chatsPage .tasksSidebar:hover {
+  background-color: rgba(105, 49, 117, 0.3);
+}
+
+.chatsPage .tasksSidebar.activeChat, .chatsPage .tasksSidebar.activeChat:hover {
+  background-color: #693175;
+  color: white;
+}
+
+.chatsPage .tasksSidebar.activeChat h3 {
+  color: white;
+}
+
+.chatsPage .tasksSidebar.activeChat p {
+  color: #f1f1f1;
+}
+
+.chatsPage .tasksSidebar.activeChat .lastMessageSendingTime {
   color: #ede6e6;
 }
 
