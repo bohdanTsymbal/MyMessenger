@@ -1,8 +1,9 @@
 'use strict';
 
-let errors, response, id, inId, token, WebSocketConnection, sHeight;
+let errors, response, id, inId, token, WebSocketConnection, sHeight, messagesDate;
 
 errors = true;
+messagesDate = new Object();
 
 window.onhashchange = () => navigate(location.hash);
 
@@ -362,7 +363,7 @@ function switchTab(event, allTabs, allContent, className, contentSelector, displ
     }
 }
 
-function createChatInterface(interlocutorId, firstName, lastName, number=null, newMessage=null) {
+function createChatInterface(interlocutorId, firstName, lastName, number=null, newMessage=null, formattedDate=null, sendingTimeValue=null) {
     const chatsPage = document.querySelector('.chatsPage');
     const sidebar = document.querySelector('.chatsPage .sidebar');
     const chatUI = document.createElement('div');
@@ -406,6 +407,7 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, n
             for (let i = messagesContent.length - 1; i > -1; i--) {
                 const message = document.createElement('div');
                 const sendingTime = document.createElement('span');
+                const messagesDateBlock = document.createElement('div');
                 const date = new Date(messagesContent[i].sendingTime);
 
                 sendingTime.className = 'sendingTime';
@@ -414,16 +416,36 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, n
                 message.className = messagesContent[i].fromUser == id ? 'userMessage' : 'interlocutorMessage';
                 message.innerHTML = messagesContent[i].message;
 
+                const formattedDate = `${date.getDate()}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
+                messagesDateBlock.className = 'messagesDate';
+                messagesDateBlock.innerHTML = formattedDate;
+                if (messagesDate[interlocutorId] != formattedDate) {
+                    messages.appendChild(messagesDateBlock);
+                    messagesDate[interlocutorId] = formattedDate;
+                }
+
                 message.appendChild(sendingTime);
                 messages.appendChild(message);
             }
 
             if (newMessage) {
                 const newMessageBlock = document.createElement('div');
+                const sendingTime = document.createElement('span');
+                const messagesDateBlock = document.createElement('div');
 
                 newMessageBlock.className = 'interlocutorMessage';
                 newMessageBlock.innerHTML = newMessage;
+                sendingTime.className = 'sendingTime';
+                sendingTime.innerHTML = sendingTimeValue;
 
+                messagesDateBlock.className = 'messagesDate';
+                messagesDateBlock.innerHTML = formattedDate;
+            
+                if (messagesDate[interlocutorId] != formattedDate) {
+                    messages.appendChild(messagesDateBlock);
+                    messagesDate[interlocutorId] = formattedDate;
+                }
+                newMessageBlock.appendChild(sendingTime);
                 messages.appendChild(newMessageBlock);
             }
 
@@ -621,6 +643,8 @@ function connect() {
             case 'message': {
                 const fromUser = data.fromUser;
                 const message = data.message;
+
+                inId = data.fromUser;
         
                 const chat = document.querySelector(`#i${fromUser} .messages`);
                 let chatsList = document.querySelector('.sidebar #tc1');
@@ -629,8 +653,13 @@ function connect() {
         
                 const newMessage = document.createElement('div');
                 const sendingTime = document.createElement('span');
+                const messagesDateBlock = document.createElement('div');
                 const date = new Date(data.sendingTime);
                 const sendingTimeValue = `${date.getHours() - new Date().getTimezoneOffset() / 60}:${String(date.getMinutes()).padStart(2, '0')}`;
+
+                const formattedDate = `${date.getDate()}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
+                messagesDateBlock.className = 'messagesDate';
+                messagesDateBlock.innerHTML = formattedDate;
         
                 sendingTime.className = 'sendingTime';
                 sendingTime.innerHTML = sendingTimeValue;
@@ -641,6 +670,10 @@ function connect() {
                 newMessage.appendChild(sendingTime);
         
                 if (chat) {
+                    if (messagesDate[inId] != formattedDate) {
+                        chat.appendChild(messagesDateBlock);
+                        messagesDate[inId] = formattedDate;
+                    }
                     chat.appendChild(newMessage);
                     chat.scrollTo(0, chat.scrollHeight);
                 }
@@ -649,7 +682,7 @@ function connect() {
         
                     makePostRequest(GET_FULL_NAME_PHP[0], params, () => {
                         const fullName = JSON.parse(response);
-                        createChatInterface(fromUser, fullName.firstName, fullName.lastName, 50, message);
+                        createChatInterface(fromUser, fullName.firstName, fullName.lastName, 50, message, formattedDate, sendingTimeValue);
                     });
                 }
         
@@ -742,6 +775,15 @@ function addMessageToChat(interlocutorId, message, time) {
     const sendingTime = document.createElement('span');
     const date = new Date(time);
     const sendingTimeValue = `${date.getHours() - new Date().getTimezoneOffset() / 60}:${String(date.getMinutes()).padStart(2, '0')}`;
+    const messagesDateBlock = document.createElement('div');
+
+    const formattedDate = `${date.getDate()}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
+    messagesDateBlock.className = 'messagesDate';
+    messagesDateBlock.innerHTML = formattedDate;
+    if (messagesDate[interlocutorId] != formattedDate) {
+        chat.appendChild(messagesDateBlock);
+        messagesDate[interlocutorId] = formattedDate;
+    }
 
     sendingTime.className = 'sendingTime';
     sendingTime.innerHTML = sendingTimeValue;

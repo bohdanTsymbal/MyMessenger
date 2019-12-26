@@ -382,6 +382,18 @@ button {
   margin: -8px -43px 0 0;
 }
 
+.chatsPage .messagesDate {
+  display: block;
+  align-self: center;
+  font-size: 17px;
+  font-family: 'Noto Sans Bold', sans-serif;
+  color: #1f1f1f;
+  padding: 5px 10px;
+  border: 3px solid #02a365;
+  border-radius: 25px;
+  margin: 10px 0;
+}
+
 .chatsPage .userForm {
   padding: 10px 25px;
   background: #f1f1f1;
@@ -505,7 +517,7 @@ button {
 .chatsPage .lastMessageSendingTime {
   font-size: 14px;
   position: absolute;
-  right: 7px;
+  right: 18px;
   top: 19px;
   color: #848484;
 }
