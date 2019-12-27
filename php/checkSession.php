@@ -8,7 +8,7 @@ if (!empty($_POST)) {
         if ($unset == 1) {
             unset($_SESSION[$param]);
         }
-        echo true;
+        echo json_encode($_SESSION[$param]);
     }
     else {
         session_destroy();

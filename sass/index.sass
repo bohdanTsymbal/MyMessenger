@@ -11,6 +11,7 @@ $lighterGray: #f1f1f1
 $gray: #ede6e6
 $sendingTimeGray: rgb(132, 132, 132)
 $violet: #693175
+$lightBlack: #1f1f1f
 
 @mixin paddingLeftRight($value)
     padding: 
@@ -211,6 +212,8 @@ button
         font-family: 'Montserrat', sans-serif
         background: $lighterGray
         position: relative
+        color: $lightBlack
+        letter-spacing: 0.75px
     .back
         display: none
         position: absolute
@@ -250,7 +253,7 @@ button
         align-self: center
         font-size: 17px
         font-family: 'Noto Sans Bold', sans-serif
-        color: #1f1f1f
+        color: $lightBlack
         padding: 5px 10px
         border: 2px solid $green
         border-radius: 25px

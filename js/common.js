@@ -154,13 +154,29 @@ function navigate(hash) {
             }
 
             window.onkeydown = (event) => pressEnter(event, inId);
+            window.ondblclick = (event) => addToTasks(event);
+
+            createChatInterface(id, 'Tasks', '', 50);
 
             const tasksSidebar = document.querySelector('.sidebar .tasksSidebar');
             tasksSidebar.onclick = function () {
+                const chatInterface = document.querySelector(`.chatsPage #i${id}`);
+                const messagesBlocks = document.querySelector(`#i${id} .messages`);
                 const sidebarChats = document.querySelectorAll('.tabContent .chat');
                 const chats = document.querySelectorAll('.chatsPage .activeChatInterface');
+
                 clearActive(chats, sidebarChats);
-                this.classList.add('activeChat');
+
+                tasksSidebar.classList.add('activeChat');
+                chatInterface.style.display = 'flex';
+                messagesBlocks.scrollTo(0, messagesBlocks.scrollHeight);
+
+                if (document.documentElement.clientWidth <= 768) {
+                    sidebar.style.display = 'none';
+                    chat.classList.remove('activeChat');
+                }
+
+                inId = id;
             }
 
             break;
@@ -173,7 +189,8 @@ function navigate(hash) {
 }
 
 function checkSession() {
-    if (response) {
+    if (response != false) {
+        id = JSON.parse(response);
         location.hash = CHATS_PAGE;
         navigate(CHATS_PAGE);
         displayChatsPage();
@@ -871,4 +888,24 @@ function processMessage(interlocutorId, messages, event) {
     }
 
     userInput.innerHTML = '';
+}
+
+function addToTasks(event) {
+    event.preventDefault();
+
+    const message = event.target;
+    if (message.classList.contains('userMessage') || message.classList.contains('interlocutorMessage')) {
+        const textAndTime = message.innerText.split('\n');
+        const taskText = textAndTime[0];
+        const taskTime = textAndTime[1];
+        const taskAuthor = message.parentNode.previousElementSibling.innerText;
+        let taskDay;
+
+        const days = message.parentNode.querySelectorAll('.messagesDate');
+        for (let i = 0; i < days.length; i++) {
+            if (message.offsetTop >= days[i].offsetTop) taskDay = days[i].innerText;
+        }
+        
+        console.log(taskText, taskDay, taskTime, taskAuthor);
+    }
 }
