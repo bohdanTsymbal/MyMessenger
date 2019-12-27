@@ -35,7 +35,6 @@ function navigate(hash) {
             const form = document.querySelector('.registrationForm');
             form.onsubmit = (event) => {
                 event.preventDefault();
-
                 checkEmptiness(selector, () => getServerResponce(inputs, REGISTRATION_CHECKS_PHP[0], selector, processPreliminaryResponse, REGISTRATION_VERIFICATION_PAGE), inputs);
             }    
 
@@ -786,6 +785,8 @@ function addMessageToChat(interlocutorId, message, time) {
     const date = new Date(time);
     const sendingTimeValue = `${date.getHours() - new Date().getTimezoneOffset() / 60}:${String(date.getMinutes()).padStart(2, '0')}`;
     const messagesDateBlock = document.createElement('div');
+    const tasksSidebar = document.querySelector('.sidebar .tasksSidebar');
+    const newTasksSidebar = tasksSidebar;
 
     const formattedDate = `${date.getDate()}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
     messagesDateBlock.className = 'messagesDate';
@@ -808,6 +809,8 @@ function addMessageToChat(interlocutorId, message, time) {
     if (sidebarChat) {    
         chatsList.removeChild(sidebarChat);
         chatsList.prepend(newSidebarChat);
+        chatsList.removeChild(tasksSidebar);
+        chatsList.prepend(newTasksSidebar);
     
         const lastMessage = document.querySelector(`#u${interlocutorId} .lastMessage`);
         const lastMessageSendingTime = document.querySelector(`#u${interlocutorId} .lastMessageSendingTime`);
