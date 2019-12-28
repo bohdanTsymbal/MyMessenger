@@ -238,6 +238,7 @@ button
             color: $lightGray
         @extend %message
     .interlocutorMessage
+        position: relative
         align-self: flex-start
         background: white
         .sendingTime
@@ -245,7 +246,15 @@ button
         &.taskMessage
             min-width: 150px
             margin-top: 7px
+            padding-top: 25px
         @extend %message
+    .authorName
+        position: absolute
+        top: 5px
+        left: 15px
+        font-family: 'Montserrat'
+        font-size: 14px
+        color: $violet
     .sendingTime
         display: block
         text-align: right

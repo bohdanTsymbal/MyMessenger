@@ -912,6 +912,7 @@ function addToTasks(event) {
 
         const messageBlock = document.createElement('div');
         const sendingTime = document.createElement('span');
+        const authorName = document.createElement('h4');
 
         sendingTime.className = 'sendingTime taskTime';
         sendingTime.innerHTML = `${taskDay} ${taskTime}`;
@@ -922,6 +923,10 @@ function addToTasks(event) {
         lastTaskText.innerHTML = taskText;
         lastTaskTime.innerHTML = taskTime;
 
+        authorName.className = 'authorName';
+        authorName.innerHTML = taskAuthor;
+
+        messageBlock.appendChild(authorName);
         messageBlock.appendChild(sendingTime);
         tasksChat.appendChild(messageBlock);
         tasksChat.scrollTo(0, tasksChat.scrollHeight);
