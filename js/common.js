@@ -156,8 +156,6 @@ function navigate(hash) {
             window.onkeydown = (event) => pressEnter(event, inId);
             window.ondblclick = (event) => addToTasks(event);
 
-            createChatInterface(id, 'Tasks', '', 50);
-
             const tasksSidebar = document.querySelector('.sidebar .tasksSidebar');
             tasksSidebar.onclick = function () {
                 const chatInterface = document.querySelector(`.chatsPage #i${id}`);
@@ -360,6 +358,8 @@ function displayChatsPage() {
         const info = JSON.parse(response);
         id = info.id;
         token = info.token;
+        createChatInterface(id, 'Tasks', '', 50);
+        document.querySelector('.chatsPage .tasksSidebar').id = `u${id}`;
         connect();
         makePostRequest(GET_ALL_CHATS_PHP[0], '', displayAllChats);
     });
@@ -894,7 +894,7 @@ function addToTasks(event) {
     event.preventDefault();
 
     const message = event.target;
-    if (message.classList.contains('userMessage') || message.classList.contains('interlocutorMessage')) {
+    if ((message.classList.contains('userMessage') || message.classList.contains('interlocutorMessage')) && !message.classList.contains('taskMessage')) {
         const textAndTime = message.innerText.split('\n');
         const taskText = textAndTime[0];
         const taskTime = textAndTime[1];
@@ -905,7 +905,25 @@ function addToTasks(event) {
         for (let i = 0; i < days.length; i++) {
             if (message.offsetTop >= days[i].offsetTop) taskDay = days[i].innerText;
         }
-        
-        console.log(taskText, taskDay, taskTime, taskAuthor);
+
+        const tasksChat = document.querySelector(`#i${id} .messages`);
+        const lastTaskText = document.querySelector(`#u${id} .lastMessage`);
+        const lastTaskTime = document.querySelector(`#u${id} .lastMessageSendingTime`);
+
+        const messageBlock = document.createElement('div');
+        const sendingTime = document.createElement('span');
+
+        sendingTime.className = 'sendingTime taskTime';
+        sendingTime.innerHTML = `${taskDay} ${taskTime}`;
+
+        messageBlock.className = 'interlocutorMessage taskMessage';
+        messageBlock.innerHTML = taskText;
+
+        lastTaskText.innerHTML = taskText;
+        lastTaskTime.innerHTML = taskTime;
+
+        messageBlock.appendChild(sendingTime);
+        tasksChat.appendChild(messageBlock);
+        tasksChat.scrollTo(0, tasksChat.scrollHeight);
     }
 }
