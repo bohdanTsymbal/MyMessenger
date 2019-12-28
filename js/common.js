@@ -1,6 +1,6 @@
 'use strict';
 
-let errors, response, id, inId, token, WebSocketConnection, sHeight, messagesDate;
+let errors, response, id, firstName, lastName, inId, token, WebSocketConnection, sHeight, messagesDate;
 
 errors = true;
 messagesDate = new Object();
@@ -353,10 +353,12 @@ function logIn(username, password) {
 function displayChatsPage() {
     location.hash = CHATS_PAGE;
 
-    const requestedInfo = JSON.stringify(['id', 'token']);
+    const requestedInfo = JSON.stringify(['id', 'firstName', 'lastName', 'token']);
     makePostRequest(GET_USER_INFO_PHP[0], `requestedInfo=${requestedInfo}`, () => {
         const info = JSON.parse(response);
         id = info.id;
+        firstName = info.firstName;
+        lastName = info.lastName;
         token = info.token;
         createChatInterface(id, 'Tasks', '', 50);
         document.querySelector('.chatsPage .tasksSidebar').id = `u${id}`;
@@ -770,7 +772,7 @@ function connect() {
 
             case 'sendingTime': {
                 const data = JSON.parse(event.data);
-                addMessageToChat(data.toUser, data.message, data.sendingTime);
+                addMessageToChat(data.toUser, data.message, data.sendingTime, id == data.toUser);
 
                 break;
             }
@@ -792,7 +794,7 @@ function sendMessage(interlocutorId, message) {
     WebSocketConnection.send(messageData);
 }
 
-function addMessageToChat(interlocutorId, message, time) {
+function addMessageToChat(interlocutorId, message, time, isTaskMessage) {
     const chatsList = document.querySelector('.sidebar #tc1');
     const sidebarChat = document.querySelector(`#tc1 #u${interlocutorId}`);
     const chat = document.querySelector(`#i${interlocutorId} .messages`);
@@ -804,21 +806,26 @@ function addMessageToChat(interlocutorId, message, time) {
     const messagesDateBlock = document.createElement('div');
     const tasksSidebar = document.querySelector('.sidebar .tasksSidebar');
     const newTasksSidebar = tasksSidebar;
+    const authorName = document.createElement('h4');
 
     const formattedDate = `${date.getDate()}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
     messagesDateBlock.className = 'messagesDate';
     messagesDateBlock.innerHTML = formattedDate;
-    if (messagesDate[interlocutorId] != formattedDate) {
+    if (messagesDate[interlocutorId] != formattedDate && !isTaskMessage) {
         chat.appendChild(messagesDateBlock);
         messagesDate[interlocutorId] = formattedDate;
     }
 
-    sendingTime.className = 'sendingTime';
-    sendingTime.innerHTML = sendingTimeValue;
+    sendingTime.className = isTaskMessage ? 'sendingTime taskTime' : 'sendingTime';
+    sendingTime.innerHTML = `${formattedDate} ${sendingTimeValue}`;
 
-    messageBlock.className = 'userMessage';
+    messageBlock.className = isTaskMessage ? 'interlocutorMessage taskMessage' : 'userMessage';
     messageBlock.innerHTML = message;
 
+    authorName.className = 'authorName';
+    authorName.innerHTML = `${firstName} ${lastName}`;
+
+    messageBlock.appendChild(authorName);
     messageBlock.appendChild(sendingTime);
     chat.appendChild(messageBlock);
     chat.scrollTo(0, chat.scrollHeight);

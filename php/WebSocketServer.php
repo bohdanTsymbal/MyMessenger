@@ -36,7 +36,7 @@ $ws_worker_messages->onMessage = function($connection, $data) use (&$users, &$mc
     $data = json_decode($data);
     $userId = $data->fromUser;
 
-    if (isset($users[$data->toUser])) {
+    if (isset($users[$data->toUser]) && $userId != $data->toUser) {
         $webconnection = $users[$data->toUser];
 
         $initialData = [
