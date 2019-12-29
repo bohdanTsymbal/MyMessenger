@@ -446,7 +446,7 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, i
 
                 const authorName = document.createElement('h4');
                 authorName.className = 'authorName';
-                authorName.innerHTML = 'taskAuthor';
+                authorName.innerHTML = `${messagesContent[i].firstName} ${messagesContent[i].lastName}`;
 
                 messagesDateBlock.className = 'messagesDate';
                 messagesDateBlock.innerHTML = formattedDate;
@@ -598,6 +598,11 @@ function displayAllChats() {
     const displayedChats = [];
     const chatsList = document.querySelector('.sidebar #tc1');
 
+    const lastMessageText = document.querySelector(`#u${id} .lastMessage`);
+    const lastMessageTime = document.querySelector(`#u${id} .lastMessageSendingTime`);
+    lastMessageText.innerHTML = '*empty*';
+    lastMessageTime.innerHTML = '*empty*';
+
     for (let i = messages.length - 1; i > -1; i--) {
         const interlocutorId = messages[i].fromUser == id ? messages[i].toUser : messages[i].fromUser;
         const date = new Date(messages[i].sendingTime);
@@ -654,8 +659,6 @@ function displayAllChats() {
         }
         else if (displayedChats.indexOf(interlocutorId) == -1 && interlocutorId == id) {
             displayedChats.push(interlocutorId);
-            const lastMessageText = document.querySelector(`#u${id} .lastMessage`);
-            const lastMessageTime = document.querySelector(`#u${id} .lastMessageSendingTime`);
             lastMessageText.innerHTML = messages[i].message;
             lastMessageTime.innerHTML = `${date.getHours() - new Date().getTimezoneOffset() / 60}:${String(date.getMinutes()).padStart(2, '0')}`;
         }
@@ -691,6 +694,8 @@ function connect() {
                 let chatsList = document.querySelector('.sidebar #tc1');
                 const sidebarChat = document.querySelector(`#tc1 #u${fromUser}`);
                 const newSidebarChat = sidebarChat;
+                const tasksSidebar = document.querySelector('.sidebar .tasksSidebar');
+                const newTasksSidebar = tasksSidebar;
         
                 const newMessage = document.createElement('div');
                 const sendingTime = document.createElement('span');
@@ -730,6 +735,8 @@ function connect() {
                 if (sidebarChat) {
                     chatsList.removeChild(sidebarChat);
                     chatsList.prepend(newSidebarChat);
+                    chatsList.removeChild(tasksSidebar);
+                    chatsList.prepend(newTasksSidebar);
                 
                     const lastMessage = document.querySelector(`#u${fromUser} .lastMessage`);
                     const lastMessageSendingTime = document.querySelector(`#u${fromUser} .lastMessageSendingTime`);
@@ -760,6 +767,8 @@ function connect() {
                         chat.appendChild(lastMessageSendingTime);
                         chat.appendChild(lastMessage);
                         chatsList.prepend(chat);
+                        chatsList.removeChild(tasksSidebar);
+                        chatsList.prepend(newTasksSidebar);
                         
                         chat.onclick = () => {
                             let chatInterface = document.querySelector(`.chatsPage #i${fromUser}`);
@@ -796,13 +805,14 @@ function connect() {
     };
 }
 
-function sendMessage(interlocutorId, message, sendingTime="NONE", whetherReturnTime=true) {
+function sendMessage(interlocutorId, message, authorId, sendingTime="NONE", whetherReturnTime=true) {
     let messageData = {
         fromUser: id,
         toUser: interlocutorId,
         message: message,
         sendingTime: sendingTime,
-        returnTime: whetherReturnTime
+        returnTime: whetherReturnTime,
+        authorId: authorId
     };
 
     messageData = JSON.stringify(messageData);
@@ -880,6 +890,8 @@ function addMessageToChat(interlocutorId, message, time, isTaskMessage) {
             chat.appendChild(lastMessageSendingTime);
             chat.appendChild(lastMessage);
             chatsList.prepend(chat);
+            chatsList.removeChild(tasksSidebar);
+            chatsList.prepend(newTasksSidebar);
             
             chat.onclick = makeActive;
 
@@ -906,7 +918,7 @@ function processMessage(interlocutorId, event) {
     const message = userInput.innerText.trim().replace(REGEXP_TAG, '').replace(REGEXP_SPECIAL,'');
 
     if (message !== '') {
-        sendMessage(interlocutorId, message);
+        sendMessage(interlocutorId, message, interlocutorId);
     }
 
     userInput.innerHTML = '';
@@ -952,7 +964,8 @@ function addToTasks(event) {
         const time = taskTime.split(':');
         time[2] = '00';
         const dateTime = `${date[2]}-${date[1]}-${date[0]} ${+time[0] + new Date().getTimezoneOffset() / 60}:${time[1]}:${time[2]}`;
-        sendMessage(id, taskText, dateTime, false);
+        const authorId = message.parentNode.parentNode.id.replace('i', '');
+        sendMessage(id, taskText, authorId, dateTime, false);
 
         messageBlock.appendChild(authorName);
         messageBlock.appendChild(sendingTime);

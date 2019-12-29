@@ -30,8 +30,8 @@ if (!$databaseSelection) {
 	die(mysqli_error($connection));
 }
 $queries = array(
-    "create table if not exists users (id tinyint unsigned not null primary key, firstName tinytext not null, lastName tinytext not null, email tinytext not null, username tinytext not null, password tinytext not null, token tinytext not null) engine=innodb character set utf8",
-    "create table if not exists messages (id decimal(65, 0) unsigned not null primary key, message text not null, fromUser tinyint unsigned not null, toUser tinyint unsigned not null, sendingTime datetime not null, foreign key (fromUser) references users (id) on delete cascade, foreign key (toUser) references users (id) on delete cascade) engine=innodb character set utf8"
+    "create table if not exists users (id tinyint not null primary key, firstName tinytext not null, lastName tinytext not null, email tinytext not null, username tinytext not null, password tinytext not null, token tinytext not null) engine=innodb character set utf8",
+    "create table if not exists messages (id decimal(65, 0) unsigned not null primary key, message text not null, fromUser tinyint not null, toUser tinyint not null, sendingTime datetime not null, authorId tinyint not null, foreign key (fromUser) references users (id) on delete cascade, foreign key (toUser) references users (id) on delete cascade, foreign key (authorId) references users (id) on delete cascade) engine=innodb character set utf8"
 );
 query($connection, $queries);
 mysqli_close($connection);

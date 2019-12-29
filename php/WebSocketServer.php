@@ -73,6 +73,7 @@ $ws_worker_messages->onMessage = function($connection, $data) use (&$users, &$mc
     $id;
     $interlocutorId = $data->toUser;
     $message = $data->message;
+    $authorId = (int)$data->authorId;
 
     $query = 'select id from messages order by id desc limit 1';
     $rows = mysqli_fetch_row(query($mconnection, $query));
@@ -83,8 +84,8 @@ $ws_worker_messages->onMessage = function($connection, $data) use (&$users, &$mc
         $id = ++$rows[0];
     }
 
-    $query = "insert into messages (`id`, `fromUser`, `toUser`, `message`, `sendingTime`) values (?, ?, ?, ?, ?)";
-    preparedQuery($mconnection, $query, [&$id, &$userId, &$interlocutorId, &$message, &$sendingTime], false);
+    $query = "insert into messages (`id`, `fromUser`, `toUser`, `message`, `sendingTime`, `authorId`) values (?, ?, ?, ?, ?, ?)";
+    preparedQuery($mconnection, $query, [&$id, &$userId, &$interlocutorId, &$message, &$sendingTime, &$authorId], false);
 };
 
 $ws_worker_messages->onClose = function($connection) use (&$users, &$mconnection)
@@ -127,6 +128,7 @@ function preparedQuery($сmconnection, $query, $params, $return) {
     array_unshift($params, $stmt, $markers);
     call_user_func_array("mysqli_stmt_bind_param", $params);
     mysqli_stmt_execute($stmt);
+    echo mysqli_error($сmconnection);
 
     if ($return) {
         mysqli_stmt_bind_result($stmt, $rows);
