@@ -417,7 +417,7 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, n
     send.type = 'button';
     send.innerHTML = 'Send';
 
-    send.onclick = () => processMessage(interlocutorId, messages);
+    send.onclick = () => processMessage(interlocutorId, event);
 
     backBtn.onclick = () => {
         chatUI.style.display = 'none';
@@ -526,7 +526,7 @@ function pressEnter(event, interlocutorId) {
     const messages = document.querySelector(`#i${interlocutorId} .messages`);
 
     if (messages && event.code === 'Enter') {
-        processMessage(interlocutorId, messages, event);
+        processMessage(interlocutorId, event);
     }
 }
 
@@ -783,11 +783,13 @@ function connect() {
     };
 }
 
-function sendMessage(interlocutorId, message) {
+function sendMessage(interlocutorId, message, sendingTime="NONE", whetherReturnTime=true) {
     let messageData = {
         fromUser: id,
         toUser: interlocutorId,
-        message: message
+        message: message,
+        sendingTime: sendingTime,
+        returnTime: whetherReturnTime
     };
 
     messageData = JSON.stringify(messageData);
@@ -817,7 +819,7 @@ function addMessageToChat(interlocutorId, message, time, isTaskMessage) {
     }
 
     sendingTime.className = isTaskMessage ? 'sendingTime taskTime' : 'sendingTime';
-    sendingTime.innerHTML = `${formattedDate} ${sendingTimeValue}`;
+    sendingTime.innerHTML = isTaskMessage ? `${formattedDate} ${sendingTimeValue}` : sendingTimeValue;
 
     messageBlock.className = isTaskMessage ? 'interlocutorMessage taskMessage' : 'userMessage';
     messageBlock.innerHTML = message;
@@ -825,7 +827,7 @@ function addMessageToChat(interlocutorId, message, time, isTaskMessage) {
     authorName.className = 'authorName';
     authorName.innerHTML = `${firstName} ${lastName}`;
 
-    messageBlock.appendChild(authorName);
+    if (isTaskMessage) messageBlock.appendChild(authorName);
     messageBlock.appendChild(sendingTime);
     chat.appendChild(messageBlock);
     chat.scrollTo(0, chat.scrollHeight);
@@ -884,14 +886,14 @@ function addMessageToChat(interlocutorId, message, time, isTaskMessage) {
     }
 }
 
-function processMessage(interlocutorId, messages, event) {
+function processMessage(interlocutorId, event) {
     event.preventDefault();
 
     const userInput = document.querySelector(`#i${interlocutorId} .userForm .userInput`);
     const message = userInput.innerText.trim().replace(REGEXP_TAG, '').replace(REGEXP_SPECIAL,'');
 
     if (message !== '') {
-        sendMessage(interlocutorId, message, messages);
+        sendMessage(interlocutorId, message);
     }
 
     userInput.innerHTML = '';
@@ -932,6 +934,12 @@ function addToTasks(event) {
 
         authorName.className = 'authorName';
         authorName.innerHTML = taskAuthor;
+
+        const date = taskDay.split('.');
+        const time = taskTime.split(':');
+        time[2] = '00';
+        const dateTime = `${date[2]}-${date[1]}-${date[0]} ${+time[0] + new Date().getTimezoneOffset() / 60}:${time[1]}:${time[2]}`;
+        sendMessage(id, taskText, dateTime, false);
 
         messageBlock.appendChild(authorName);
         messageBlock.appendChild(sendingTime);

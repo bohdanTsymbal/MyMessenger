@@ -30,11 +30,17 @@ $ws_worker_messages->onConnect = function($connection) use (&$users, &$mconnecti
 
 $ws_worker_messages->onMessage = function($connection, $data) use (&$users, &$mconnection)
 {
-    $sendingTime = date('c');
-    $sendingTime = substr($sendingTime, 0, 10)." ".substr($sendingTime, 11, 8);
-
     $data = json_decode($data);
     $userId = $data->fromUser;
+
+    $sendingTime = "";
+    if ($data->sendingTime != "NONE") {
+        $sendingTime = $data->sendingTime;
+    }
+    else {
+        $sendingTime = date('c');
+        $sendingTime = substr($sendingTime, 0, 10)." ".substr($sendingTime, 11, 8);
+    }
 
     if (isset($users[$data->toUser]) && $userId != $data->toUser) {
         $webconnection = $users[$data->toUser];
@@ -50,7 +56,7 @@ $ws_worker_messages->onMessage = function($connection, $data) use (&$users, &$mc
         $webconnection->send($initialData);
     }
 
-    if (isset($users[$userId])) {
+    if (isset($users[$userId]) && $data->returnTime) {
         $webconnection = $users[$userId];
 
         $initialData = [
