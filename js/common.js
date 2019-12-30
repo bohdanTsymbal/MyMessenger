@@ -436,7 +436,7 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, i
                 const messagesDateBlock = document.createElement('div');
                 const date = new Date(messagesContent[i].sendingTime);
                 date.setHours(date.getHours() - new Date().getTimezoneOffset() / 60);
-                const formattedDate = `${date.getDate()}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
+                const formattedDate = `${date.getDate()}.${String(date.getMonth() + 1)}.${date.getFullYear()}`;
                 const time = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 
                 sendingTime.className = isTaskMessage ? 'sendingTime taskTime' : 'sendingTime';
