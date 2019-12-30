@@ -27,4 +27,5 @@ const CHECK_SESSION_PHP = ['http://localhost/Projects/MyMessenger/php/checkSessi
 const CONFIRM_REGISTRATION_PHP = ['http://localhost/Projects/MyMessenger/php/confirmRegistration.php', 'http://195.64.154.3/php/confirmRegistration.php'];
 const CONFIRM_RECOVERY_PHP = ['http://localhost/Projects/MyMessenger/php/confirmRecovery.php', 'http://195.64.154.3/php/confirmRecovery.php'];
 const GET_USER_INFO_PHP = ['http://localhost/Projects/MyMessenger/php/getUserInfo.php', 'http://195.64.154.3/php/getUserInfo.php'];
+const GET_DATE_PHP = ['http://localhost/Projects/MyMessenger/php/getDate.php', 'http://195.64.154.3/php/getDate.php'];
 const IP = ['127.0.0.1', '195.64.154.3'];

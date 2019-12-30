@@ -1,6 +1,6 @@
 'use strict';
 
-let errors, response, id, firstName, lastName, inId, token, WebSocketConnection, sHeight, messagesDate;
+let errors, response, id, firstName, lastName, inId, token, WebSocketConnection, sHeight, messagesDate, todayDate;
 
 errors = true;
 messagesDate = new Object();
@@ -9,6 +9,9 @@ window.onhashchange = () => navigate(location.hash);
 
 const params = 'param=id&unset=0';
 makePostRequest(CHECK_SESSION_PHP[0], params, checkSession);
+makePostRequest(GET_DATE_PHP[0], '', () => {
+    todayDate = new Date(JSON.parse(response));
+});
 
 function navigate(hash) {
     switch (hash) {
@@ -626,7 +629,13 @@ function displayAllChats() {
             lastMessage.className = 'lastMessage';
             lastMessage.innerHTML = messages[i].message;
             lastMessageSendingTime.className = 'lastMessageSendingTime';
-            lastMessageSendingTime.innerHTML = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+
+            if (todayDate.getFullYear() != date.getFullYear() || todayDate.getMonth() != date.getMonth() || todayDate.getDate() != date.getDate()) {
+                lastMessageSendingTime.innerHTML = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+            }
+            else {
+                lastMessageSendingTime.innerHTML = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+            }
 
             chat.appendChild(name);
             chat.appendChild(lastMessageSendingTime);
@@ -961,6 +970,13 @@ function addToTasks(event) {
 
         lastTaskText.innerHTML = taskText;
         lastTaskTime.innerHTML = taskTime;
+
+        if (todayDate.getFullYear() != date.getFullYear() && todayDate.getMonth() != date.getMonth() && todayDate.getDate() != date.getDate()) {
+            lastTaskTime.innerHTML = taskDay;
+        }
+        else {
+            lastTaskTime.innerHTML = taskTime;
+        }
 
         authorName.className = 'authorName';
         authorName.innerHTML = taskAuthor;
