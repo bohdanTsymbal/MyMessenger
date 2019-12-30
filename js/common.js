@@ -435,8 +435,9 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, i
                 const sendingTime = document.createElement('span');
                 const messagesDateBlock = document.createElement('div');
                 const date = new Date(messagesContent[i].sendingTime);
+                date.setHours(date.getHours() - new Date().getTimezoneOffset() / 60);
                 const formattedDate = `${date.getDate()}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
-                const time = `${date.getHours() - new Date().getTimezoneOffset() / 60}:${String(date.getMinutes()).padStart(2, '0')}`;
+                const time = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 
                 sendingTime.className = isTaskMessage ? 'sendingTime taskTime' : 'sendingTime';
                 sendingTime.innerHTML = isTaskMessage ? `${formattedDate} ${time}` : time;
@@ -511,9 +512,10 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, i
                     const message = document.createElement('div');
                     const sendingTime = document.createElement('span');
                     const date = new Date(messagesContent[i].sendingTime);
+                    date.setHours(date.getHours() - new Date().getTimezoneOffset() / 60);
 
                     sendingTime.className = 'sendingTime';
-                    sendingTime.innerHTML = `${date.getHours() - new Date().getTimezoneOffset() / 60}:${String(date.getMinutes()).padStart(2, '0')}`;
+                    sendingTime.innerHTML = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
                     
                     message.className = messagesContent[i].fromUser == id ? 'userMessage' : 'interlocutorMessage';
                     message.innerHTML = messagesContent[i].message;
@@ -606,6 +608,7 @@ function displayAllChats() {
     for (let i = messages.length - 1; i > -1; i--) {
         const interlocutorId = messages[i].fromUser == id ? messages[i].toUser : messages[i].fromUser;
         const date = new Date(messages[i].sendingTime);
+        date.setHours(date.getHours() - new Date().getTimezoneOffset() / 60);
 
         if (displayedChats.indexOf(interlocutorId) == -1 && interlocutorId != id) {
             displayedChats.push(interlocutorId);
@@ -623,7 +626,7 @@ function displayAllChats() {
             lastMessage.className = 'lastMessage';
             lastMessage.innerHTML = messages[i].message;
             lastMessageSendingTime.className = 'lastMessageSendingTime';
-            lastMessageSendingTime.innerHTML = `${date.getHours() - new Date().getTimezoneOffset() / 60}:${String(date.getMinutes()).padStart(2, '0')}`;
+            lastMessageSendingTime.innerHTML = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 
             chat.appendChild(name);
             chat.appendChild(lastMessageSendingTime);
@@ -660,7 +663,7 @@ function displayAllChats() {
         else if (displayedChats.indexOf(interlocutorId) == -1 && interlocutorId == id) {
             displayedChats.push(interlocutorId);
             lastMessageText.innerHTML = messages[i].message;
-            lastMessageTime.innerHTML = `${date.getHours() - new Date().getTimezoneOffset() / 60}:${String(date.getMinutes()).padStart(2, '0')}`;
+            lastMessageTime.innerHTML = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
         }
     } 
 }
@@ -701,7 +704,8 @@ function connect() {
                 const sendingTime = document.createElement('span');
                 const messagesDateBlock = document.createElement('div');
                 const date = new Date(data.sendingTime);
-                const sendingTimeValue = `${date.getHours() - new Date().getTimezoneOffset() / 60}:${String(date.getMinutes()).padStart(2, '0')}`;
+                date.setHours(date.getHours() - new Date().getTimezoneOffset() / 60);
+                const sendingTimeValue = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 
                 const formattedDate = `${date.getDate()}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
                 messagesDateBlock.className = 'messagesDate';
@@ -827,7 +831,8 @@ function addMessageToChat(interlocutorId, message, time, isTaskMessage) {
     const messageBlock = document.createElement('div');
     const sendingTime = document.createElement('span');
     const date = new Date(time);
-    const sendingTimeValue = `${date.getHours() - new Date().getTimezoneOffset() / 60}:${String(date.getMinutes()).padStart(2, '0')}`;
+    date.setHours(date.getHours() - new Date().getTimezoneOffset() / 60);
+    const sendingTimeValue = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
     const messagesDateBlock = document.createElement('div');
     const tasksSidebar = document.querySelector('.sidebar .tasksSidebar');
     const newTasksSidebar = tasksSidebar;
@@ -963,9 +968,11 @@ function addToTasks(event) {
         const date = taskDay.split('.');
         const time = taskTime.split(':');
         time[2] = '00';
-        const dateTime = `${date[2]}-${date[1]}-${date[0]} ${+time[0] + new Date().getTimezoneOffset() / 60}:${time[1]}:${time[2]}`;
+        const dateTime = new Date(`${date[2]}-${date[1]}-${date[0]} ${time[0]}:${time[1]}:${time[2]}`);
+        dateTime.setHours(dateTime.getHours() + new Date().getTimezoneOffset() / 60);
+        const formattedDateTime = `${dateTime.getFullYear()}-${dateTime.getMonth() + 1}-${dateTime.getDate()} ${String(dateTime.getHours()).padStart(2, '0')}:${dateTime.getMinutes()}:${dateTime.getSeconds()}`;
         const authorId = message.parentNode.parentNode.id.replace('i', '');
-        sendMessage(id, taskText, authorId, dateTime, false);
+        sendMessage(id, taskText, authorId, formattedDateTime, false);
 
         messageBlock.appendChild(authorName);
         messageBlock.appendChild(sendingTime);
