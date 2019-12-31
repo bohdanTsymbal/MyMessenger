@@ -11,6 +11,7 @@ const params = 'param=id&unset=0';
 makePostRequest(CHECK_SESSION_PHP[0], params, checkSession);
 makePostRequest(GET_DATE_PHP[0], '', () => {
     todayDate = new Date(JSON.parse(response));
+    todayDate.setHours(todayDate.getHours() - new Date().getTimezoneOffset() / 60);
 });
 
 function navigate(hash) {
@@ -672,7 +673,12 @@ function displayAllChats() {
         else if (displayedChats.indexOf(interlocutorId) == -1 && interlocutorId == id) {
             displayedChats.push(interlocutorId);
             lastMessageText.innerHTML = messages[i].message;
-            lastMessageTime.innerHTML = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+            if (todayDate.getFullYear() != date.getFullYear() || todayDate.getMonth() != date.getMonth() || todayDate.getDate() != date.getDate()) {
+                lastMessageTime.innerHTML = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+            }
+            else {
+                lastMessageTime.innerHTML = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+            }
         }
     } 
 }
@@ -971,7 +977,12 @@ function addToTasks(event) {
         lastTaskText.innerHTML = taskText;
         lastTaskTime.innerHTML = taskTime;
 
-        if (todayDate.getFullYear() != date.getFullYear() && todayDate.getMonth() != date.getMonth() && todayDate.getDate() != date.getDate()) {
+        const date = taskDay.split('.');
+        const time = taskTime.split(':');
+        time[2] = '00';
+        const dateTime = new Date(`${date[2]}-${date[1]}-${date[0]} ${time[0]}:${time[1]}:${time[2]}`);
+
+        if (todayDate.getFullYear() != dateTime.getFullYear() || todayDate.getMonth() != dateTime.getMonth() || todayDate.getDate() != dateTime.getDate()) {
             lastTaskTime.innerHTML = taskDay;
         }
         else {
@@ -981,10 +992,6 @@ function addToTasks(event) {
         authorName.className = 'authorName';
         authorName.innerHTML = taskAuthor;
 
-        const date = taskDay.split('.');
-        const time = taskTime.split(':');
-        time[2] = '00';
-        const dateTime = new Date(`${date[2]}-${date[1]}-${date[0]} ${time[0]}:${time[1]}:${time[2]}`);
         dateTime.setHours(dateTime.getHours() + new Date().getTimezoneOffset() / 60);
         const formattedDateTime = `${dateTime.getFullYear()}-${dateTime.getMonth() + 1}-${dateTime.getDate()} ${String(dateTime.getHours()).padStart(2, '0')}:${dateTime.getMinutes()}:${dateTime.getSeconds()}`;
         const authorId = message.parentNode.parentNode.id.replace('i', '');
