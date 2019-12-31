@@ -56,20 +56,6 @@ $ws_worker_messages->onMessage = function($connection, $data) use (&$users, &$mc
         $webconnection->send($initialData);
     }
 
-    if (isset($users[$userId]) && $data->returnTime) {
-        $webconnection = $users[$userId];
-
-        $initialData = [
-            'type' => 'sendingTime',
-            'toUser' => $data->toUser,
-            'message' => $data->message,
-            'sendingTime' => $sendingTime
-        ];
-        $initialData = json_encode($initialData);
-
-        $webconnection->send($initialData);
-    }
-
     $id;
     $interlocutorId = $data->toUser;
     $message = $data->message;
@@ -82,6 +68,36 @@ $ws_worker_messages->onMessage = function($connection, $data) use (&$users, &$mc
     }
     else {
         $id = ++$rows[0];
+    }
+
+    if (isset($users[$userId]) && $data->returnTime && $data->additionalData == false) {
+        $webconnection = $users[$userId];
+
+        $initialData = [
+            'type' => 'sendingTime',
+            'toUser' => $data->toUser,
+            'message' => $data->message,
+            'sendingTime' => $sendingTime,
+            'messageId' => $id
+        ];
+        $initialData = json_encode($initialData);
+
+        $webconnection->send($initialData);
+    }
+    
+    if (isset($users[$userId]) && $data->additionalData != false) {
+        $webconnection = $users[$userId];
+
+        $initialData = [
+            'type' => 'messageId',
+            'messageId' => $id,
+            'messageDate' => $data->sendingTime,
+            'messageText' => $data->message,
+            'additionalData' => $data->additionalData
+        ];
+        $initialData = json_encode($initialData);
+
+        $webconnection->send($initialData);
     }
 
     $query = "insert into messages (`id`, `fromUser`, `toUser`, `message`, `sendingTime`, `authorId`) values (?, ?, ?, ?, ?, ?)";
