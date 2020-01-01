@@ -161,26 +161,10 @@ function navigate(hash) {
             window.ondblclick = (event) => {
                 const message = event.target;
                 if ((message.classList.contains('userMessage') || message.classList.contains('interlocutorMessage')) && !message.classList.contains('taskMessage')) {
-                    const textAndTime = message.innerText.split('\n');
-                    const taskText = textAndTime[0];
-                    const taskTime = textAndTime[1];
-                    const taskAuthor = message.parentNode.previousElementSibling.innerText;
-                    let taskDay;
-
-                    const days = message.parentNode.querySelectorAll('.messagesDate');
-                    for (let i = 0; i < days.length; i++) {
-                        if (message.offsetTop >= days[i].offsetTop) taskDay = days[i].innerText;
-                    }
-                    
-                    const date = taskDay.split('.');
-                    const time = taskTime.split(':');
-                    time[2] = '00';
-                    const dateTime = new Date(`${date[2]}-${date[1]}-${date[0]} ${time[0]}:${time[1]}:${time[2]}`);
-                    dateTime.setHours(dateTime.getHours() + new Date().getTimezoneOffset() / 60);
-                    const formattedDateTime = `${dateTime.getFullYear()}-${dateTime.getMonth() + 1}-${dateTime.getDate()} ${String(dateTime.getHours()).padStart(2, '0')}:${dateTime.getMinutes()}:${dateTime.getSeconds()}`;
-                    const authorId = message.parentNode.parentNode.id.replace('i', '');
-
-                    sendMessage(id, taskText, authorId, formattedDateTime, true, { messageAuthor:  taskAuthor });
+                    writeTaskToDB(message);
+                }
+                else if (message.classList.contains('taskMessage')) {
+                    changeIsDoneStatus(message);
                 }
             }
 
@@ -462,6 +446,7 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, i
                 const message = document.createElement('div');
                 const sendingTime = document.createElement('span');
                 const messagesDateBlock = document.createElement('div');
+                const isDoneBlock = document.createElement('span');
                 const date = new Date(messagesContent[i].sendingTime);
                 date.setHours(date.getHours() - new Date().getTimezoneOffset() / 60);
                 const formattedDate = `${date.getDate()}.${String(date.getMonth() + 1)}.${date.getFullYear()}`;
@@ -485,7 +470,18 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, i
                     messagesDate[interlocutorId] = formattedDate;
                 }
 
-                if (isTaskMessage) message.appendChild(authorName);
+                isDoneBlock.className = 'isDoneBlock';
+                isDoneBlock.innerHTML = 'Done';
+
+                if (messagesContent[i].isDone) {
+                    isDoneBlock.style.opacity = 1;
+                    message.classList.add('done');
+                }
+
+                if (isTaskMessage) {
+                    message.appendChild(authorName);
+                    message.appendChild(isDoneBlock);
+                }
                 message.appendChild(sendingTime);
                 messages.appendChild(message);
             }
@@ -885,6 +881,7 @@ function addMessageToChat(interlocutorId, message, time, isTaskMessage, messageI
     const tasksSidebar = document.querySelector('.sidebar .tasksSidebar');
     const newTasksSidebar = tasksSidebar;
     const authorName = document.createElement('h4');
+    const isDoneBlock = document.createElement('span');
 
     const formattedDate = `${date.getDate()}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
     messagesDateBlock.className = 'messagesDate';
@@ -904,7 +901,13 @@ function addMessageToChat(interlocutorId, message, time, isTaskMessage, messageI
     authorName.className = 'authorName';
     authorName.innerHTML = `${firstName} ${lastName}`;
 
-    if (isTaskMessage) messageBlock.appendChild(authorName);
+    isDoneBlock.className = 'isDoneBlock';
+    isDoneBlock.innerHTML = 'Done';
+
+    if (isTaskMessage) {
+        messageBlock.appendChild(authorName);
+        messageBlock.appendChild(isDoneBlock);
+    }
     messageBlock.appendChild(sendingTime);
     chat.appendChild(messageBlock);
     chat.scrollTo(0, chat.scrollHeight);
@@ -986,8 +989,9 @@ function addToTasks(messageId, messageDate, messageText, messageAuthor) {
     const messageBlock = document.createElement('div');
     const sendingTime = document.createElement('span');
     const authorName = document.createElement('h4');
+    const isDoneBlock = document.createElement('span');
 
-    const dateTime = new Date(messageDate)
+    const dateTime = new Date(messageDate);
     dateTime.setHours(dateTime.getHours() - new Date().getTimezoneOffset() / 60);
     const taskDay = `${dateTime.getDate()}.${dateTime.getMonth() + 1}.${dateTime.getFullYear()}`;
     const taskTime = `${dateTime.getHours()}:${dateTime.getMinutes()}`;
@@ -1011,8 +1015,53 @@ function addToTasks(messageId, messageDate, messageText, messageAuthor) {
     authorName.className = 'authorName';
     authorName.innerHTML = messageAuthor;
 
+    isDoneBlock.className = 'isDoneBlock';
+    isDoneBlock.innerHTML = 'Done';
+
     messageBlock.appendChild(authorName);
+    messageBlock.appendChild(isDoneBlock);
     messageBlock.appendChild(sendingTime);
     tasksChat.appendChild(messageBlock);
     tasksChat.scrollTo(0, tasksChat.scrollHeight);
+}
+
+function writeTaskToDB (message) {
+    const textAndTime = message.innerText.split('\n');
+    const taskText = textAndTime[0];
+    const taskTime = textAndTime[1];
+    const taskAuthor = message.parentNode.previousElementSibling.innerText;
+    let taskDay;
+
+    const days = message.parentNode.querySelectorAll('.messagesDate');
+    for (let i = 0; i < days.length; i++) {
+        if (message.offsetTop >= days[i].offsetTop) taskDay = days[i].innerText;
+    }
+    
+    const date = taskDay.split('.');
+    const time = taskTime.split(':');
+    time[2] = '00';
+    const dateTime = new Date(`${date[2]}-${date[1]}-${date[0]} ${time[0]}:${time[1]}:${time[2]}`);
+    dateTime.setHours(dateTime.getHours() + new Date().getTimezoneOffset() / 60);
+    const formattedDateTime = `${dateTime.getFullYear()}-${dateTime.getMonth() + 1}-${dateTime.getDate()} ${String(dateTime.getHours()).padStart(2, '0')}:${dateTime.getMinutes()}:${dateTime.getSeconds()}`;
+    const authorId = message.parentNode.parentNode.id.replace('i', '');
+
+    sendMessage(id, taskText, authorId, formattedDateTime, true, { messageAuthor:  taskAuthor });
+}
+
+function changeIsDoneStatus (message) {
+    const type = 'changeIsDoneStatus';
+    const messageId = message.id.replace('m', '');
+    let messageData = { type, messageId };
+    messageData = JSON.stringify(messageData);
+    WebSocketConnection.send(messageData);
+
+    if (message.classList.contains('done')) {
+        message.classList.remove('done');
+    }
+    else {
+        message.classList.add('done');
+    }
+    
+    const isDoneBlock = message.querySelector('.isDoneBlock');
+    isDoneBlock.style.opacity = -1 * isDoneBlock.style.opacity + 1;
 }

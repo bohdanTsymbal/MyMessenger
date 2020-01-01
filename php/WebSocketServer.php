@@ -31,77 +31,88 @@ $ws_worker_messages->onConnect = function($connection) use (&$users, &$mconnecti
 $ws_worker_messages->onMessage = function($connection, $data) use (&$users, &$mconnection)
 {
     $data = json_decode($data);
-    $userId = $data->fromUser;
+    if (isset($data->type)) {
+        $messageId = $data->messageId;
 
-    $sendingTime = "";
-    if ($data->sendingTime != "NONE") {
-        $sendingTime = $data->sendingTime;
+        $query = "select isDone from messages where id = ?";
+        $isDone = preparedQuery($mconnection, $query, [&$messageId], true);
+        $isDone = $isDone ? false : true;
+
+        $query = "update messages set isDone = ? where id = ?";
+        preparedQuery($mconnection, $query, [&$isDone, &$messageId], false);
     }
     else {
-        $sendingTime = date('c');
-        $sendingTime = substr($sendingTime, 0, 10)." ".substr($sendingTime, 11, 8);
-    }
+        $userId = $data->fromUser;
 
-    if (isset($users[$data->toUser]) && $userId != $data->toUser) {
-        $webconnection = $users[$data->toUser];
-
-        $initialData = [
-            'type' => 'message',
-            'fromUser' => $userId,
-            'message' => $data->message,
-            'sendingTime' => $sendingTime
-        ];
-        $initialData = json_encode($initialData);
-
-        $webconnection->send($initialData);
-    }
-
-    $id;
-    $interlocutorId = $data->toUser;
-    $message = $data->message;
-    $authorId = (int)$data->authorId;
-
-    $query = 'select id from messages order by id desc limit 1';
-    $rows = mysqli_fetch_row(query($mconnection, $query));
-    if ($rows[0] == "") {
-        $id = 1;
-    }
-    else {
-        $id = ++$rows[0];
-    }
-
-    if (isset($users[$userId]) && $data->returnTime && $data->additionalData == false) {
-        $webconnection = $users[$userId];
-
-        $initialData = [
-            'type' => 'sendingTime',
-            'toUser' => $data->toUser,
-            'message' => $data->message,
-            'sendingTime' => $sendingTime,
-            'messageId' => $id
-        ];
-        $initialData = json_encode($initialData);
-
-        $webconnection->send($initialData);
-    }
+        $sendingTime = "";
+        if ($data->sendingTime != "NONE") {
+            $sendingTime = $data->sendingTime;
+        }
+        else {
+            $sendingTime = date('c');
+            $sendingTime = substr($sendingTime, 0, 10)." ".substr($sendingTime, 11, 8);
+        }
     
-    if (isset($users[$userId]) && $data->additionalData != false) {
-        $webconnection = $users[$userId];
-
-        $initialData = [
-            'type' => 'messageId',
-            'messageId' => $id,
-            'messageDate' => $data->sendingTime,
-            'messageText' => $data->message,
-            'additionalData' => $data->additionalData
-        ];
-        $initialData = json_encode($initialData);
-
-        $webconnection->send($initialData);
+        if (isset($users[$data->toUser]) && $userId != $data->toUser) {
+            $webconnection = $users[$data->toUser];
+    
+            $initialData = [
+                'type' => 'message',
+                'fromUser' => $userId,
+                'message' => $data->message,
+                'sendingTime' => $sendingTime
+            ];
+            $initialData = json_encode($initialData);
+    
+            $webconnection->send($initialData);
+        }
+    
+        $id;
+        $query = 'select id from messages order by id desc limit 1';
+        $rows = mysqli_fetch_row(query($mconnection, $query));
+        if ($rows[0] == "") {
+            $id = 1;
+        }
+        else {
+            $id = ++$rows[0];
+        }
+    
+        if (isset($users[$userId]) && $data->returnTime && $data->additionalData == false) {
+            $webconnection = $users[$userId];
+    
+            $initialData = [
+                'type' => 'sendingTime',
+                'toUser' => $data->toUser,
+                'message' => $data->message,
+                'sendingTime' => $sendingTime,
+                'messageId' => $id
+            ];
+            $initialData = json_encode($initialData);
+    
+            $webconnection->send($initialData);
+        }
+    
+        if (isset($users[$userId]) && $data->additionalData != false) {
+            $webconnection = $users[$userId];
+    
+            $initialData = [
+                'type' => 'messageId',
+                'messageId' => $id,
+                'messageDate' => $data->sendingTime,
+                'messageText' => $data->message,
+                'additionalData' => $data->additionalData
+            ];
+            $initialData = json_encode($initialData);
+    
+            $webconnection->send($initialData);
+        }
+    
+        $interlocutorId = $data->toUser;
+        $message = $data->message;
+        $authorId = (int)$data->authorId;
+        $query = "insert into messages (`id`, `fromUser`, `toUser`, `message`, `sendingTime`, `authorId`) values (?, ?, ?, ?, ?, ?)";
+        preparedQuery($mconnection, $query, [&$id, &$userId, &$interlocutorId, &$message, &$sendingTime, &$authorId], false);
     }
-
-    $query = "insert into messages (`id`, `fromUser`, `toUser`, `message`, `sendingTime`, `authorId`) values (?, ?, ?, ?, ?, ?)";
-    preparedQuery($mconnection, $query, [&$id, &$userId, &$interlocutorId, &$message, &$sendingTime, &$authorId], false);
 };
 
 $ws_worker_messages->onClose = function($connection) use (&$users, &$mconnection)
@@ -152,6 +163,6 @@ function preparedQuery($сmconnection, $query, $params, $return) {
         mysqli_stmt_close($stmt);
         return $rows;
     }
-
+    
     mysqli_stmt_close($stmt);
 }

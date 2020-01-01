@@ -247,6 +247,8 @@ button
             min-width: 150px
             margin-top: 7px
             padding-top: 25px
+        &.done
+            background-color: rgba(117, 116, 116, 0.25)
         @extend %message
     .authorName
         position: absolute
@@ -255,6 +257,15 @@ button
         font-family: 'Montserrat'
         font-size: 14px
         color: $violet
+    .isDoneBlock
+        position: absolute
+        top: 5.5px
+        right: 8px
+        opacity: 0
+        color: $darkGreen
+        font-size: 13px
+        font-family: 'Noto Sans Bold'
+        text-decoration: underline
     .sendingTime
         display: block
         text-align: right

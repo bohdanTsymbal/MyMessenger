@@ -7,9 +7,9 @@ if (!empty($_POST)) {
     $number = $_POST['number'];
     $number = explode('_', $number);
     
-    $query = "select id, message, fromUser, toUser, sendingTime, authorId from messages where (`fromUser` = ? and `toUser` = ?) or (`fromUser` = ? and `toUser` = ?) order by id desc limit ?, ?";
+    $query = "select id, message, fromUser, toUser, sendingTime, authorId, isDone from messages where (`fromUser` = ? and `toUser` = ?) or (`fromUser` = ? and `toUser` = ?) order by id desc limit ?, ?";
     $stmt = preparedQuery($connection, $query, [&$userId, &$interlocatorId, &$interlocatorId, &$userId, &$number[0], &$number[1]]);
-    mysqli_stmt_bind_result($stmt, $messageId, $message, $fromUser, $toUser, $sendingTime, $authorId);    
+    mysqli_stmt_bind_result($stmt, $messageId, $message, $fromUser, $toUser, $sendingTime, $authorId, $isDone);    
 
     $result = [];
     $authors = [];
@@ -20,6 +20,7 @@ if (!empty($_POST)) {
         $result[$i]['toUser'] = $toUser;
         $result[$i]['sendingTime'] = $sendingTime;
         $result[$i]['messageId'] = $messageId;
+        $result[$i]['isDone'] = $isDone;
         $authors[$i] = $authorId;
         $i++;
     }

@@ -384,6 +384,10 @@ button {
   padding-top: 25px;
 }
 
+.chatsPage .interlocutorMessage.done {
+  background-color: rgba(117, 116, 116, 0.25);
+}
+
 .chatsPage .authorName {
   position: absolute;
   top: 5px;
@@ -391,6 +395,17 @@ button {
   font-family: 'Montserrat';
   font-size: 14px;
   color: #693175;
+}
+
+.chatsPage .isDoneBlock {
+  position: absolute;
+  top: 5.5px;
+  right: 8px;
+  opacity: 0;
+  color: #01855d;
+  font-size: 13px;
+  font-family: 'Noto Sans Bold';
+  text-decoration: underline;
 }
 
 .chatsPage .sendingTime {
