@@ -449,7 +449,7 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, i
                 const isDoneBlock = document.createElement('span');
                 const date = new Date(messagesContent[i].sendingTime);
                 date.setHours(date.getHours() - new Date().getTimezoneOffset() / 60);
-                const formattedDate = `${date.getDate()}.${String(date.getMonth() + 1)}.${date.getFullYear()}`;
+                const formattedDate = `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
                 const time = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 
                 sendingTime.className = isTaskMessage ? 'sendingTime taskTime' : 'sendingTime';
@@ -653,7 +653,7 @@ function displayAllChats() {
             lastMessageSendingTime.className = 'lastMessageSendingTime';
 
             if (todayDate.getFullYear() != date.getFullYear() || todayDate.getMonth() != date.getMonth() || todayDate.getDate() != date.getDate()) {
-                lastMessageSendingTime.innerHTML = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+                lastMessageSendingTime.innerHTML = `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
             }
             else {
                 lastMessageSendingTime.innerHTML = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
@@ -695,7 +695,7 @@ function displayAllChats() {
             displayedChats.push(interlocutorId);
             lastMessageText.innerHTML = messages[i].message;
             if (todayDate.getFullYear() != date.getFullYear() || todayDate.getMonth() != date.getMonth() || todayDate.getDate() != date.getDate()) {
-                lastMessageTime.innerHTML = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+                lastMessageTime.innerHTML = `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
             }
             else {
                 lastMessageTime.innerHTML = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
@@ -743,7 +743,7 @@ function connect() {
                 date.setHours(date.getHours() - new Date().getTimezoneOffset() / 60);
                 const sendingTimeValue = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 
-                const formattedDate = `${date.getDate()}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
+                const formattedDate = `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
                 messagesDateBlock.className = 'messagesDate';
                 messagesDateBlock.innerHTML = formattedDate;
         
@@ -883,7 +883,7 @@ function addMessageToChat(interlocutorId, message, time, isTaskMessage, messageI
     const authorName = document.createElement('h4');
     const isDoneBlock = document.createElement('span');
 
-    const formattedDate = `${date.getDate()}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
+    const formattedDate = `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
     messagesDateBlock.className = 'messagesDate';
     messagesDateBlock.innerHTML = formattedDate;
     if (messagesDate[interlocutorId] != formattedDate && !isTaskMessage) {
@@ -993,8 +993,8 @@ function addToTasks(messageId, messageDate, messageText, messageAuthor) {
 
     const dateTime = new Date(messageDate);
     dateTime.setHours(dateTime.getHours() - new Date().getTimezoneOffset() / 60);
-    const taskDay = `${dateTime.getDate()}.${dateTime.getMonth() + 1}.${dateTime.getFullYear()}`;
-    const taskTime = `${dateTime.getHours()}:${dateTime.getMinutes()}`;
+    const taskDay = `${String(dateTime.getDate()).padStart(2, '0')}.${String(dateTime.getMonth() + 1).padStart(2, '0')}.${dateTime.getFullYear()}`;
+    const taskTime = `${String(dateTime.getHours()).padStart(2, '0')}:${String(dateTime.getMinutes()).padStart(2, '0')}`;
 
     sendingTime.className = 'sendingTime taskTime';
     sendingTime.innerHTML = `${taskDay} ${taskTime}`;
