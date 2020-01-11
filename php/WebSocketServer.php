@@ -53,20 +53,6 @@ $ws_worker_messages->onMessage = function($connection, $data) use (&$users, &$mc
             $sendingTime = substr($sendingTime, 0, 10)." ".substr($sendingTime, 11, 8);
         }
     
-        if (isset($users[$data->toUser]) && $userId != $data->toUser) {
-            $webconnection = $users[$data->toUser];
-    
-            $initialData = [
-                'type' => 'message',
-                'fromUser' => $userId,
-                'message' => $data->message,
-                'sendingTime' => $sendingTime
-            ];
-            $initialData = json_encode($initialData);
-    
-            $webconnection->send($initialData);
-        }
-    
         $id;
         $query = 'select id from messages order by id desc limit 1';
         $rows = mysqli_fetch_row(query($mconnection, $query));
@@ -75,6 +61,21 @@ $ws_worker_messages->onMessage = function($connection, $data) use (&$users, &$mc
         }
         else {
             $id = ++$rows[0];
+        }
+    
+        if (isset($users[$data->toUser]) && $userId != $data->toUser) {
+            $webconnection = $users[$data->toUser];
+    
+            $initialData = [
+                'type' => 'message',
+                'fromUser' => $userId,
+                'message' => $data->message,
+                'sendingTime' => $sendingTime,
+                'messageId' => $id
+            ];
+            $initialData = json_encode($initialData);
+    
+            $webconnection->send($initialData);
         }
     
         if (isset($users[$userId]) && $data->returnTime && $data->additionalData == false) {

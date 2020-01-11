@@ -401,7 +401,7 @@ function switchTab(event, allTabs, allContent, className, contentSelector, displ
     }
 }
 
-function createChatInterface(interlocutorId, firstName, lastName, number=null, isTaskMessage=false, newMessage=null, formattedDate=null, sendingTimeValue=null) {
+function createChatInterface(interlocutorId, firstName, lastName, number=null, isTaskMessage=false, newMessage=null, formattedDate=null, sendingTimeValue=null, messageId=null) {
     const chatsPage = document.querySelector('.chatsPage');
     const sidebar = document.querySelector('.chatsPage .sidebar');
     const chatUI = document.createElement('div');
@@ -492,6 +492,7 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, i
                 const messagesDateBlock = document.createElement('div');
 
                 newMessageBlock.className = 'interlocutorMessage';
+                newMessageBlock.id = `m${messageId}`;
                 newMessageBlock.innerHTML = newMessage;
                 sendingTime.className = 'sendingTime';
                 sendingTime.innerHTML = sendingTimeValue;
@@ -726,6 +727,7 @@ function connect() {
             case 'message': {
                 const fromUser = data.fromUser;
                 const message = data.message;
+                const messageId = data.messageId;
 
                 inId = data.fromUser;
         
@@ -751,6 +753,7 @@ function connect() {
                 sendingTime.innerHTML = sendingTimeValue;
         
                 newMessage.className = 'interlocutorMessage';
+                newMessage.id = `m${messageId}`;
                 newMessage.innerHTML = message;
         
                 newMessage.appendChild(sendingTime);
@@ -768,7 +771,7 @@ function connect() {
         
                     makePostRequest(GET_FULL_NAME_PHP[0], params, () => {
                         const fullName = JSON.parse(response);
-                        createChatInterface(fromUser, fullName.firstName, fullName.lastName, 50, false, message, formattedDate, sendingTimeValue);
+                        createChatInterface(fromUser, fullName.firstName, fullName.lastName, 50, false, message, formattedDate, sendingTimeValue, messageId);
                     });
                 }
         
@@ -1026,10 +1029,11 @@ function addToTasks(messageId, messageDate, messageText, messageAuthor) {
 }
 
 function writeTaskToDB (message) {
+    const interlocutorMessage = message.classList.contains('interlocutorMessage');
     const textAndTime = message.innerText.split('\n');
     const taskText = textAndTime[0];
     const taskTime = textAndTime[1];
-    const taskAuthor = message.parentNode.previousElementSibling.innerText;
+    const taskAuthor = interlocutorMessage ? message.parentNode.previousElementSibling.innerText : `${firstName} ${lastName}`;
     let taskDay;
 
     const days = message.parentNode.querySelectorAll('.messagesDate');
@@ -1043,7 +1047,7 @@ function writeTaskToDB (message) {
     const dateTime = new Date(`${date[2]}-${date[1]}-${date[0]} ${time[0]}:${time[1]}:${time[2]}`);
     dateTime.setHours(dateTime.getHours() + new Date().getTimezoneOffset() / 60);
     const formattedDateTime = `${dateTime.getFullYear()}-${dateTime.getMonth() + 1}-${dateTime.getDate()} ${String(dateTime.getHours()).padStart(2, '0')}:${dateTime.getMinutes()}:${dateTime.getSeconds()}`;
-    const authorId = message.parentNode.parentNode.id.replace('i', '');
+    const authorId = interlocutorMessage ? inId : id;
 
     sendMessage(id, taskText, authorId, formattedDateTime, true, { messageAuthor:  taskAuthor });
 }
