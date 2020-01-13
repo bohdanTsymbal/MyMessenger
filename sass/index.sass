@@ -85,6 +85,11 @@ body
     margin: 0 auto
     width: 100%
     height: 100vh
+    display: flex
+    flex-direction: column
+    border-radius: 25px
+    min-height: 500px
+    background-color: whitesmoke
 
 header 
     padding: 24px 15px
@@ -101,14 +106,16 @@ header
         letter-spacing: 1px
 
 main 
-    background: whitesmoke
     text-align: center  
     padding: 50px 15px
     overflow: hidden
     border-bottom:
         left-radius: 25px
         right-radius: 25px
-    height: calc(100% - 73px)
+    height: 100%
+    margin:
+        bottom: auto
+        top: auto
     display: flex
     justify-content: center
     align-items: center
@@ -244,7 +251,7 @@ button
         .sendingTime
             color: $sendingTimeGray
         &.taskMessage
-            min-width: 150px
+            min-width: 200px
             margin-top: 7px
             padding-top: 25px
         &.done
@@ -316,7 +323,10 @@ button
         width: 320px
         background-color: $lighterGray
         border-right: 1px solid #acaaaa
-        overflow: hidden
+        overflow-x: hidden
+        overflow-y: scroll
+        &::-webkit-scrollbar
+            width: 0
     .tabs
         display: flex
         justify-content: center
@@ -428,6 +438,10 @@ button
             display: inline
         .messages
             @include paddingLeftRight(35)
+        .userMessage, .tabContent
+            margin-right: 0
+    .window 
+        border-radius: 0
 
 @media screen and (max-width: 576px)
     input

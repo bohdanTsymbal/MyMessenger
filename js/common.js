@@ -19,6 +19,10 @@ function navigate(hash) {
         case REGISTARTION_PAGE: {
             displayPage('.registrationPage');
 
+            if (document.documentElement.clientWidth <= 768) {
+                document.querySelector('.window').style.minHeight = '700px';
+            }
+
             const inputs = {
                 firstNameInput: document.querySelector('.registrationForm #firstName'),
                 lastNameInput: document.querySelector('.registrationForm #lastName'),
@@ -169,6 +173,7 @@ function navigate(hash) {
             }
 
             const tasksSidebar = document.querySelector('.sidebar .tasksSidebar');
+            const sidebar = document.querySelector('.chatsPage .sidebar');
             tasksSidebar.onclick = function () {
                 const chatInterface = document.querySelector(`.chatsPage #i${id}`);
                 const messagesBlocks = document.querySelector(`#i${id} .messages`);
@@ -183,7 +188,7 @@ function navigate(hash) {
 
                 if (document.documentElement.clientWidth <= 768) {
                     sidebar.style.display = 'none';
-                    chat.classList.remove('activeChat');
+                    tasksSidebar.classList.remove('activeChat');
                 }
 
                 inId = id;
@@ -219,6 +224,7 @@ function completeOperation(toPage, message) {
 function displayPage(elementSelector=null, displayType='block') {
     const pages = document.querySelectorAll('main *');
     const startPage = '.startPage';
+    document.querySelector('.window').removeAttribute('style');
 
     for (let i = 0; i < pages.length; i++) {
         pages[i].removeAttribute('style');
@@ -429,7 +435,10 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, i
     send.type = 'button';
     send.innerHTML = 'Send';
 
-    send.onclick = () => processMessage(interlocutorId, event);
+    send.onclick = () => {
+        userInput.focus();
+        processMessage(interlocutorId, event);
+    }
 
     backBtn.onclick = () => {
         chatUI.style.display = 'none';
@@ -771,7 +780,7 @@ function connect() {
         
                     makePostRequest(GET_FULL_NAME_PHP[0], params, () => {
                         const fullName = JSON.parse(response);
-                        createChatInterface(fromUser, fullName.firstName, fullName.lastName, 50, false, message, formattedDate, sendingTimeValue, messageId);
+                        createChatInterface(fromUser, fullName.firstName, fullName.lastName, 50, false, null, formattedDate, sendingTimeValue, messageId);
                     });
                 }
         
@@ -1033,7 +1042,7 @@ function writeTaskToDB (message) {
     const textAndTime = message.innerText.split('\n');
     const taskText = textAndTime[0];
     const taskTime = textAndTime[1];
-    const taskAuthor = interlocutorMessage ? message.parentNode.previousElementSibling.innerText : `${firstName} ${lastName}`;
+    const taskAuthor = interlocutorMessage ? message.parentNode.previousElementSibling.innerText.trim().replace('‹', '') : `${firstName} ${lastName}`;
     let taskDay;
 
     const days = message.parentNode.querySelectorAll('.messagesDate');
