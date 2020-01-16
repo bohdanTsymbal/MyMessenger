@@ -17,6 +17,7 @@ $user = "root";
 $password = "";
 $database = "mymessengerdatabase";
 $connection = mysqli_connect($location, $user, $password);
+mysqli_set_charset($connection, "utf8");
 if (!$connection) {
 	die("Connection has been completed unsuccefully!");
 }

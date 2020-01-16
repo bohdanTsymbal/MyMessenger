@@ -130,6 +130,7 @@ function databaseConnection(&$mconnection) {
     $password = '';
     $database = 'mymessengerdatabase';
     $mconnection = mysqli_connect($location, $user, $password);
+    mysqli_set_charset($mconnection, "utf8");
     $databaseSelection = mysqli_select_db($mconnection, $database);
 }
 
