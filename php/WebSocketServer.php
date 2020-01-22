@@ -5,19 +5,19 @@ use Workerman\Worker;
 
 $users = [];
 
-$ws_worker_messages = new Worker("websocket://0.0.0.0:0666");
+$ws_worker_messages = new Worker("websocket://0.0.0.0:0666"); // https://www.instagram.com/_kate__mate/
 
-databaseConnection($mconnection);
-
-$ws_worker_messages->onConnect = function($connection) use (&$users, &$mconnection)
+$ws_worker_messages->onConnect = function($connection) use (&$users)
 {
-    $connection->onWebSocketConnect = function($connection) use (&$users, &$mconnection)
+    $connection->onWebSocketConnect = function($connection) use (&$users)
     {
         $userId = (int) $_GET['userId'];
         $token = $_GET['userToken'];
 
         $query = "select token from users where `id` = ?";
+        databaseConnection($mconnection);
         $rows = preparedQuery($mconnection, $query, [&$userId], true);
+        mysqli_close($mconnection);
 
         if ($rows == $token) {
             $users[$_GET['userId']] = $connection;
@@ -28,9 +28,10 @@ $ws_worker_messages->onConnect = function($connection) use (&$users, &$mconnecti
     };
 };
 
-$ws_worker_messages->onMessage = function($connection, $data) use (&$users, &$mconnection)
+$ws_worker_messages->onMessage = function($connection, $data) use (&$users)
 {
     $data = json_decode($data);
+    databaseConnection($mconnection);
     if (isset($data->type)) {
         $messageId = $data->messageId;
 
@@ -113,10 +114,11 @@ $ws_worker_messages->onMessage = function($connection, $data) use (&$users, &$mc
         $authorId = (int)$data->authorId;
         $query = "insert into messages (`id`, `fromUser`, `toUser`, `message`, `sendingTime`, `authorId`) values (?, ?, ?, ?, ?, ?)";
         preparedQuery($mconnection, $query, [&$id, &$userId, &$interlocutorId, &$message, &$sendingTime, &$authorId], false);
+        mysqli_close($mconnection);
     }
 };
 
-$ws_worker_messages->onClose = function($connection) use (&$users, &$mconnection)
+$ws_worker_messages->onClose = function($connection) use (&$users)
 {
     $user = array_search($connection, $users);
     unset($users[$user]);
