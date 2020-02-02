@@ -824,10 +824,12 @@ function connect() {
                         
                         chat.onclick = () => {
                             let chatInterface = document.querySelector(`.chatsPage #i${fromUser}`);
+                            let messagesBlocks = document.querySelector(`#i${fromUser} .messages`);
         
                             if (!chatInterface) {
                                 createChatInterface(fromUser, fullName.firstName, fullName.lastName, 50);
                                 chatInterface = document.querySelector(`.chatsPage #i${fromUser}`);
+                                messagesBlocks = document.querySelector(`#i${fromUser} .messages`);
                             }
         
                             const sidebarChats = document.querySelectorAll('.tabContent .chat');
@@ -837,6 +839,14 @@ function connect() {
         
                             chat.classList.add('activeChat');
                             chatInterface.style.display = 'flex';
+                            messagesBlocks.scrollTo(0, messagesBlocks.scrollHeight);
+
+                            if (document.documentElement.clientWidth <= 768) {
+                                document.querySelector('.chatsPage .sidebar').style.display = 'none';
+                                chat.classList.remove('activeChat');
+                            }
+
+                            inId = fromUser;
                         }
                     });
                 }
@@ -968,6 +978,7 @@ function addMessageToChat(interlocutorId, message, time, isTaskMessage, messageI
 
             function makeActive() {
                 const chatInterface = document.querySelector(`.chatsPage #i${interlocutorId}`);
+                let messagesBlocks = document.querySelector(`#i${interlocutorId} .messages`);
                 const sidebarChats = document.querySelectorAll('.tabContent .chat');
                 const chats = document.querySelectorAll('.chatsPage .activeChatInterface');
 
@@ -975,6 +986,14 @@ function addMessageToChat(interlocutorId, message, time, isTaskMessage, messageI
 
                 chat.classList.add('activeChat');
                 chatInterface.style.display = 'flex';
+                messagesBlocks.scrollTo(0, messagesBlocks.scrollHeight);
+
+                if (document.documentElement.clientWidth <= 768) {
+                    document.querySelector('.chatsPage .sidebar').style.display = 'none';
+                    chat.classList.remove('activeChat');
+                }
+    
+                inId = interlocutorId;
             }
         });
     }
