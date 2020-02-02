@@ -5,7 +5,7 @@ use Workerman\Worker;
 
 $users = [];
 
-$ws_worker_messages = new Worker("websocket://0.0.0.0:0666"); // https://www.instagram.com/_kate__mate/
+$ws_worker_messages = new Worker("websocket://0.0.0.0:0666");
 
 $ws_worker_messages->onConnect = function($connection) use (&$users)
 {
@@ -63,6 +63,13 @@ $ws_worker_messages->onMessage = function($connection, $data) use (&$users)
         else {
             $id = ++$rows[0];
         }
+        
+        $interlocutorId = $data->toUser;
+        $message = $data->message;
+        $authorId = (int)$data->authorId;
+        $query = "insert into messages (`id`, `fromUser`, `toUser`, `message`, `sendingTime`, `authorId`) values (?, ?, ?, ?, ?, ?)";
+        preparedQuery($mconnection, $query, [&$id, &$userId, &$interlocutorId, &$message, &$sendingTime, &$authorId], false);
+        mysqli_close($mconnection);
     
         if (isset($users[$data->toUser]) && $userId != $data->toUser) {
             $webconnection = $users[$data->toUser];
@@ -108,13 +115,6 @@ $ws_worker_messages->onMessage = function($connection, $data) use (&$users)
     
             $webconnection->send($initialData);
         }
-    
-        $interlocutorId = $data->toUser;
-        $message = $data->message;
-        $authorId = (int)$data->authorId;
-        $query = "insert into messages (`id`, `fromUser`, `toUser`, `message`, `sendingTime`, `authorId`) values (?, ?, ?, ?, ?, ?)";
-        preparedQuery($mconnection, $query, [&$id, &$userId, &$interlocutorId, &$message, &$sendingTime, &$authorId], false);
-        mysqli_close($mconnection);
     }
 };
 
