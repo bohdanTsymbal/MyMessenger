@@ -24,7 +24,7 @@ $lightBlack: #1f1f1f
         bottom: $value + px
 
 %message
-    margin: 2px 0
+    margin: 3px 0
     border-radius: 20px
     padding: 10px 55px 5px 15px
     max-width: 75%
@@ -39,14 +39,18 @@ $lightBlack: #1f1f1f
     cursor: pointer
     position: relative
     text-align: left
-    text-indent: 35px
+    text-indent: 18px
     &:hover
         background-color: rgba(1, 133, 93, 0.3)
 
 %hideScroll
     overflow-x: hidden
     overflow-y: scroll
-    margin: 0 -18px
+    -ms-overflow-style: none
+    overflow: -moz-scrollbars-none
+    scrollbar-width: none
+    &::-webkit-scrollbar
+        display: none
 
 %inputStyle
     text-align: center
@@ -234,13 +238,12 @@ button
         flex-grow: 1
         display: flex
         flex-direction: column
-        padding: 10px 60px 5px
+        padding: 10px 35px 5px
         @extend %hideScroll
     .userMessage
         align-self: flex-end
         background: #057e70
         color: white
-        margin-right: -18px
         .sendingTime
             color: $lightGray
         @extend %message
@@ -304,14 +307,9 @@ button
         border: none
         line-height: 1
         flex-grow: 1
-        overflow-x: hidden
-        overflow-y: scroll
         border-radius: 25px
         max-height: 100%
-        scrollbar-width: none
-        -ms-overflow-style: none
-        &::-webkit-scrollbar 
-            display: none
+        @extend %hideScroll
     .send
         margin-left: 10px
         padding: 10.5px 10px
@@ -323,13 +321,12 @@ button
         width: 320px
         background-color: $lighterGray
         border-right: 1px solid #acaaaa
-        overflow-x: hidden
-        overflow-y: scroll
-        &::-webkit-scrollbar
-            width: 0
+        @extend %hideScroll
     .tabs
         display: flex
         justify-content: center
+    .tabContent
+        @extend %hideScroll
     .tab
         flex-grow: 1
         color: #0d685d
@@ -341,8 +338,6 @@ button
         cursor: pointer
         &.activeTab
             background-color: $lighterGray
-    .tabContent
-        @extend %hideScroll
     .chat
         padding: 15px 5px
         @extend %sidebarPoint
@@ -414,7 +409,7 @@ button
         .sidebar
             width: 300px
         .messages
-            @include paddingLeftRight(50)
+            @include paddingLeftRight(30)
 
 @media screen and (max-width: 992px)
     .wrapper
@@ -425,7 +420,7 @@ button
         .sidebar
             width: 30%
         .messages
-            @include paddingLeftRight(40)
+            @include paddingLeftRight(25)
 
 @media screen and (max-width: 768px)
     .chatsPage
@@ -437,7 +432,7 @@ button
         .back
             display: inline
         .messages
-            @include paddingLeftRight(35)
+            @include paddingLeftRight(20)
         .userMessage, .tabContent
             margin-right: 0
     .window 
@@ -453,7 +448,7 @@ button
             font-size: 23px
     .chatsPage
         .messages
-            @include paddingLeftRight(30)
+            @include paddingLeftRight(15)
         .userForm
             @include paddingLeftRight(10)
         .send
@@ -472,5 +467,5 @@ button
             font-size: 21px
     .chatsPage
         .messages
-            @include paddingLeftRight(25)
+            @include paddingLeftRight(15)
         

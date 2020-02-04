@@ -1,8 +1,3 @@
 [contentEditable=true]:empty:not(:focus):before {
     content:attr(data-text)
 }
-
-.sidebar {
-    -ms-overflow-style: none;
-    overflow: -moz-scrollbars-none;
-}

@@ -117,7 +117,7 @@ a {
 }
 
 .chatsPage .userMessage, .chatsPage .interlocutorMessage {
-  margin: 2px 0;
+  margin: 3px 0;
   border-radius: 20px;
   padding: 10px 55px 5px 15px;
   max-width: 75%;
@@ -133,17 +133,23 @@ a {
   cursor: pointer;
   position: relative;
   text-align: left;
-  text-indent: 35px;
+  text-indent: 18px;
 }
 
 .chatsPage .chat:hover, .chatsPage .tasksSidebar:hover, .chatsPage .user:hover {
   background-color: rgba(1, 133, 93, 0.3);
 }
 
-.chatsPage .messages, .chatsPage .tabContent {
+.chatsPage .messages, .chatsPage .userInput, .chatsPage .sidebar, .chatsPage .tabContent {
   overflow-x: hidden;
   overflow-y: scroll;
-  margin: 0 -18px;
+  -ms-overflow-style: none;
+  overflow: -moz-scrollbars-none;
+  scrollbar-width: none;
+}
+
+.chatsPage .messages::-webkit-scrollbar, .chatsPage .userInput::-webkit-scrollbar, .chatsPage .sidebar::-webkit-scrollbar, .chatsPage .tabContent::-webkit-scrollbar {
+  display: none;
 }
 
 input, button {
@@ -175,11 +181,6 @@ input, button {
 
 [contentEditable=true]:empty:not(:focus):before {
   content: attr(data-text);
-}
-
-.sidebar {
-  -ms-overflow-style: none;
-  overflow: -moz-scrollbars-none;
 }
 
 body {
@@ -365,14 +366,13 @@ button {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  padding: 10px 60px 5px;
+  padding: 10px 35px 5px;
 }
 
 .chatsPage .userMessage {
   align-self: flex-end;
   background: #057e70;
   color: white;
-  margin-right: -18px;
 }
 
 .chatsPage .userMessage .sendingTime {
@@ -458,16 +458,8 @@ button {
   border: none;
   line-height: 1;
   flex-grow: 1;
-  overflow-x: hidden;
-  overflow-y: scroll;
   border-radius: 25px;
   max-height: 100%;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.chatsPage .userInput::-webkit-scrollbar {
-  display: none;
 }
 
 .chatsPage .send {
@@ -483,12 +475,6 @@ button {
   width: 320px;
   background-color: #f1f1f1;
   border-right: 1px solid #acaaaa;
-  overflow-x: hidden;
-  overflow-y: scroll;
-}
-
-.chatsPage .sidebar::-webkit-scrollbar {
-  width: 0;
 }
 
 .chatsPage .tabs {
@@ -616,8 +602,8 @@ button {
     width: 300px;
   }
   .chatsPage .messages {
-    padding-left: 50px;
-    padding-right: 50px;
+    padding-left: 30px;
+    padding-right: 30px;
   }
 }
 
@@ -632,8 +618,8 @@ button {
     width: 30%;
   }
   .chatsPage .messages {
-    padding-left: 40px;
-    padding-right: 40px;
+    padding-left: 25px;
+    padding-right: 25px;
   }
 }
 
@@ -649,8 +635,8 @@ button {
     display: inline;
   }
   .chatsPage .messages {
-    padding-left: 35px;
-    padding-right: 35px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
   .chatsPage .userMessage, .chatsPage .tabContent {
     margin-right: 0;
@@ -673,8 +659,8 @@ button {
     font-size: 23px;
   }
   .chatsPage .messages {
-    padding-left: 30px;
-    padding-right: 30px;
+    padding-left: 15px;
+    padding-right: 15px;
   }
   .chatsPage .userForm {
     padding-left: 10px;
@@ -701,7 +687,7 @@ button {
     font-size: 21px;
   }
   .chatsPage .messages {
-    padding-left: 25px;
-    padding-right: 25px;
+    padding-left: 15px;
+    padding-right: 15px;
   }
 }
