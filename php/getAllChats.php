@@ -4,7 +4,7 @@ require('./initial.php');
 session_start();
 $id = (int) $_SESSION['id'];
 
-$query = "select message, fromUser, toUser, sendingTime from messages where `fromUser` = ? or `toUser` = ?";
+$query = "select message, fromUser, toUser, sendingTime from messages where (`fromUser` = ? or `toUser` = ?) and `fromUser` <> `toUser`";
 $stmt = preparedQuery($connection, $query, [&$id, &$id]);
 mysqli_stmt_bind_result($stmt, $message, $fromUser, $toUser, $sendingTime);
 

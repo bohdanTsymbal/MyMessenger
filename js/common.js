@@ -1,6 +1,6 @@
 'use strict';
 
-let errors, response, id, firstName, lastName, inId, token, WebSocketConnection, sHeight, messagesDate, todayDate;
+let errors, response, id, firstName, lastName, inId, token, WebSocketConnection, messagesDate, todayDate;
 
 errors = true;
 messagesDate = new Object();
@@ -378,8 +378,10 @@ function displayChatsPage() {
         firstName = info.firstName;
         lastName = info.lastName;
         token = info.token;
+        
         createChatInterface(id, 'Tasks', '', 50, true);
         document.querySelector('.chatsPage .tasksSidebar').id = `u${id}`;
+
         connect();
         makePostRequest(GET_ALL_CHATS_PHP[0], '', displayAllChats);
     });
@@ -407,7 +409,7 @@ function switchTab(event, allTabs, allContent, className, contentSelector, displ
     }
 }
 
-function createChatInterface(interlocutorId, firstName, lastName, number=null, isTaskMessage=false, newMessage=null, formattedDate=null, sendingTimeValue=null, messageId=null) {
+function createChatInterface(interlocutorId, firstName, lastName, number=null, isTaskMessage=false) {
     const chatsPage = document.querySelector('.chatsPage');
     const sidebar = document.querySelector('.chatsPage .sidebar');
     const chatUI = document.createElement('div');
@@ -445,80 +447,13 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, i
         sidebar.style.display = 'block';
     };
 
-    if (number) {
+    if (number && !isTaskMessage) {
         const params = `interlocutorId=${interlocutorId}&number=0_${number}`;
-
-        makePostRequest(GET_MESSAGES_PHP[0], params, () => {
-            const messagesContent = JSON.parse(response);
-
-            for (let i = messagesContent.length - 1; i > -1; i--) {
-                const message = document.createElement('div');
-                const sendingTime = document.createElement('span');
-                const messagesDateBlock = document.createElement('div');
-                const isDoneBlock = document.createElement('span');
-                const date = new Date(messagesContent[i].sendingTime);
-                date.setHours(date.getHours() - new Date().getTimezoneOffset() / 60);
-                const formattedDate = `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
-                const time = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-
-                sendingTime.className = isTaskMessage ? 'sendingTime taskTime' : 'sendingTime';
-                sendingTime.innerHTML = isTaskMessage ? `${formattedDate} ${time}` : time;
-                
-                message.className = messagesContent[i].fromUser == id && !isTaskMessage ? 'userMessage' : isTaskMessage ? 'interlocutorMessage taskMessage' : 'interlocutorMessage';
-                message.id = `m${messagesContent[i].messageId}`;
-                message.innerHTML = messagesContent[i].message;
-
-                const authorName = document.createElement('h4');
-                authorName.className = 'authorName';
-                authorName.innerHTML = `${messagesContent[i].firstName} ${messagesContent[i].lastName}`;
-
-                messagesDateBlock.className = 'messagesDate';
-                messagesDateBlock.innerHTML = formattedDate;
-                if (messagesDate[interlocutorId] != formattedDate && !isTaskMessage) {
-                    messages.appendChild(messagesDateBlock);
-                    messagesDate[interlocutorId] = formattedDate;
-                }
-
-                isDoneBlock.className = 'isDoneBlock';
-                isDoneBlock.innerHTML = 'Done';
-
-                if (messagesContent[i].isDone) {
-                    isDoneBlock.style.opacity = 1;
-                    message.classList.add('done');
-                }
-
-                if (isTaskMessage) {
-                    message.appendChild(authorName);
-                    message.appendChild(isDoneBlock);
-                }
-                message.appendChild(sendingTime);
-                messages.appendChild(message);
-            }
-
-            if (newMessage) {
-                const newMessageBlock = document.createElement('div');
-                const sendingTime = document.createElement('span');
-                const messagesDateBlock = document.createElement('div');
-
-                newMessageBlock.className = 'interlocutorMessage';
-                newMessageBlock.id = `m${messageId}`;
-                newMessageBlock.innerHTML = newMessage;
-                sendingTime.className = 'sendingTime';
-                sendingTime.innerHTML = sendingTimeValue;
-
-                messagesDateBlock.className = 'messagesDate';
-                messagesDateBlock.innerHTML = formattedDate;
-            
-                if (messagesDate[interlocutorId] != formattedDate) {
-                    messages.appendChild(messagesDateBlock);
-                    messagesDate[interlocutorId] = formattedDate;
-                }
-                newMessageBlock.appendChild(sendingTime);
-                messages.appendChild(newMessageBlock);
-            }
-
-            messages.scrollTo(0, messages.scrollHeight);
-        });
+        makePostRequest(GET_MESSAGES_PHP[0], params, () => { displayMessages(messages, interlocutorId); });
+    }
+    else if (number && isTaskMessage) {
+        const params = `number=0_${number}`;
+        makePostRequest(GET_TASKS_PHP[0], params, () => { displayMessages(messages, interlocutorId, isTaskMessage); });
     }
 
     chatsPage.appendChild(chatUI);
@@ -563,6 +498,71 @@ function createChatInterface(interlocutorId, firstName, lastName, number=null, i
             num1 += 50;
         }
     };
+}
+
+function displayMessages(messages, interlocutorId, isTaskMessage=false) {
+    const messagesContent = JSON.parse(response);
+
+    if (isTaskMessage && messagesContent.length != 0) {
+        const lastMessageText = document.querySelector(`#u${id} .lastMessage`);
+        const lastMessageTime = document.querySelector(`#u${id} .lastMessageSendingTime`);
+        const date = new Date(messagesContent[0].sendingTime);
+        date.setHours(date.getHours() - new Date().getTimezoneOffset() / 60);
+
+        lastMessageText.innerHTML = messagesContent[0].message;
+        if (todayDate.getFullYear() != date.getFullYear() || todayDate.getMonth() != date.getMonth() || todayDate.getDate() != date.getDate()) {
+            lastMessageTime.innerHTML = `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
+        }
+        else {
+            lastMessageTime.innerHTML = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+        }
+    }
+
+    for (let i = messagesContent.length - 1; i > -1; i--) {
+        const message = document.createElement('div');
+        const sendingTime = document.createElement('span');
+        const messagesDateBlock = document.createElement('div');
+        const isDoneBlock = document.createElement('span');
+        const date = new Date(messagesContent[i].sendingTime);
+        date.setHours(date.getHours() - new Date().getTimezoneOffset() / 60);
+        const formattedDate = `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
+        const time = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+
+        sendingTime.className = isTaskMessage ? 'sendingTime taskTime' : 'sendingTime';
+        sendingTime.innerHTML = isTaskMessage ? `${formattedDate} ${time}` : time;
+        
+        message.className = messagesContent[i].fromUser == id && !isTaskMessage ? 'userMessage' : isTaskMessage ? 'interlocutorMessage taskMessage' : 'interlocutorMessage';
+        message.id = isTaskMessage ? `t${messagesContent[i].messageId}` : `m${messagesContent[i].messageId}`;
+        message.innerHTML = messagesContent[i].message;
+
+        const authorName = document.createElement('h4');
+        authorName.className = 'authorName';
+        authorName.innerHTML = `${messagesContent[i].firstName} ${messagesContent[i].lastName}`;
+
+        messagesDateBlock.className = 'messagesDate';
+        messagesDateBlock.innerHTML = formattedDate;
+        if (messagesDate[interlocutorId] != formattedDate && !isTaskMessage) {
+            messages.appendChild(messagesDateBlock);
+            messagesDate[interlocutorId] = formattedDate;
+        }
+
+        isDoneBlock.className = 'isDoneBlock';
+        isDoneBlock.innerHTML = 'Done';
+
+        if (messagesContent[i].isDone) {
+            isDoneBlock.style.opacity = 1;
+            message.classList.add('done');
+        }
+
+        if (isTaskMessage) {
+            message.appendChild(authorName);
+            message.appendChild(isDoneBlock);
+        }
+        message.appendChild(sendingTime);
+        messages.appendChild(message);
+    }
+
+    messages.scrollTo(0, messages.scrollHeight);
 }
 
 function pressEnter(event, interlocutorId) {
@@ -635,17 +635,12 @@ function displayAllChats() {
     const displayedChats = [];
     const chatsList = document.querySelector('.sidebar #tc1');
 
-    const lastMessageText = document.querySelector(`#u${id} .lastMessage`);
-    const lastMessageTime = document.querySelector(`#u${id} .lastMessageSendingTime`);
-    lastMessageText.innerHTML = '*empty*';
-    lastMessageTime.innerHTML = '*empty*';
-
     for (let i = messages.length - 1; i > -1; i--) {
         const interlocutorId = messages[i].fromUser == id ? messages[i].toUser : messages[i].fromUser;
         const date = new Date(messages[i].sendingTime);
         date.setHours(date.getHours() - new Date().getTimezoneOffset() / 60);
 
-        if (displayedChats.indexOf(interlocutorId) == -1 && interlocutorId != id) {
+        if (displayedChats.indexOf(interlocutorId) == -1) {
             displayedChats.push(interlocutorId);
 
             const chat = document.createElement('div');
@@ -699,16 +694,6 @@ function displayAllChats() {
                 }
 
                 inId = interlocutorId;
-            }
-        }
-        else if (displayedChats.indexOf(interlocutorId) == -1 && interlocutorId == id) {
-            displayedChats.push(interlocutorId);
-            lastMessageText.innerHTML = messages[i].message;
-            if (todayDate.getFullYear() != date.getFullYear() || todayDate.getMonth() != date.getMonth() || todayDate.getDate() != date.getDate()) {
-                lastMessageTime.innerHTML = `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
-            }
-            else {
-                lastMessageTime.innerHTML = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
             }
         }
     } 
@@ -780,7 +765,7 @@ function connect() {
         
                     makePostRequest(GET_FULL_NAME_PHP[0], params, () => {
                         const fullName = JSON.parse(response);
-                        createChatInterface(fromUser, fullName.firstName, fullName.lastName, 50, false, null, formattedDate, sendingTimeValue, messageId);
+                        createChatInterface(fromUser, fullName.firstName, fullName.lastName, 50);
                     });
                 }
         
@@ -863,7 +848,7 @@ function connect() {
 
             case 'messageId': {
                 const data = JSON.parse(event.data);
-                addToTasks(data.messageId, data.messageDate, data.messageText, data.additionalData.messageAuthor);
+                addToTasks(data.messageId, data.messageDate, data.messageText, data.messageAuthor);
 
                 break;
             }
@@ -874,15 +859,12 @@ function connect() {
     };
 }
 
-function sendMessage(interlocutorId, message, authorId, sendingTime="NONE", whetherReturnTime=true, additionalData=false) {
+function sendMessage(interlocutorId, message) {
     let messageData = {
+        type: 'message',
         fromUser: id,
         toUser: interlocutorId,
-        message: message,
-        sendingTime: sendingTime,
-        returnTime: whetherReturnTime,
-        authorId: authorId,
-        additionalData: additionalData
+        message: message
     };
 
     messageData = JSON.stringify(messageData);
@@ -917,7 +899,7 @@ function addMessageToChat(interlocutorId, message, time, isTaskMessage, messageI
     sendingTime.innerHTML = isTaskMessage ? `${formattedDate} ${sendingTimeValue}` : sendingTimeValue;
 
     messageBlock.className = isTaskMessage ? 'interlocutorMessage taskMessage' : 'userMessage';
-    messageBlock.id = `m${messageId}`;
+    messageBlock.id = isTaskMessage ? `t${messageId}` : `m${messageId}`;
     messageBlock.innerHTML = message;
 
     authorName.className = 'authorName';
@@ -1006,7 +988,7 @@ function processMessage(interlocutorId, event) {
     const message = userInput.innerText.trim().replace(REGEXP_TAG, '').replace(REGEXP_SPECIAL,'');
 
     if (message !== '') {
-        sendMessage(interlocutorId, message, interlocutorId);
+        sendMessage(interlocutorId, message);
     }
 
     userInput.innerHTML = '';
@@ -1031,7 +1013,7 @@ function addToTasks(messageId, messageDate, messageText, messageAuthor) {
     sendingTime.innerHTML = `${taskDay} ${taskTime}`;
 
     messageBlock.className = 'interlocutorMessage taskMessage';
-    messageBlock.id = `m${messageId}`;
+    messageBlock.id = `t${messageId}`;
     messageBlock.innerHTML = messageText;
 
     lastTaskText.innerHTML = messageText;
@@ -1056,34 +1038,24 @@ function addToTasks(messageId, messageDate, messageText, messageAuthor) {
     tasksChat.scrollTo(0, tasksChat.scrollHeight);
 }
 
-function writeTaskToDB (message) {
-    const interlocutorMessage = message.classList.contains('interlocutorMessage');
-    const textAndTime = message.innerText.split('\n');
-    const taskText = textAndTime[0];
-    const taskTime = textAndTime[1];
-    const taskAuthor = interlocutorMessage ? message.parentNode.previousElementSibling.innerText.trim().replace('‹', '') : `${firstName} ${lastName}`;
-    let taskDay;
+function writeTaskToDB(message) {
+    const messageId = message.id.replace('m', '');
+    let requestData = {
+        type: 'task',
+        fromUser: id,
+        messageId: messageId
+    };
 
-    const days = message.parentNode.querySelectorAll('.messagesDate');
-    for (let i = 0; i < days.length; i++) {
-        if (message.offsetTop >= days[i].offsetTop) taskDay = days[i].innerText;
-    }
-    
-    const date = taskDay.split('.');
-    const time = taskTime.split(':');
-    time[2] = '00';
-    const dateTime = new Date(`${date[2]}-${date[1]}-${date[0]} ${time[0]}:${time[1]}:${time[2]}`);
-    dateTime.setHours(dateTime.getHours() + new Date().getTimezoneOffset() / 60);
-    const formattedDateTime = `${dateTime.getFullYear()}-${dateTime.getMonth() + 1}-${dateTime.getDate()} ${String(dateTime.getHours()).padStart(2, '0')}:${dateTime.getMinutes()}:${dateTime.getSeconds()}`;
-    const authorId = interlocutorMessage ? inId : id;
-
-    sendMessage(id, taskText, authorId, formattedDateTime, true, { messageAuthor:  taskAuthor });
+    requestData = JSON.stringify(requestData);
+    WebSocketConnection.send(requestData);
 }
 
-function changeIsDoneStatus (message) {
-    const type = 'changeIsDoneStatus';
-    const messageId = message.id.replace('m', '');
-    let messageData = { type, messageId };
+function changeIsDoneStatus(message) {
+    const messageId = message.id.replace('t', '');
+    let messageData = { 
+        type: "changeIsDoneStatus",
+        messageId: messageId
+    };
     messageData = JSON.stringify(messageData);
     WebSocketConnection.send(messageData);
 
